@@ -43,12 +43,6 @@ namespace TrackerClient
                 }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             SetupListViews();
@@ -72,17 +66,6 @@ namespace TrackerClient
             proxy = channelFactory.CreateChannel();
         }
 
-        private void llblAliases_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            ToolTip aliasToolTip = new ToolTip();
-            aliasToolTip.IsBalloon = true;
-            string toolTipText = "";
-            foreach (string name in aliases)
-                toolTipText += name + Environment.NewLine;
-            aliasToolTip.SetToolTip(sender as Control, toolTipText);
-
-        }
-
         private void tpPlayerStats_Click(object sender, EventArgs e)
         {
 
@@ -96,11 +79,6 @@ namespace TrackerClient
         private void pSearch_Paint(object sender, PaintEventArgs e)
         {
 
-
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
 
         }
         delegate void SetTextCallback(string text, Control c);
