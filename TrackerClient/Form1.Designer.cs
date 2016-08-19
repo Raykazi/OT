@@ -85,6 +85,8 @@
             this.bwPlayerListRefresh = new System.ComponentModel.BackgroundWorker();
             this.bwPlayerListFilter = new System.ComponentModel.BackgroundWorker();
             this.tpDebug = new System.Windows.Forms.TabPage();
+            this.rtbDebugVehicle = new System.Windows.Forms.RichTextBox();
+            this.rtbDebugEquipment = new System.Windows.Forms.RichTextBox();
             this.pLeft.SuspendLayout();
             this.tcPlayerLists.SuspendLayout();
             this.tpPlayersAll.SuspendLayout();
@@ -98,6 +100,7 @@
             this.tpPI.SuspendLayout();
             this.tcPlayerInfo.SuspendLayout();
             this.tpPlayerStats.SuspendLayout();
+            this.tpDebug.SuspendLayout();
             this.SuspendLayout();
             // 
             // pLeft
@@ -367,6 +370,7 @@
             this.lvVehicleInfo.TabIndex = 39;
             this.lvVehicleInfo.UseCompatibleStateImageBehavior = false;
             this.lvVehicleInfo.View = System.Windows.Forms.View.Details;
+            this.lvVehicleInfo.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvVehicleInfo_ColumnClick);
             // 
             // chName
             // 
@@ -602,6 +606,8 @@
             // 
             // tpDebug
             // 
+            this.tpDebug.Controls.Add(this.rtbDebugEquipment);
+            this.tpDebug.Controls.Add(this.rtbDebugVehicle);
             this.tpDebug.Location = new System.Drawing.Point(4, 4);
             this.tpDebug.Name = "tpDebug";
             this.tpDebug.Padding = new System.Windows.Forms.Padding(3);
@@ -609,6 +615,22 @@
             this.tpDebug.TabIndex = 2;
             this.tpDebug.Text = "Debug Info";
             this.tpDebug.UseVisualStyleBackColor = true;
+            // 
+            // rtbDebugVehicle
+            // 
+            this.rtbDebugVehicle.Location = new System.Drawing.Point(3, 6);
+            this.rtbDebugVehicle.Name = "rtbDebugVehicle";
+            this.rtbDebugVehicle.Size = new System.Drawing.Size(339, 556);
+            this.rtbDebugVehicle.TabIndex = 0;
+            this.rtbDebugVehicle.Text = "";
+            // 
+            // rtbDebugEquipment
+            // 
+            this.rtbDebugEquipment.Location = new System.Drawing.Point(348, 6);
+            this.rtbDebugEquipment.Name = "rtbDebugEquipment";
+            this.rtbDebugEquipment.Size = new System.Drawing.Size(339, 556);
+            this.rtbDebugEquipment.TabIndex = 1;
+            this.rtbDebugEquipment.Text = "";
             // 
             // frmMain
             // 
@@ -640,6 +662,7 @@
             this.tcPlayerInfo.ResumeLayout(false);
             this.tpPlayerStats.ResumeLayout(false);
             this.tpPlayerStats.PerformLayout();
+            this.tpDebug.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -702,6 +725,8 @@
         private System.Windows.Forms.Label lblHelmet;
         private System.Windows.Forms.Label lblVest;
         private System.Windows.Forms.TabPage tpDebug;
+        private System.Windows.Forms.RichTextBox rtbDebugEquipment;
+        private System.Windows.Forms.RichTextBox rtbDebugVehicle;
     }
 }
 

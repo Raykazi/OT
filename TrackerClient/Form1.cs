@@ -3,11 +3,9 @@ using System.ServiceModel;
 using System.Windows.Forms;
 using TrackerInterface;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using System.Threading;
 using HtmlAgilityPack;
+using System.Collections;
 
 namespace TrackerClient
 {
@@ -22,10 +20,14 @@ namespace TrackerClient
         public HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
         public List<string> steamID = new List<string>();
         object locker = new object();
+
+
+        ListViewItemComparer _lvwItemComparer = new ListViewItemComparer();
         public frmMain()
         {
             InitializeComponent();
             HtmlNode.ElementsFlags.Remove("form");
+            lvVehicleInfo.ListViewItemSorter = _lvwItemComparer;
         }
         public void resetLabels(Control control)
         {
@@ -318,6 +320,33 @@ namespace TrackerClient
         private void lvPlayerList_SelectedIndexChanged(object sender, EventArgs e)
         {
         }
+
+        private void lvVehicleInfo_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            // Determine if clicked column is already the column that is being sorted.
+            if (e.Column == _lvwItemComparer.SortColumn)
+            {
+                // Reverse the current sort direction for this column.
+                if (_lvwItemComparer.Order == SortOrder.Ascending)
+                {
+                    _lvwItemComparer.Order = SortOrder.Descending;
+                }
+                else
+                {
+                    _lvwItemComparer.Order = SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                _lvwItemComparer.SortColumn = e.Column;
+                _lvwItemComparer.Order = SortOrder.Ascending;
+            }
+
+            // Perform the sort with these new sort options.
+            lvVehicleInfo.Sort();
+        }
+
     }
 
 }
