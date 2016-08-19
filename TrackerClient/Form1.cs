@@ -18,7 +18,6 @@ namespace TrackerClient
         List<Player> Players;
         List<string> debugList = new List<string>();
         public HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-        public List<string> steamID = new List<string>();
         object locker = new object();
 
 
@@ -122,6 +121,7 @@ namespace TrackerClient
 
         private void wkbMain_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
+            List<string> steamID = new List<string>();
             if (wkbMain.Url.ToString().Contains("/players"))
             {
                 steamID.Clear();
