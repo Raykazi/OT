@@ -16,7 +16,8 @@ namespace TrackerClient
         IWCFTrackerService proxy;
         List<string> aliases = new List<string>();
         List<Player> Players;
-        List<string> debugList = new List<string>();
+        List<string> debugListVeh = new List<string>();
+        List<string> debugListEqu = new List<string>();
         public HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
         object locker = new object();
 
@@ -65,22 +66,6 @@ namespace TrackerClient
         {
             channelFactory = new ChannelFactory<IWCFTrackerService>("TrackerClientEndpoint");
             proxy = channelFactory.CreateChannel();
-        }
-
-        private void tpPlayerStats_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tbStats_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pSearch_Paint(object sender, PaintEventArgs e)
-        {
-
-
         }
         delegate void SetTextCallback(string text, Control c);
         private void SetText(string text, Control c)
@@ -163,7 +148,33 @@ namespace TrackerClient
             List<Player> metaPlayers = new List<Player>();
 
             string[] watchListItems = { "rock", "salt", "cement", "glass", "iron", "copper", "silver", "platinum", "oilp", "diamond", "diamondc", "marijuana", "frog", "mushroom", "heroinp", "cocaine", "moonshine", "meth", "goldbar", "yeast", "sugar", "corn", "cannabis", "heroinu", "ephedra", "lithium", "phosphorus", "oilu", "heroinp", "ironore" };
-            string[] watchListVehicles = { "Tempest (Device)", "Zamak Transport (Covered)", "HEMTT Transport", "HEMTT Box", "Truck Box", "Truck Fuel", "Ifrit", "Taru (Fuel)", "Orca", "Huron" };
+            string[] watchListVehicles = {
+            "Hellcat",
+            "HEMTT Box",
+            "HEMTT Fuel",
+            "HEMTT Transport",
+            "Hummingbird",
+            "Huron",
+            "Ifrit",
+            "Offroad (Armed)",
+            "Orca",
+            "M900",
+            "Mohawk",
+            "SDV",
+            "Taru (Bench)",
+            "Taru (Fuel)",
+            "Taru (Transport)",
+            "Tempest (Device)",
+            "Tempest Fuel",
+            "Tempest Transport",
+            "Tempest Transport (Covered)",
+            "Truck",
+            "Truck Box",
+            "Truck Fuel",
+            "Zamak Fuel",
+            "Zamak Transport",
+            "Zamak Transport (Covered)"
+            };
 
             foreach (Player p in Players)
             {
@@ -269,9 +280,18 @@ namespace TrackerClient
             lblMedicRank.Text = string.Format("R&R Rank: {0}", p.medicLevel);
             lblMedicTime.Text = string.Format("R&R Time: {0:0,0}", p.timeMed.ToString() == "-1" ? "N/A" : p.timeMed.ToString());
             lblMedicRevives.Text = string.Format("R&R Revives: {0:0,0}", p.medicRevives.ToString() == "-1" ? "N/A" : p.medicRevives.ToString());
-            lblVest.Text = string.Format("Vest: {0}", p.Equipment[1]);
-            lblHelmet.Text = string.Format("Helmet: {0}", p.Equipment[4]);
-            lblGun.Text = string.Format("Gun: {0}", p.Equipment[5]);
+            lblVest.Text = string.Format("Vest: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[1]);
+            lblHelmet.Text = string.Format("Helmet: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[4]);
+            lblGun.Text = string.Format("Gun: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[5]);
+            foreach (string equip in p.Equipment)
+            {
+                if (!debugListEqu.Contains(equip) && equip.Length > 0)
+                {
+                    debugListVeh.Add(equip);
+                    rtbDebugEquipment.Text += string.Format("{0}{1}", equip, Environment.NewLine);
+                }
+
+            }
             foreach (string alias in p.aliases)
             {
                 tbAliases.Text += string.Format("{0}{1}", alias, Environment.NewLine);
@@ -287,22 +307,31 @@ namespace TrackerClient
                 foreach (Vehicles v in p.civAir)
                 {
                     sortedList.Add(v);
-                    if (!debugList.Contains(v.name))
-                        debugList.Add(v.name);
+                    if (!debugListVeh.Contains(v.name))
+                    {
+                        debugListVeh.Add(v.name);
+                        rtbDebugVehicle.Text += string.Format("{0}{1}", v.name, Environment.NewLine);
+                    }
                 }
             if (p.civCar != null)
                 foreach (Vehicles v in p.civCar)
                 {
                     sortedList.Add(v);
-                    if (!debugList.Contains(v.name))
-                        debugList.Add(v.name);
+                    if (!debugListVeh.Contains(v.name))
+                    {
+                        debugListVeh.Add(v.name);
+                        rtbDebugVehicle.Text += string.Format("{0}{1}", v.name, Environment.NewLine);
+                    }
                 }
             if (p.civShip != null)
                 foreach (Vehicles v in p.civShip)
                 {
                     sortedList.Add(v);
-                    if (!debugList.Contains(v.name))
-                        debugList.Add(v.name);
+                    if (!debugListVeh.Contains(v.name))
+                    {
+                        debugListVeh.Add(v.name);
+                        rtbDebugVehicle.Text += string.Format("{0}{1}", v.name, Environment.NewLine);
+                    }
                 }
             sortedList = sortedList.OrderByDescending(v => v.active).ToList();
             foreach (Vehicles v in sortedList)
@@ -315,10 +344,6 @@ namespace TrackerClient
                 lviV.SubItems.Add(v.insuranceLevel.ToString());
                 lvVehicleInfo.Items.Add(lviV);
             }
-        }
-
-        private void lvPlayerList_SelectedIndexChanged(object sender, EventArgs e)
-        {
         }
 
         private void lvVehicleInfo_ColumnClick(object sender, ColumnClickEventArgs e)

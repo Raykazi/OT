@@ -175,7 +175,6 @@
             this.pSearch.Name = "pSearch";
             this.pSearch.Size = new System.Drawing.Size(158, 34);
             this.pSearch.TabIndex = 35;
-            this.pSearch.Paint += new System.Windows.Forms.PaintEventHandler(this.pSearch_Paint);
             // 
             // tbFilter
             // 
@@ -325,7 +324,6 @@
             this.tpPlayerStats.TabIndex = 0;
             this.tpPlayerStats.Text = "Player Stats";
             this.tpPlayerStats.UseVisualStyleBackColor = true;
-            this.tpPlayerStats.Click += new System.EventHandler(this.tpPlayerStats_Click);
             // 
             // lblHelmet
             // 
@@ -517,7 +515,6 @@
             this.tbAliases.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tbAliases.Size = new System.Drawing.Size(195, 276);
             this.tbAliases.TabIndex = 5;
-            this.tbAliases.TextChanged += new System.EventHandler(this.tbStats_TextChanged);
             // 
             // lblGang
             // 
