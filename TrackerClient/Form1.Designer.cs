@@ -36,7 +36,6 @@
             this.tpPlayersMeta = new System.Windows.Forms.TabPage();
             this.lbPlayersMeta = new System.Windows.Forms.ListBox();
             this.pSearch = new System.Windows.Forms.Panel();
-            this.button3 = new System.Windows.Forms.Button();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.pMain = new System.Windows.Forms.Panel();
             this.tcMain = new System.Windows.Forms.TabControl();
@@ -85,6 +84,7 @@
             this.timerPLRefresh = new System.Windows.Forms.Timer(this.components);
             this.bwPlayerListRefresh = new System.ComponentModel.BackgroundWorker();
             this.bwPlayerListFilter = new System.ComponentModel.BackgroundWorker();
+            this.tpDebug = new System.Windows.Forms.TabPage();
             this.pLeft.SuspendLayout();
             this.tcPlayerLists.SuspendLayout();
             this.tpPlayersAll.SuspendLayout();
@@ -166,7 +166,6 @@
             // 
             // pSearch
             // 
-            this.pSearch.Controls.Add(this.button3);
             this.pSearch.Controls.Add(this.tbFilter);
             this.pSearch.Dock = System.Windows.Forms.DockStyle.Top;
             this.pSearch.Location = new System.Drawing.Point(0, 0);
@@ -175,21 +174,11 @@
             this.pSearch.TabIndex = 35;
             this.pSearch.Paint += new System.Windows.Forms.PaintEventHandler(this.pSearch_Paint);
             // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(3, 3);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(52, 23);
-            this.button3.TabIndex = 1;
-            this.button3.Text = "button3";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
             // tbFilter
             // 
-            this.tbFilter.Location = new System.Drawing.Point(61, 5);
+            this.tbFilter.Location = new System.Drawing.Point(12, 5);
             this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(91, 20);
+            this.tbFilter.Size = new System.Drawing.Size(140, 20);
             this.tbFilter.TabIndex = 0;
             // 
             // pMain
@@ -207,6 +196,7 @@
             this.tcMain.Alignment = System.Windows.Forms.TabAlignment.Right;
             this.tcMain.Controls.Add(this.tpPL);
             this.tcMain.Controls.Add(this.tpPI);
+            this.tcMain.Controls.Add(this.tpDebug);
             this.tcMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tcMain.Location = new System.Drawing.Point(158, 0);
             this.tcMain.Multiline = true;
@@ -610,6 +600,16 @@
             this.timerPLRefresh.Interval = 180000;
             this.timerPLRefresh.Tick += new System.EventHandler(this.timerPLRefresh_Tick);
             // 
+            // tpDebug
+            // 
+            this.tpDebug.Location = new System.Drawing.Point(4, 4);
+            this.tpDebug.Name = "tpDebug";
+            this.tpDebug.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDebug.Size = new System.Drawing.Size(806, 568);
+            this.tpDebug.TabIndex = 2;
+            this.tpDebug.Text = "Debug Info";
+            this.tpDebug.UseVisualStyleBackColor = true;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -651,7 +651,6 @@
         private System.Windows.Forms.Panel pSearch;
         private System.Windows.Forms.ListBox lbPlayersAll;
         private System.Windows.Forms.TextBox tbFilter;
-        private System.Windows.Forms.Button button3;
         private System.Windows.Forms.TabControl tcMain;
         private System.Windows.Forms.TabPage tpPL;
         private System.Windows.Forms.TabPage tpPI;
@@ -702,6 +701,7 @@
         private System.Windows.Forms.Label lblGun;
         private System.Windows.Forms.Label lblHelmet;
         private System.Windows.Forms.Label lblVest;
+        private System.Windows.Forms.TabPage tpDebug;
     }
 }
 

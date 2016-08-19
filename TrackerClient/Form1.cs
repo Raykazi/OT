@@ -101,43 +101,6 @@ namespace TrackerClient
 
         private void button3_Click(object sender, EventArgs e)
         {
-            //openConnection();
-            //string response = proxy.getPlayers("8.26.94.223", 2303);
-            //response = response.Replace(@"\""", "s");
-            //response = response.Replace(@"\", "");
-            //closeConnection();
-            //JObject o = JObject.Parse(response);
-            //JArray a = (JArray)o["Players"];
-            //int i = 0;
-            //Thread[] workers = new Thread[a.Count];
-            //label1.Text = a.Count.ToString();
-            //new Thread(() =>
-            //{
-            //    while (Players.Count <= a.Count)
-            //    {
-            //        SetText(Players.Count.ToString(), label2);
-            //    }
-
-            //}).Start();
-            //openConnection();
-            //foreach (var name in a)
-            //{
-            //    string pName = name.First.First.Value<string>();
-            //    new Thread(() => doThreadWork(pName)).Start();
-            //}
-
-        }
-        private void doThreadWork(string pName)
-        {
-            //string steamID = proxy.getSteamID(pName);
-            //if (steamID != "NULL")
-            //{
-            //    lock (locker)
-            //    {
-            //        Players.Add(new Player() { Name = pName, ID = steamID });
-            //        //SetText(string.Format("{0} has been added to the list{1}",pName,Environment.NewLine));
-            //    }
-            //}
 
         }
         delegate void SetTextCallback(string text, Control c);
@@ -247,7 +210,7 @@ namespace TrackerClient
                     }
                 if (p.civCar != null)
                     foreach (Vehicles vehicle in p.civCar)
-                    {                        
+                    {
                         if (Array.IndexOf(watchListVehicles, vehicle.name) != -1 && !metaPlayers.Contains(p))
                         {
                             if (vehicle.active == 1)
@@ -371,9 +334,7 @@ namespace TrackerClient
                 lviV.SubItems.Add(v.storageLevel.ToString());
                 lviV.SubItems.Add(v.insuranceLevel.ToString());
                 lvVehicleInfo.Items.Add(lviV);
-
             }
-
         }
 
         private void lvPlayerList_SelectedIndexChanged(object sender, EventArgs e)
