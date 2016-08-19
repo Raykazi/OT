@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="configuration">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="startup">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="supportedRuntime">
+                <xs:complexType>
+                  <xs:attribute name="version" type="xs:string" use="required" />
+                  <xs:attribute name="sku" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="system.serviceModel">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="behaviors">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="serviceBehaviors">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="behavior">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="serviceMetadata">
+                                  <xs:complexType>
+                                    <xs:attribute name="httpGetEnabled" type="xs:boolean" use="required" />
+                                    <xs:attribute name="httpsGetEnabled" type="xs:boolean" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="serviceDebug">
+                                  <xs:complexType>
+                                    <xs:attribute name="includeExceptionDetailInFaults" type="xs:boolean" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute name="name" type="xs:string" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="services">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="service">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="endpoint">
+                            <xs:complexType>
+                              <xs:attribute name="address" type="xs:string" use="required" />
+                              <xs:attribute name="binding" type="xs:string" use="required" />
+                              <xs:attribute name="bindingConfiguration" type="xs:string" use="required" />
+                              <xs:attribute name="name" type="xs:string" use="required" />
+                              <xs:attribute name="contract" type="xs:string" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="name" type="xs:string" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="netTcpBinding">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="binding">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="security">
+                      <xs:complexType>
+                        <xs:attribute name="mode" type="xs:string" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="name" type="xs:string" use="required" />
+                  <xs:attribute name="maxReceivedMessageSize" type="xs:unsignedInt" use="required" />
+                  <xs:attribute name="transferMode" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
