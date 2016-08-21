@@ -36,21 +36,6 @@ namespace TrackerClient
             timerPLRefresh.Enabled = true;
             timerPLRefresh.Start();
         }
-        public void resetLabels(Control control)
-        {
-
-            if (control is Label)
-            {
-                Label lbl = (Label)control;
-                lbl.ResetText();
-
-            }
-            else
-                foreach (Control child in control.Controls)
-                {
-                    resetLabels(child);
-                }
-        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -68,26 +53,6 @@ namespace TrackerClient
         {
             channelFactory = new ChannelFactory<IWCFTrackerService>("TrackerClientEndpoint");
             proxy = channelFactory.CreateChannel();
-        }
-        delegate void SetTextCallback(string text, Control c);
-        private void SetText(string text, Control c)
-        {
-            // InvokeRequired required compares the thread ID of the
-            // calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-            if (c.InvokeRequired)
-            {
-                SetTextCallback d = new SetTextCallback(SetText);
-                Invoke(d, new object[] { text, c });
-            }
-            else
-            {
-                c.Text = text;
-            }
-        }
-        private void wkbMain_Navigated(object sender, WebBrowserNavigatedEventArgs e)
-        {
-            tbURL.Text = wkbMain.Url.ToString();
         }
 
         private void btnGetPlayers_Click(object sender, EventArgs e)
@@ -118,6 +83,10 @@ namespace TrackerClient
 
             }
         }
+        private void wkbMain_Navigated(object sender, WebBrowserNavigatedEventArgs e)
+        {
+            tbURL.Text = wkbMain.Url.ToString();
+        }
 
         private void wkbMain_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
@@ -128,6 +97,10 @@ namespace TrackerClient
                 bgwDone = false;
                 string src = wkbMain.DocumentText.ToString();
                 doc.LoadHtml(src);
+                if (src.Contains("You are not currently in a Steamworks game with other Steam players."))
+                {
+                    Reset();
+                }
                 HtmlNode node = doc.GetElementbyId("friendListForm");
                 if (node != null)
                 {
@@ -155,10 +128,12 @@ namespace TrackerClient
             {
                 default:
                     if (sw.IsRunning)
+                    {
                         tspbMain.PerformStep();
+                        tsslStatus.Text = string.Format("Refreshing player list in {0} seconds.", (tspbMain.Maximum - (sw.ElapsedMilliseconds / 1000)));
+                    }
                     if (bgwDone && !btnGetPlayers.Enabled)
                         btnGetPlayers.Enabled = true;
-                    tsslStatus.Text = string.Format("Refreshing player list in {0} seconds.", (tspbMain.Maximum - (sw.ElapsedMilliseconds / 1000)));
                     break;
 
                 case 180000:
@@ -253,9 +228,9 @@ namespace TrackerClient
                     }
 
             }
-            List<Player> sortedPlayers = metaPlayers.OrderBy(p => p.name).ToList();
+            metaPlayers = metaPlayers.OrderBy(p => p.name).ToList();
             lbPlayersMeta.DisplayMember = "name";
-            lbPlayersMeta.DataSource = sortedPlayers;
+            lbPlayersMeta.DataSource = metaPlayers;
         }
 
         private void lbPlayers_SelectedIndexChanged(object sender, EventArgs e)
@@ -297,15 +272,15 @@ namespace TrackerClient
 
             this.Text = string.Format("Olympus Tracker - {0} | {1}", p.name, p.steamID);
             lblName.Text = string.Format("Name: {0}", p.name);
-            lblCash.Text = string.Format("Cash: {0:0,0}", p.cash);
+            lblCash.Text = string.Format("Cash: {0:C}", p.cash);
             lblBounty.Text = string.Format("Bounty: {0:0,0}", p.bountyWanted);
             lblKDR.Text = string.Format("K/D/R: {0:0,0}/{1:0,0}/{2:0.##}", p.kills, p.deaths, Convert.ToDecimal(Convert.ToDecimal(p.kills) / Convert.ToDecimal(p.deaths)));
             lblCopRank.Text = string.Format("APD Rank: {0}", p.copLevel);
             lblCopTime.Text = string.Format("APD Time: {0:0,0}", (p.timeApd.ToString() == "-1") ? "N/A" : p.timeApd.ToString());
             lblCopArrest.Text = string.Format("APD Arrests: {0:0,0}", (p.copArrest.ToString() == "-1") ? "N/A" : p.copArrest.ToString());
             lblGang.Text = string.Format("Gang: {0}", p.gangName == "-1" ? "N/A" : p.gangName);
-            lblBank.Text = string.Format("Bank: {0:0,0}", p.bank);
-            lblVigiBounty.Text = string.Format("Bounty Collected: {0:0,0}", p.bountyCollected.ToString() == "-1" ? "N/A" : p.bountyCollected.ToString());
+            lblBank.Text = string.Format("Bank: {0:C}", p.bank);
+            lblVigiBounty.Text = string.Format("Bounty Collected: {0:C}", p.bountyCollected.ToString() == "-1" ? "N/A" : p.bountyCollected.ToString());
             lblCivTime.Text = string.Format("Civ Time: {0:0,0}", p.timeCiv);
             lblMedicRank.Text = string.Format("R&R Rank: {0}", p.medicLevel);
             lblMedicTime.Text = string.Format("R&R Time: {0:0,0}", p.timeMed.ToString() == "-1" ? "N/A" : p.timeMed.ToString());
