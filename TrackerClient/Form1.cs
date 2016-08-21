@@ -273,14 +273,14 @@ namespace TrackerClient
             this.Text = string.Format("Olympus Tracker - {0} | {1}", p.name, p.steamID);
             lblName.Text = string.Format("Name: {0}", p.name);
             lblCash.Text = string.Format("Cash: {0:C}", p.cash);
-            lblBounty.Text = string.Format("Bounty: {0:0,0}", p.bountyWanted);
+            lblBounty.Text = string.Format("Bounty: {0:C}", p.bountyWanted);
             lblKDR.Text = string.Format("K/D/R: {0:0,0}/{1:0,0}/{2:0.##}", p.kills, p.deaths, Convert.ToDecimal(Convert.ToDecimal(p.kills) / Convert.ToDecimal(p.deaths)));
             lblCopRank.Text = string.Format("APD Rank: {0}", p.copLevel);
             lblCopTime.Text = string.Format("APD Time: {0:0,0}", (p.timeApd.ToString() == "-1") ? "N/A" : p.timeApd.ToString());
             lblCopArrest.Text = string.Format("APD Arrests: {0:0,0}", (p.copArrest.ToString() == "-1") ? "N/A" : p.copArrest.ToString());
             lblGang.Text = string.Format("Gang: {0}", p.gangName == "-1" ? "N/A" : p.gangName);
             lblBank.Text = string.Format("Bank: {0:C}", p.bank);
-            lblVigiBounty.Text = string.Format("Bounty Collected: {0:C}", p.bountyCollected.ToString() == "-1" ? "N/A" : p.bountyCollected.ToString());
+            lblVigiBounty.Text = string.Format("Bounty Collected: {0:C}", p.bountyCollected == -1 ? 0 : p.bountyCollected);
             lblCivTime.Text = string.Format("Civ Time: {0:0,0}", p.timeCiv);
             lblMedicRank.Text = string.Format("R&R Rank: {0}", p.medicLevel);
             lblMedicTime.Text = string.Format("R&R Time: {0:0,0}", p.timeMed.ToString() == "-1" ? "N/A" : p.timeMed.ToString());
@@ -288,7 +288,7 @@ namespace TrackerClient
             lblVest.Text = string.Format("Vest: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[1]);
             lblHelmet.Text = string.Format("Helmet: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[4]);
             lblGun.Text = string.Format("Gun: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[5]);
-            lblUpdated.Text = string.Format("Last Updated: {0}", p.lastUpdated);
+            lblUpdated.Text = string.Format("Last Updated (UTC): {0}", p.lastUpdated);
             foreach (string equip in p.Equipment)
             {
                 if (!debugListEqu.Contains(equip) && equip.Length > 0)

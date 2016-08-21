@@ -48,6 +48,7 @@
             this.tpPI = new System.Windows.Forms.TabPage();
             this.tcPlayerInfo = new System.Windows.Forms.TabControl();
             this.tpPlayerStats = new System.Windows.Forms.TabPage();
+            this.lblUpdated = new System.Windows.Forms.Label();
             this.lblHelmet = new System.Windows.Forms.Label();
             this.lblVest = new System.Windows.Forms.Label();
             this.lblGun = new System.Windows.Forms.Label();
@@ -89,7 +90,6 @@
             this.timerPLRefresh = new System.Windows.Forms.Timer(this.components);
             this.bwPlayerListRefresh = new System.ComponentModel.BackgroundWorker();
             this.bwPlayerListFilter = new System.ComponentModel.BackgroundWorker();
-            this.lblUpdated = new System.Windows.Forms.Label();
             this.pLeft.SuspendLayout();
             this.tcPlayerLists.SuspendLayout();
             this.tpPlayersAll.SuspendLayout();
@@ -331,6 +331,15 @@
             this.tpPlayerStats.Text = "Player Stats";
             this.tpPlayerStats.UseVisualStyleBackColor = true;
             // 
+            // lblUpdated
+            // 
+            this.lblUpdated.AutoSize = true;
+            this.lblUpdated.Location = new System.Drawing.Point(12, 511);
+            this.lblUpdated.Name = "lblUpdated";
+            this.lblUpdated.Size = new System.Drawing.Size(51, 13);
+            this.lblUpdated.TabIndex = 40;
+            this.lblUpdated.Text = "Updated:";
+            // 
             // lblHelmet
             // 
             this.lblHelmet.AutoSize = true;
@@ -525,11 +534,11 @@
             // lblGang
             // 
             this.lblGang.AutoSize = true;
-            this.lblGang.Location = new System.Drawing.Point(264, 3);
+            this.lblGang.Location = new System.Drawing.Point(295, 3);
             this.lblGang.Name = "lblGang";
-            this.lblGang.Size = new System.Drawing.Size(67, 13);
+            this.lblGang.Size = new System.Drawing.Size(36, 13);
             this.lblGang.TabIndex = 26;
-            this.lblGang.Text = "Gang/Rank:";
+            this.lblGang.Text = "Gang:";
             // 
             // lblName
             // 
@@ -655,15 +664,6 @@
             this.bwPlayerListRefresh.WorkerReportsProgress = true;
             this.bwPlayerListRefresh.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwPlayerListRefresh_DoWork);
             this.bwPlayerListRefresh.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwPlayerListRefresh_RunWorkerCompleted);
-            // 
-            // lblUpdated
-            // 
-            this.lblUpdated.AutoSize = true;
-            this.lblUpdated.Location = new System.Drawing.Point(12, 511);
-            this.lblUpdated.Name = "lblUpdated";
-            this.lblUpdated.Size = new System.Drawing.Size(51, 13);
-            this.lblUpdated.TabIndex = 40;
-            this.lblUpdated.Text = "Updated:";
             // 
             // frmMain
             // 
