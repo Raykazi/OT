@@ -80,13 +80,15 @@
             this.lblBank = new System.Windows.Forms.Label();
             this.lblCash = new System.Windows.Forms.Label();
             this.tpCrimes = new System.Windows.Forms.TabPage();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.tpDebug = new System.Windows.Forms.TabPage();
+            this.rtbDebugEquipment = new System.Windows.Forms.RichTextBox();
+            this.rtbDebugVehicle = new System.Windows.Forms.RichTextBox();
+            this.ssMain = new System.Windows.Forms.StatusStrip();
+            this.tspbMain = new System.Windows.Forms.ToolStripProgressBar();
+            this.tsslStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.timerPLRefresh = new System.Windows.Forms.Timer(this.components);
             this.bwPlayerListRefresh = new System.ComponentModel.BackgroundWorker();
             this.bwPlayerListFilter = new System.ComponentModel.BackgroundWorker();
-            this.tpDebug = new System.Windows.Forms.TabPage();
-            this.rtbDebugVehicle = new System.Windows.Forms.RichTextBox();
-            this.rtbDebugEquipment = new System.Windows.Forms.RichTextBox();
             this.pLeft.SuspendLayout();
             this.tcPlayerLists.SuspendLayout();
             this.tpPlayersAll.SuspendLayout();
@@ -101,6 +103,7 @@
             this.tcPlayerInfo.SuspendLayout();
             this.tpPlayerStats.SuspendLayout();
             this.tpDebug.SuspendLayout();
+            this.ssMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // pLeft
@@ -144,6 +147,7 @@
             this.lbPlayersAll.Name = "lbPlayersAll";
             this.lbPlayersAll.Size = new System.Drawing.Size(144, 510);
             this.lbPlayersAll.TabIndex = 35;
+            this.lbPlayersAll.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBox_DrawItem);
             this.lbPlayersAll.SelectedIndexChanged += new System.EventHandler(this.lbPlayers_SelectedIndexChanged);
             // 
             // tpPlayersMeta
@@ -588,19 +592,6 @@
             this.tpCrimes.Text = "Crimes";
             this.tpCrimes.UseVisualStyleBackColor = true;
             // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 576);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(991, 22);
-            this.statusStrip1.TabIndex = 2;
-            this.statusStrip1.Text = "statusStrip";
-            // 
-            // timerPLRefresh
-            // 
-            this.timerPLRefresh.Interval = 180000;
-            this.timerPLRefresh.Tick += new System.EventHandler(this.timerPLRefresh_Tick);
-            // 
             // tpDebug
             // 
             this.tpDebug.Controls.Add(this.rtbDebugEquipment);
@@ -613,14 +604,6 @@
             this.tpDebug.Text = "Debug Info";
             this.tpDebug.UseVisualStyleBackColor = true;
             // 
-            // rtbDebugVehicle
-            // 
-            this.rtbDebugVehicle.Location = new System.Drawing.Point(3, 6);
-            this.rtbDebugVehicle.Name = "rtbDebugVehicle";
-            this.rtbDebugVehicle.Size = new System.Drawing.Size(339, 556);
-            this.rtbDebugVehicle.TabIndex = 0;
-            this.rtbDebugVehicle.Text = "";
-            // 
             // rtbDebugEquipment
             // 
             this.rtbDebugEquipment.Location = new System.Drawing.Point(348, 6);
@@ -629,13 +612,55 @@
             this.rtbDebugEquipment.TabIndex = 1;
             this.rtbDebugEquipment.Text = "";
             // 
+            // rtbDebugVehicle
+            // 
+            this.rtbDebugVehicle.Location = new System.Drawing.Point(3, 6);
+            this.rtbDebugVehicle.Name = "rtbDebugVehicle";
+            this.rtbDebugVehicle.Size = new System.Drawing.Size(339, 556);
+            this.rtbDebugVehicle.TabIndex = 0;
+            this.rtbDebugVehicle.Text = "";
+            // 
+            // ssMain
+            // 
+            this.ssMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tspbMain,
+            this.tsslStatus});
+            this.ssMain.Location = new System.Drawing.Point(0, 576);
+            this.ssMain.Name = "ssMain";
+            this.ssMain.Size = new System.Drawing.Size(991, 22);
+            this.ssMain.TabIndex = 2;
+            this.ssMain.Text = "statusStrip";
+            // 
+            // tspbMain
+            // 
+            this.tspbMain.Maximum = 180;
+            this.tspbMain.Name = "tspbMain";
+            this.tspbMain.Size = new System.Drawing.Size(100, 16);
+            this.tspbMain.Step = 1;
+            // 
+            // tsslStatus
+            // 
+            this.tsslStatus.Name = "tsslStatus";
+            this.tsslStatus.Size = new System.Drawing.Size(0, 17);
+            // 
+            // timerPLRefresh
+            // 
+            this.timerPLRefresh.Interval = 1000;
+            this.timerPLRefresh.Tick += new System.EventHandler(this.timerPLRefresh_Tick);
+            // 
+            // bwPlayerListRefresh
+            // 
+            this.bwPlayerListRefresh.WorkerReportsProgress = true;
+            this.bwPlayerListRefresh.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwPlayerListRefresh_DoWork);
+            this.bwPlayerListRefresh.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwPlayerListRefresh_RunWorkerCompleted);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(991, 598);
             this.Controls.Add(this.pMain);
-            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.ssMain);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Name = "frmMain";
@@ -660,6 +685,8 @@
             this.tpPlayerStats.ResumeLayout(false);
             this.tpPlayerStats.PerformLayout();
             this.tpDebug.ResumeLayout(false);
+            this.ssMain.ResumeLayout(false);
+            this.ssMain.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -679,7 +706,7 @@
         private System.Windows.Forms.Panel panelTop1;
         private System.Windows.Forms.TextBox tbURL;
         private System.Windows.Forms.Button btnGetPlayers;
-        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.StatusStrip ssMain;
         private System.Windows.Forms.Timer timerPLRefresh;
         private System.ComponentModel.BackgroundWorker bwPlayerListRefresh;
         private System.Windows.Forms.TabControl tcPlayerLists;
@@ -724,6 +751,8 @@
         private System.Windows.Forms.TabPage tpDebug;
         private System.Windows.Forms.RichTextBox rtbDebugEquipment;
         private System.Windows.Forms.RichTextBox rtbDebugVehicle;
+        private System.Windows.Forms.ToolStripStatusLabel tsslStatus;
+        private System.Windows.Forms.ToolStripProgressBar tspbMain;
     }
 }
 

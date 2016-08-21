@@ -6,6 +6,9 @@ using System.Linq;
 using System.Collections.Generic;
 using HtmlAgilityPack;
 using System.Collections;
+using System.Drawing;
+using System.Threading;
+using System.Diagnostics;
 
 namespace TrackerClient
 {
@@ -14,12 +17,14 @@ namespace TrackerClient
     {
         ChannelFactory<IWCFTrackerService> channelFactory;
         IWCFTrackerService proxy;
-        List<string> aliases = new List<string>();
-        List<Player> Players;
+        List<Player> unsortedPlayers = new List<Player>();
+        List<Player> sortedPlayers = new List<Player>();
         List<string> debugListVeh = new List<string>();
         List<string> debugListEqu = new List<string>();
         public HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
         object locker = new object();
+        bool bgwDone = false;
+        Stopwatch sw = new Stopwatch();
 
 
         ListViewItemComparer _lvwItemComparer = new ListViewItemComparer();
@@ -28,6 +33,8 @@ namespace TrackerClient
             InitializeComponent();
             HtmlNode.ElementsFlags.Remove("form");
             lvVehicleInfo.ListViewItemSorter = _lvwItemComparer;
+            timerPLRefresh.Enabled = true;
+            timerPLRefresh.Start();
         }
         public void resetLabels(Control control)
         {
@@ -46,11 +53,6 @@ namespace TrackerClient
         }
 
         private void Form1_Load(object sender, EventArgs e)
-        {
-            SetupListViews();
-        }
-
-        private void SetupListViews()
         {
         }
 
@@ -90,26 +92,40 @@ namespace TrackerClient
 
         private void btnGetPlayers_Click(object sender, EventArgs e)
         {
+            Reset();
+            btnGetPlayers.Enabled = false;
             string currentURL = wkbMain.Url.ToString();
+            string steamName = null;
+            string targetPage;
             if (currentURL.Contains("/home"))
             {
                 string[] segments = currentURL.Split('/');
-                string steamName = segments[4];
-                string targetPage = string.Format("https://steamcommunity.com/id/{0}/friends/players/", steamName);
+                steamName = segments[4];
+                targetPage = string.Format("https://steamcommunity.com/id/{0}/friends/players/", steamName);
                 wkbMain.Url = new Uri(targetPage);
             }
             else if (currentURL.Contains("/friends/players"))
             {
                 wkbMain.Reload();
             }
+            else
+            {
+                if (steamName == null)
+                {
+                    targetPage = string.Format("https://steamcommunity.com/id/{0}/friends/players/", steamName);
+                    wkbMain.Url = new Uri(targetPage);
+                }
+
+            }
         }
 
         private void wkbMain_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
             List<string> steamID = new List<string>();
-            if (wkbMain.Url.ToString().Contains("/players"))
+            if (wkbMain.Url.ToString().Contains("/friends/players/"))
             {
                 steamID.Clear();
+                bgwDone = false;
                 string src = wkbMain.DocumentText.ToString();
                 doc.LoadHtml(src);
                 HtmlNode node = doc.GetElementbyId("friendListForm");
@@ -124,59 +140,71 @@ namespace TrackerClient
                         }
                     }
                 }
-                timerPLRefresh.Enabled = true;
-                timerPLRefresh.Start();
-                openConnection();
-                proxy.updateDB(steamID);
-                Players = proxy.sendPlayers();
-                List<Player> sortedPlayers = Players.OrderBy(p => p.name).ToList();
-                closeConnection();
+                bwPlayerListRefresh.RunWorkerAsync(steamID);
 
-                lbPlayersAll.DisplayMember = "name";
-                lbPlayersAll.DataSource = sortedPlayers;
-                METAGAMETHESENIGGAS();
             }
-            else if (timerPLRefresh.Enabled && !wkbMain.Url.ToString().Contains("/friends/players"))
+            else if (!wkbMain.Url.ToString().Contains("/friends/players"))
             {
-                timerPLRefresh.Enabled = false;
-                timerPLRefresh.Stop();
+                //tsslStatus.Text = "Not connected to a server.";
             }
+        }
+
+        private void timerPLRefresh_Tick(object sender, EventArgs e)
+        {
+            switch (sw.ElapsedMilliseconds)
+            {
+                default:
+                    if (sw.IsRunning)
+                        tspbMain.PerformStep();
+                    if (bgwDone && !btnGetPlayers.Enabled)
+                        btnGetPlayers.Enabled = true;
+                    tsslStatus.Text = string.Format("Refreshing player list in {0} seconds.", (tspbMain.Maximum - (sw.ElapsedMilliseconds / 1000)));
+                    break;
+
+                case 180000:
+                    break;
+            }
+            if (tspbMain.ProgressBar.Value == tspbMain.Maximum)
+            {
+                Reset();
+                wkbMain.Reload();
+            }
+        }
+
+        private void Reset()
+        {
+            bgwDone = false;
+            tspbMain.Value = 0;
+            sw.Stop();
+            sw.Reset();
         }
 
         private void METAGAMETHESENIGGAS()
         {
             List<Player> metaPlayers = new List<Player>();
 
-            string[] watchListItems = { "rock", "salt", "cement", "glass", "iron", "copper", "silver", "platinum", "oilp", "diamond", "diamondc", "marijuana", "frog", "mushroom", "heroinp", "cocaine", "moonshine", "meth", "goldbar", "yeast", "sugar", "corn", "cannabis", "heroinu", "ephedra", "lithium", "phosphorus", "oilu", "heroinp", "ironore" };
-            string[] watchListVehicles = {
-            "Hellcat",
-            "HEMTT Box",
-            "HEMTT Fuel",
-            "HEMTT Transport",
-            "Hummingbird",
-            "Huron",
-            "Ifrit",
-            "Offroad (Armed)",
-            "Orca",
-            "M900",
-            "Mohawk",
-            "SDV",
-            "Taru (Bench)",
-            "Taru (Fuel)",
-            "Taru (Transport)",
-            "Tempest (Device)",
-            "Tempest Fuel",
-            "Tempest Transport",
-            "Tempest Transport (Covered)",
-            "Truck",
-            "Truck Box",
-            "Truck Fuel",
-            "Zamak Fuel",
-            "Zamak Transport",
-            "Zamak Transport (Covered)"
-            };
+            string[] watchListItems = {
+               "salt", "glass","sand",
+                "rock", "cement",
+                "copperore", "copperr",
+                "silver",
+                "platinum",
+                "ironore","ironr",
+                "oilu", "oilp",
+                "diamond", "diamondc",
+                "cannabis","marijuana",
+                "cocaine",  "cocainep",
+                "heroinu","heroinp",
+                "frog", "frogp",
+                "mushroom","mmushroom",
+                "ephedra", "lithium", "phosphorus","meth",
+                "yeast", "sugar", "corn","moonshine",
+                "goldbar" };
+            string[] watchListVehicles = { "Hellcat", "HEMTT Box", "HEMTT Fuel", "HEMTT Transport", "Hummingbird", "Huron", "Ifrit", "Offroad (Armed)", "Orca", "M900", "Mohawk", "SDV",
+                "Taru (Bench)", "Taru (Fuel)", "Taru (Transport)", "Tempest (Device)", "Tempest Fuel", "Tempest Transport", "Tempest Transport (Covered)", "Truck", "Truck Box", "Truck Fuel",
+                "Zamak Fuel", "Zamak Transport", "Zamak Transport (Covered)"};
 
-            foreach (Player p in Players)
+            foreach (Player p in unsortedPlayers)
             {
                 if (p.Virtuals != null)
                     foreach (VirtualItem v in p.Virtuals)
@@ -230,11 +258,6 @@ namespace TrackerClient
             lbPlayersMeta.DataSource = sortedPlayers;
         }
 
-        private void timerPLRefresh_Tick(object sender, EventArgs e)
-        {
-            wkbMain.Reload();
-        }
-
         private void lbPlayers_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (tcMain.SelectedTab != tpPI)
@@ -255,9 +278,16 @@ namespace TrackerClient
             }
             Player p = (Player)lbPlayersMeta.SelectedValue;
             DisplayPlayer(p);
-
         }
-
+        private void listBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            e.DrawBackground();
+            Graphics g = e.Graphics;
+            g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
+            ListBox lb = (ListBox)sender;
+            g.DrawString(lb.Items[e.Index].ToString(), e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+            e.DrawFocusRectangle();
+        }
         private void DisplayPlayer(Player p)
         {
             List<Vehicles> sortedList = new List<Vehicles>();
@@ -302,36 +332,23 @@ namespace TrackerClient
                     ListViewItem lviV = new ListViewItem(v.name);
                     lviV.SubItems.Add(v.amount.ToString());
                     lvVirtualItems.Items.Add(lviV);
+                    if (!rtbDebugVehicle.Text.Contains(v.name))
+                        rtbDebugVehicle.Text += string.Format("{0}{1}", v.name, Environment.NewLine);
                 }
             if (p.civAir != null)
                 foreach (Vehicles v in p.civAir)
                 {
                     sortedList.Add(v);
-                    if (!debugListVeh.Contains(v.name))
-                    {
-                        debugListVeh.Add(v.name);
-                        rtbDebugVehicle.Text += string.Format("{0}{1}", v.name, Environment.NewLine);
-                    }
                 }
             if (p.civCar != null)
                 foreach (Vehicles v in p.civCar)
                 {
                     sortedList.Add(v);
-                    if (!debugListVeh.Contains(v.name))
-                    {
-                        debugListVeh.Add(v.name);
-                        rtbDebugVehicle.Text += string.Format("{0}{1}", v.name, Environment.NewLine);
-                    }
                 }
             if (p.civShip != null)
                 foreach (Vehicles v in p.civShip)
                 {
                     sortedList.Add(v);
-                    if (!debugListVeh.Contains(v.name))
-                    {
-                        debugListVeh.Add(v.name);
-                        rtbDebugVehicle.Text += string.Format("{0}{1}", v.name, Environment.NewLine);
-                    }
                 }
             sortedList = sortedList.OrderByDescending(v => v.active).ToList();
             foreach (Vehicles v in sortedList)
@@ -348,10 +365,8 @@ namespace TrackerClient
 
         private void lvVehicleInfo_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            // Determine if clicked column is already the column that is being sorted.
             if (e.Column == _lvwItemComparer.SortColumn)
             {
-                // Reverse the current sort direction for this column.
                 if (_lvwItemComparer.Order == SortOrder.Ascending)
                 {
                     _lvwItemComparer.Order = SortOrder.Descending;
@@ -363,15 +378,30 @@ namespace TrackerClient
             }
             else
             {
-                // Set the column number that is to be sorted; default to ascending.
                 _lvwItemComparer.SortColumn = e.Column;
                 _lvwItemComparer.Order = SortOrder.Ascending;
             }
-
-            // Perform the sort with these new sort options.
             lvVehicleInfo.Sort();
         }
 
+        private void bwPlayerListRefresh_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            openConnection();
+            proxy.updateDB((List<string>)e.Argument);
+            unsortedPlayers = proxy.sendPlayers();
+            sortedPlayers = unsortedPlayers.OrderBy(p => p.name).ToList();
+            closeConnection();
+        }
+
+        private void bwPlayerListRefresh_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            if (!sw.IsRunning)
+                sw.Start();
+            bgwDone = true;
+            lbPlayersAll.DisplayMember = "name";
+            lbPlayersAll.DataSource = sortedPlayers;
+            METAGAMETHESENIGGAS();
+        }
     }
 
 }
