@@ -15,7 +15,8 @@ namespace TrackerService
 
         public DB()
         {
-            string conString = string.Format("SERVER=10.1.10.3;Port=3306;DATABASE=olympus;UID=Raykazi;PASSWORD=$Rofl_pwn23;Convert Zero Datetime=True;");
+            //string conString = string.Format("SERVER=10.1.10.3;Port=3306;DATABASE=olympus;UID=Raykazi;PASSWORD=$Rofl_pwn23;Convert Zero Datetime=True;");
+            string conString = string.Format("SERVER=hq.channelofblessings.com;Port=3306;DATABASE=olympus;UID=Raykazi;PASSWORD=$Rofl_pwn23;Convert Zero Datetime=True;");
             _connection = new MySqlConnection(conString);
         }
         private bool OpenConnection()
@@ -31,13 +32,13 @@ namespace TrackerService
                 switch (ex.Number)
                 {
                     case 1042:
-                        Console.WriteLine("Cannot connect to server.  Contact administrator");
+                        Program.ConsoleLog("Cannot connect to server.  Contact administrator");
                         break;
                     case 1045:
-                        Console.WriteLine("Invalid username/password, please try again.");
+                        Program.ConsoleLog("Invalid username/password, please try again.");
                         break;
                     default:
-                        Console.WriteLine("Error " + ex.ErrorCode + ": " + ex.Message);
+                        Program.ConsoleLog("Error " + ex.ErrorCode + ": " + ex.Message);
                         break;
                 }
                 return false;

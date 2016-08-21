@@ -100,6 +100,8 @@ namespace TrackerInterface
         [DataMember]
         public DateTime lastActive { get; private set; }
         [DataMember]
+        public DateTime lastUpdated { get; private set; }
+        [DataMember]
         public Vehicles[] civAir { get; private set; }
         [DataMember]
         public Vehicles[] civCar { get; private set; }
@@ -111,7 +113,7 @@ namespace TrackerInterface
         public VirtualItem[] Virtuals { get; private set; }
         public Player(int UID, long steamID, string name, int cash, int bank, int cop, int medic, int admin, int donator, string aliases,
             int kills, int deaths, int revives, int arrests, int timeC, int timeA, int timeM, int bountyC, int bountyW, string gangN, int gangR, long lastActive,
-            string vCivAir, string vCivCar, string vCivShip, string gearCiv)
+            string vCivAir, string vCivCar, string vCivShip, string gearCiv, long lastUpdated)
         {
             this.aliases = new List<string>();
             this.Equipment = new List<string>();
@@ -145,6 +147,7 @@ namespace TrackerInterface
             this.gangName = gangN;
             this.gangRank = gangR;
             this.lastActive = Helper.FromUnixTime(lastActive);
+            this.lastUpdated = Helper.FromUnixTime(lastUpdated);
 
             if (vCivAir.Length > 2)
             {

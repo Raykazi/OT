@@ -9,14 +9,24 @@ namespace TrackerService
 {
     class Program
     {
+        public static void ConsoleLog(string msg)
+        {
+            Console.WriteLine(string.Format("[{0}] {1}", DateTime.Now, msg));
+        }
         static void Main(string[] args)
         {
             using (ServiceHost host = new ServiceHost(typeof(WCFTrackerService)))
             {
                 host.Open();
-                Console.WriteLine("Server is open");
+                host.Opened += Host_Opened;
+                Program.ConsoleLog("Server is open");
                 Console.ReadLine();
             }
+        }
+
+        private static void Host_Opened(object sender, EventArgs e)
+        {
+            ConsoleLog("Connection Opened");
         }
     }
 }

@@ -89,6 +89,7 @@
             this.timerPLRefresh = new System.Windows.Forms.Timer(this.components);
             this.bwPlayerListRefresh = new System.ComponentModel.BackgroundWorker();
             this.bwPlayerListFilter = new System.ComponentModel.BackgroundWorker();
+            this.lblUpdated = new System.Windows.Forms.Label();
             this.pLeft.SuspendLayout();
             this.tcPlayerLists.SuspendLayout();
             this.tpPlayersAll.SuspendLayout();
@@ -298,6 +299,7 @@
             // 
             // tpPlayerStats
             // 
+            this.tpPlayerStats.Controls.Add(this.lblUpdated);
             this.tpPlayerStats.Controls.Add(this.lblHelmet);
             this.tpPlayerStats.Controls.Add(this.lblVest);
             this.tpPlayerStats.Controls.Add(this.lblGun);
@@ -654,6 +656,15 @@
             this.bwPlayerListRefresh.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwPlayerListRefresh_DoWork);
             this.bwPlayerListRefresh.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwPlayerListRefresh_RunWorkerCompleted);
             // 
+            // lblUpdated
+            // 
+            this.lblUpdated.AutoSize = true;
+            this.lblUpdated.Location = new System.Drawing.Point(12, 511);
+            this.lblUpdated.Name = "lblUpdated";
+            this.lblUpdated.Size = new System.Drawing.Size(51, 13);
+            this.lblUpdated.TabIndex = 40;
+            this.lblUpdated.Text = "Updated:";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -753,6 +764,7 @@
         private System.Windows.Forms.RichTextBox rtbDebugVehicle;
         private System.Windows.Forms.ToolStripStatusLabel tsslStatus;
         private System.Windows.Forms.ToolStripProgressBar tspbMain;
+        private System.Windows.Forms.Label lblUpdated;
     }
 }
 

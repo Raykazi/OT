@@ -288,6 +288,7 @@ namespace TrackerClient
             lblVest.Text = string.Format("Vest: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[1]);
             lblHelmet.Text = string.Format("Helmet: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[4]);
             lblGun.Text = string.Format("Gun: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[5]);
+            lblUpdated.Text = string.Format("Last Updated: {0}", p.lastUpdated);
             foreach (string equip in p.Equipment)
             {
                 if (!debugListEqu.Contains(equip) && equip.Length > 0)
