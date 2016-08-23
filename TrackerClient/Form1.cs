@@ -23,6 +23,7 @@ namespace TrackerClient
         List<string> debugListVeh = new List<string>();
         List<string> debugListEqu = new List<string>();
         SlackClient sc = new SlackClient("https://hooks.slack.com/services/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");
+        string steamName = null;
         public HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
         object locker = new object();
         bool bgwDone = false;
@@ -62,8 +63,8 @@ namespace TrackerClient
             Reset();
             btnGetPlayers.Enabled = false;
             string currentURL = wkbMain.Url.ToString();
-            string steamName = null;
             string targetPage;
+            tsslStatus.Text = "Getting players.";
             if (currentURL.Contains("/home"))
             {
                 string[] segments = currentURL.Split('/');
@@ -101,7 +102,10 @@ namespace TrackerClient
                 doc.LoadHtml(src);
                 if (src.Contains("You are not currently in a Steamworks game with other Steam players."))
                 {
+                    btnGetPlayers.Enabled = true;
+                    tsslStatus.Text = "Not connected to an Olympus Server.";
                     Reset();
+                    return;
                 }
                 HtmlNode node = doc.GetElementbyId("friendListForm");
                 if (node != null)
