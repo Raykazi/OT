@@ -11,15 +11,20 @@ namespace TrackerInterface
     [ServiceContract]
     public interface IWCFTrackerService
     {
+        //TODO Clean up un-needed service calls
+        #region No longer needed
         [OperationContract]
         string getPlayerIfno(long playerID);
         [OperationContract]
         string getPlayers(string IP, int port);
         [OperationContract]
         long getSteamID(string name);
+        #endregion
+        //Client sends steam IDs,we pull data from the API based on the ID and store it.
         [OperationContract]
         void updateDB(List<string> steamIDs);
         [OperationContract]
+        //Returns a list of player object to the client
         List<Player> sendPlayers();
     }
 }
