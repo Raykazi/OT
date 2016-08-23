@@ -90,6 +90,7 @@
             this.timerPLRefresh = new System.Windows.Forms.Timer(this.components);
             this.bwPlayerListRefresh = new System.ComponentModel.BackgroundWorker();
             this.bwPlayerListFilter = new System.ComponentModel.BackgroundWorker();
+            this.cbSlack = new System.Windows.Forms.CheckBox();
             this.pLeft.SuspendLayout();
             this.tcPlayerLists.SuspendLayout();
             this.tpPlayersAll.SuspendLayout();
@@ -665,11 +666,22 @@
             this.bwPlayerListRefresh.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwPlayerListRefresh_DoWork);
             this.bwPlayerListRefresh.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwPlayerListRefresh_RunWorkerCompleted);
             // 
+            // cbSlack
+            // 
+            this.cbSlack.AutoSize = true;
+            this.cbSlack.Location = new System.Drawing.Point(869, 582);
+            this.cbSlack.Name = "cbSlack";
+            this.cbSlack.Size = new System.Drawing.Size(99, 17);
+            this.cbSlack.TabIndex = 30;
+            this.cbSlack.Text = "Post To Slack?";
+            this.cbSlack.UseVisualStyleBackColor = true;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(991, 598);
+            this.Controls.Add(this.cbSlack);
             this.Controls.Add(this.pMain);
             this.Controls.Add(this.ssMain);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -765,6 +777,7 @@
         private System.Windows.Forms.ToolStripStatusLabel tsslStatus;
         private System.Windows.Forms.ToolStripProgressBar tspbMain;
         private System.Windows.Forms.Label lblUpdated;
+        private System.Windows.Forms.CheckBox cbSlack;
     }
 }
 

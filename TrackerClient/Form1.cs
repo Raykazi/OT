@@ -19,8 +19,10 @@ namespace TrackerClient
         IWCFTrackerService proxy;
         List<Player> unsortedPlayers = new List<Player>();
         List<Player> sortedPlayers = new List<Player>();
+        List<Player> slackPostList = new List<Player>();
         List<string> debugListVeh = new List<string>();
         List<string> debugListEqu = new List<string>();
+        SlackClient sc = new SlackClient("https://hooks.slack.com/services/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");
         public HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
         object locker = new object();
         bool bgwDone = false;
@@ -156,6 +158,7 @@ namespace TrackerClient
 
         private void METAGAMETHESENIGGAS()
         {
+            rtbDebugVehicle.Clear();
             List<Player> metaPlayers = new List<Player>();
 
             string[] watchListItems = {
@@ -179,56 +182,88 @@ namespace TrackerClient
                 "Taru (Bench)", "Taru (Fuel)", "Taru (Transport)", "Tempest (Device)", "Tempest Fuel", "Tempest Transport", "Tempest Transport (Covered)", "Truck", "Truck Box", "Truck Fuel",
                 "Zamak Fuel", "Zamak Transport", "Zamak Transport (Covered)"};
 
-            foreach (Player p in unsortedPlayers)
+            foreach (Player p in sortedPlayers)
             {
+                string wItem = "";
+                string wVehicle = "";
                 if (p.Virtuals != null)
-                    foreach (VirtualItem v in p.Virtuals)
+                    foreach (VirtualItem item in p.Virtuals)
                     {
-                        if (Array.IndexOf(watchListItems, v.name) != -1 && !metaPlayers.Contains(p))
+                        foreach (string watchItem in watchListItems)
                         {
-                            metaPlayers.Add(p);
-                            continue;
+                            if (watchItem == item.name)
+                            {
+                                wItem += item.name + "\r\n";
+                                if (!metaPlayers.Contains(p))
+                                    metaPlayers.Add(p);
+                            }
                         }
                     }
                 if (p.civAir != null)
                     foreach (Vehicles vehicle in p.civAir)
                     {
-                        if (Array.IndexOf(watchListVehicles, vehicle.name) != -1 && !metaPlayers.Contains(p))
+                        foreach (string watchItem in watchListVehicles)
                         {
-                            if (vehicle.active == 1)
+                            if (watchItem == vehicle.name && vehicle.active == 1)
                             {
-                                metaPlayers.Add(p);
-                                continue;
+                                wVehicle += vehicle.name + "\r\n";
+                                if (!metaPlayers.Contains(p))
+                                    metaPlayers.Add(p);
                             }
                         }
                     }
                 if (p.civCar != null)
                     foreach (Vehicles vehicle in p.civCar)
                     {
-                        if (Array.IndexOf(watchListVehicles, vehicle.name) != -1 && !metaPlayers.Contains(p))
+                        foreach (string watchItem in watchListVehicles)
                         {
-                            if (vehicle.active == 1)
+                            if (watchItem == vehicle.name && vehicle.active == 1)
                             {
-                                metaPlayers.Add(p);
-                                continue;
+                                wVehicle += vehicle.name + "\r\n";
+                                if (!metaPlayers.Contains(p))
+                                    metaPlayers.Add(p);
                             }
                         }
                     }
                 if (p.civShip != null)
                     foreach (Vehicles vehicle in p.civShip)
                     {
-                        if (Array.IndexOf(watchListVehicles, vehicle.name) != -1 && !metaPlayers.Contains(p))
+                        foreach (string watchItem in watchListVehicles)
                         {
-                            if (vehicle.active == 1)
+                            if (watchItem == vehicle.name && vehicle.active == 1)
                             {
-                                metaPlayers.Add(p);
-                                continue;
+                                wVehicle += vehicle.name + "\r\n";
+                                if (!metaPlayers.Contains(p))
+                                    metaPlayers.Add(p);
                             }
                         }
                     }
-
+                if (wItem.Length > 0 || wVehicle.Length > 0)
+                {
+                    if (!slackPostList.Contains(p))
+                    {
+                        slackPostList.Add(p);
+                        new Thread(() =>
+                        {
+                            Fields[] temp = {
+                                new Fields() { Title = "Item", Value = wItem },
+                                new Fields() { Title = "Vehicle", Value = wVehicle }
+                            };
+                            Attachment attachment = new Attachment()
+                            {
+                                title = p.name,
+                                text = "Last Updated: " + p.lastUpdated.ToString(),
+                                fields = temp
+                            };
+                            //sc.PostMessage(attachment);
+                            Thread.Sleep(3000);
+                        }).Start();
+                    }
+                }
             }
+
             metaPlayers = metaPlayers.OrderBy(p => p.name).ToList();
+
             lbPlayersMeta.DisplayMember = "name";
             lbPlayersMeta.DataSource = metaPlayers;
         }
@@ -308,8 +343,8 @@ namespace TrackerClient
                     ListViewItem lviV = new ListViewItem(v.name);
                     lviV.SubItems.Add(v.amount.ToString());
                     lvVirtualItems.Items.Add(lviV);
-                    if (!rtbDebugVehicle.Text.Contains(v.name))
-                        rtbDebugVehicle.Text += string.Format("{0}{1}", v.name, Environment.NewLine);
+                    //if (!rtbDebugVehicle.Text.Contains(v.name))
+                    //    rtbDebugVehicle.Text += string.Format("{0}{1}", v.name, Environment.NewLine);
                 }
             if (p.civAir != null)
                 foreach (Vehicles v in p.civAir)
