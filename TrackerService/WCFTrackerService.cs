@@ -21,6 +21,7 @@ namespace TrackerService
         int updateCount = 0;
         int insertCount = 0;
         int playerCount = 0;
+        //Curl method to fetch data from the API
         public string getPlayerIfno(long playerID)
         {
             var client = new RestClient("http://olympusapi.xyz/apiv2");
@@ -87,17 +88,21 @@ namespace TrackerService
             }
             return playerList;
         }
-
+        //Updates the players in the database
         public void updateDB(List<string> steamIDs)
         {
+            //Gets the number of players for a loop later down the line
             playerCount = steamIDs.Count;
+            //Some Linq query i dont really understand but here we go
+            //Starts a new thread foreach ID in the list,
             steamIDs.Select(id =>
             {
                 Thread tr = new Thread(() => storeInfo(id));
                 tr.Start();
                 return tr;
 
-            }).ToList().ForEach(t => t.Join()); ;
+            }).ToList().ForEach(t => t.Join());
+            //Log it to the console.
             Program.ConsoleLog(string.Format("{0} player added. {1} player updated", insertCount, updateCount));
             //return playerCount;
 
@@ -108,26 +113,33 @@ namespace TrackerService
             string aliases = "";
             int result = 0;
             long steamID = Convert.ToInt64(id);
+            //Just incase someone has a 0 for a steam ID
             if (steamID > 1)
             {
+                //Pull the API info and parse it into an object
                 JObject pInfo = JObject.Parse(getPlayerIfno(steamID));
                 if (pInfo["error"] != null)
                 {
+                    //Making sure we got a valid json string
                     Program.ConsoleLog("Error: " + pInfo["error"].ToString());
                     return;
                 }
+                //Lock the table
                 lock (locker)
                 {
                     string sql = "";
+                    //Parse the aliases into one string
                     if (pInfo.Count > 0)
                         foreach (var pAlias in pInfo["aliases"])
                         {
                             aliases += pAlias + ";";
                         }
                     sql = "";
+                    //Determine if we are adding a player or updating
                     List<string>[] data = db.ExecuteReader("SELECT steamID FROM Player WHERE steamID =?", steamID);
                     if (data[0].Count == 0)
                     {
+                        //Add the player to the DB
                         sql = "INSERT INTO player (UID, steamID, playerName, cash, bank, copLevel, medicLevel, adminLevel, donatorLevel, kills, deaths, medicRevives, bountyCollected, copArrests, timeCiv, timeApd, timeMed, bountyWanted, aliases, gangName, lastActive, vehApdAir, vehApdCar, vehApdShip, vehCivAir, vehCivCar, vehCivShip, vehMedAir, vehMedCar, vehMedShip, gearApd, gearCiv, gearMed, gangRank, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                         result = db.ExecuteNonQuery(sql, (int)pInfo["uid"], (long)pInfo["playerid"], pInfo["name"], (int)pInfo["cash"], (int)pInfo["bank"], (int)pInfo["coplevel"], (int)pInfo["mediclevel"], (int)pInfo["adminlevel"], (int)pInfo["donatorlevel"], (int)pInfo["stat_kills"], (int)pInfo["stat_deaths"], (int)pInfo["stat_revives"], (int)pInfo["stat_bounties"], (int)pInfo["stat_arrests"], (int)pInfo["stat_time_civ"], (int)pInfo["stat_time_apd"], (int)pInfo["stat_time_med"], (int)pInfo["wanted_total"], aliases, pInfo["gang_name"], Helper.ToUnixTime(Convert.ToDateTime(pInfo["last_active"])), pInfo["vehicle_apd_air"], pInfo["vehicle_apd_car"], pInfo["vehicle_apd_ship"], pInfo["vehicle_civ_air"], pInfo["vehicle_civ_car"], pInfo["vehicle_civ_ship"], pInfo["vehicle_med_air"], pInfo["vehicle_med_car"], pInfo["vehicle_med_ship"], pInfo["cop_gear"], pInfo["civ_gear"], pInfo["med_gear"], pInfo["gang_rank"], pInfo["time"]);
                         if (result == 1)
@@ -135,6 +147,7 @@ namespace TrackerService
                     }
                     else
                     {
+                        //Update the player
                         sql = "UPDATE player SET `playerName` = ?, `cash` = ?, `bank` = ?, `copLevel` = ?, `medicLevel` = ?, `adminLevel` = ?, `donatorLevel` = ?, `aliases` = ?, `kills` = ?, `deaths` = ?, `medicRevives` = ?, `bountyCollected` = ?, `copArrests` = ?, `timeCiv` = ?, `timeApd` = ?, `timeMed` = ?, `bountyWanted` = ?, `gangName` = ?, `gangRank` = ?, `lastActive` = ?, `gearApd` = ?, `gearCiv` = ?, `gearMed` = ?, `vehApdAir` = ?, `vehApdCar` = ?, `vehApdShip` = ?, `vehCivAir` = ?, `vehCivCar` = ?, `vehCivShip` = ?, `vehMedAir` = ?, `vehMedCar` = ?, `vehMedShip` = ? , `timestamp` = ? WHERE `steamID` = ?";
                         result = db.ExecuteNonQuery(sql, pInfo["name"], (int)pInfo["cash"], (int)pInfo["bank"], (int)pInfo["coplevel"], (int)pInfo["mediclevel"], (int)pInfo["adminlevel"], (int)pInfo["donatorlevel"], aliases, (int)pInfo["stat_kills"], (int)pInfo["stat_deaths"], (int)pInfo["stat_revives"], (int)pInfo["stat_bounties"], (int)pInfo["stat_arrests"], (int)pInfo["stat_time_civ"], (int)pInfo["stat_time_apd"], (int)pInfo["stat_time_med"], (int)pInfo["wanted_total"], pInfo["gang_name"], pInfo["gang_rank"], Helper.ToUnixTime(Convert.ToDateTime(pInfo["last_active"])), pInfo["cop_gear"], pInfo["civ_gear"], pInfo["med_gear"], pInfo["vehicle_apd_air"], pInfo["vehicle_apd_car"], pInfo["vehicle_apd_ship"], pInfo["vehicle_civ_air"], pInfo["vehicle_civ_car"], pInfo["vehicle_civ_ship"], pInfo["vehicle_med_air"], pInfo["vehicle_med_car"], pInfo["vehicle_med_ship"], pInfo["time"], steamID);
                         if (result == 1)
