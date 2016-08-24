@@ -268,8 +268,8 @@ namespace TrackerClient
 
             metaPlayers = metaPlayers.OrderBy(p => p.name).ToList();
 
-            lbPlayersMeta.DisplayMember = "name";
-            lbPlayersMeta.DataSource = metaPlayers;
+            lbPlayersTargets.DisplayMember = "name";
+            lbPlayersTargets.DataSource = metaPlayers;
         }
 
         private void lbPlayers_SelectedIndexChanged(object sender, EventArgs e)
@@ -290,16 +290,20 @@ namespace TrackerClient
                 tcMain.SelectTab(1);
                 tcPlayerInfo.SelectTab(0);
             }
-            Player p = (Player)lbPlayersMeta.SelectedValue;
+            Player p = (Player)lbPlayersTargets.SelectedValue;
             DisplayPlayer(p);
         }
         private void listBox_DrawItem(object sender, DrawItemEventArgs e)
         {
             e.DrawBackground();
             Graphics g = e.Graphics;
-            g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
             ListBox lb = (ListBox)sender;
-            g.DrawString(lb.Items[e.Index].ToString(), e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+            Player p = (Player)lb.Items[e.Index];
+            if (p.adminLevel == 0)
+                g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
+            else
+                g.FillRectangle(new SolidBrush(Color.Red), e.Bounds);
+            g.DrawString(p.name, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
             e.DrawFocusRectangle();
         }
         private void DisplayPlayer(Player p)

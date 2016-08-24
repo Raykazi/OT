@@ -33,8 +33,8 @@
             this.tcPlayerLists = new System.Windows.Forms.TabControl();
             this.tpPlayersAll = new System.Windows.Forms.TabPage();
             this.lbPlayersAll = new System.Windows.Forms.ListBox();
-            this.tpPlayersMeta = new System.Windows.Forms.TabPage();
-            this.lbPlayersMeta = new System.Windows.Forms.ListBox();
+            this.tpPlayersTargets = new System.Windows.Forms.TabPage();
+            this.lbPlayersTargets = new System.Windows.Forms.ListBox();
             this.pSearch = new System.Windows.Forms.Panel();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.pMain = new System.Windows.Forms.Panel();
@@ -94,7 +94,7 @@
             this.pLeft.SuspendLayout();
             this.tcPlayerLists.SuspendLayout();
             this.tpPlayersAll.SuspendLayout();
-            this.tpPlayersMeta.SuspendLayout();
+            this.tpPlayersTargets.SuspendLayout();
             this.pSearch.SuspendLayout();
             this.pMain.SuspendLayout();
             this.tcMain.SuspendLayout();
@@ -122,7 +122,7 @@
             // 
             this.tcPlayerLists.Alignment = System.Windows.Forms.TabAlignment.Bottom;
             this.tcPlayerLists.Controls.Add(this.tpPlayersAll);
-            this.tcPlayerLists.Controls.Add(this.tpPlayersMeta);
+            this.tcPlayerLists.Controls.Add(this.tpPlayersTargets);
             this.tcPlayerLists.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tcPlayerLists.Location = new System.Drawing.Point(0, 34);
             this.tcPlayerLists.Name = "tcPlayerLists";
@@ -144,6 +144,7 @@
             // lbPlayersAll
             // 
             this.lbPlayersAll.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbPlayersAll.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.lbPlayersAll.FormattingEnabled = true;
             this.lbPlayersAll.Location = new System.Drawing.Point(3, 3);
             this.lbPlayersAll.Name = "lbPlayersAll";
@@ -152,26 +153,27 @@
             this.lbPlayersAll.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBox_DrawItem);
             this.lbPlayersAll.SelectedIndexChanged += new System.EventHandler(this.lbPlayers_SelectedIndexChanged);
             // 
-            // tpPlayersMeta
+            // tpPlayersTargets
             // 
-            this.tpPlayersMeta.Controls.Add(this.lbPlayersMeta);
-            this.tpPlayersMeta.Location = new System.Drawing.Point(4, 4);
-            this.tpPlayersMeta.Name = "tpPlayersMeta";
-            this.tpPlayersMeta.Padding = new System.Windows.Forms.Padding(3);
-            this.tpPlayersMeta.Size = new System.Drawing.Size(150, 516);
-            this.tpPlayersMeta.TabIndex = 1;
-            this.tpPlayersMeta.Text = "Meta";
-            this.tpPlayersMeta.UseVisualStyleBackColor = true;
+            this.tpPlayersTargets.Controls.Add(this.lbPlayersTargets);
+            this.tpPlayersTargets.Location = new System.Drawing.Point(4, 4);
+            this.tpPlayersTargets.Name = "tpPlayersTargets";
+            this.tpPlayersTargets.Padding = new System.Windows.Forms.Padding(3);
+            this.tpPlayersTargets.Size = new System.Drawing.Size(150, 516);
+            this.tpPlayersTargets.TabIndex = 1;
+            this.tpPlayersTargets.Text = "Targets";
+            this.tpPlayersTargets.UseVisualStyleBackColor = true;
             // 
-            // lbPlayersMeta
+            // lbPlayersTargets
             // 
-            this.lbPlayersMeta.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbPlayersMeta.FormattingEnabled = true;
-            this.lbPlayersMeta.Location = new System.Drawing.Point(3, 3);
-            this.lbPlayersMeta.Name = "lbPlayersMeta";
-            this.lbPlayersMeta.Size = new System.Drawing.Size(144, 510);
-            this.lbPlayersMeta.TabIndex = 36;
-            this.lbPlayersMeta.SelectedIndexChanged += new System.EventHandler(this.lbPlayersMeta_SelectedIndexChanged);
+            this.lbPlayersTargets.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbPlayersTargets.FormattingEnabled = true;
+            this.lbPlayersTargets.Location = new System.Drawing.Point(3, 3);
+            this.lbPlayersTargets.Name = "lbPlayersTargets";
+            this.lbPlayersTargets.Size = new System.Drawing.Size(144, 510);
+            this.lbPlayersTargets.TabIndex = 36;
+            this.lbPlayersTargets.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBox_DrawItem);
+            this.lbPlayersTargets.SelectedIndexChanged += new System.EventHandler(this.lbPlayersMeta_SelectedIndexChanged);
             // 
             // pSearch
             // 
@@ -694,7 +696,7 @@
             this.pLeft.ResumeLayout(false);
             this.tcPlayerLists.ResumeLayout(false);
             this.tpPlayersAll.ResumeLayout(false);
-            this.tpPlayersMeta.ResumeLayout(false);
+            this.tpPlayersTargets.ResumeLayout(false);
             this.pSearch.ResumeLayout(false);
             this.pSearch.PerformLayout();
             this.pMain.ResumeLayout(false);
@@ -734,9 +736,9 @@
         private System.ComponentModel.BackgroundWorker bwPlayerListRefresh;
         private System.Windows.Forms.TabControl tcPlayerLists;
         private System.Windows.Forms.TabPage tpPlayersAll;
-        private System.Windows.Forms.TabPage tpPlayersMeta;
+        private System.Windows.Forms.TabPage tpPlayersTargets;
         private System.ComponentModel.BackgroundWorker bwPlayerListFilter;
-        private System.Windows.Forms.ListBox lbPlayersMeta;
+        private System.Windows.Forms.ListBox lbPlayersTargets;
         private System.Windows.Forms.TabControl tcPlayerInfo;
         private System.Windows.Forms.TabPage tpPlayerStats;
         private System.Windows.Forms.ListView lvVehicleInfo;
