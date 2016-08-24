@@ -167,6 +167,7 @@
             // lbPlayersTargets
             // 
             this.lbPlayersTargets.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbPlayersTargets.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.lbPlayersTargets.FormattingEnabled = true;
             this.lbPlayersTargets.Location = new System.Drawing.Point(3, 3);
             this.lbPlayersTargets.Name = "lbPlayersTargets";
