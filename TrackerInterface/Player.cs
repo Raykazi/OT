@@ -153,6 +153,9 @@ namespace TrackerInterface
         [DataMember]
         //Custom item class for the palyers virtual items
         public VirtualItem[] Virtuals { get; private set; }
+        [DataMember]
+        //Because these ***holes wanted colors
+        public int TargetLevel = -1;
         //Constructor
         public Player(int UID, long steamID, string name, int cash, int bank, int cop, int medic, int admin, int donator, string aliases,
             int kills, int deaths, int revives, int arrests, int timeC, int timeA, int timeM, int bountyC, int bountyW, string gangN, int gangR, long lastActive,

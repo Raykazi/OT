@@ -17,7 +17,7 @@ namespace TrackerClient
     {
         ChannelFactory<IWCFTrackerService> channelFactory;
         IWCFTrackerService proxy;
-        List<Player> unsortedPlayers = new List<Player>();
+        List<Player> targetPlayers = new List<Player>();
         List<Player> sortedPlayers = new List<Player>();
         List<Player> slackPostList = new List<Player>();
         List<string> debugListVeh = new List<string>();
@@ -28,6 +28,29 @@ namespace TrackerClient
         object locker = new object();
         bool bgwDone = false;
         Stopwatch sw = new Stopwatch();
+
+        string[] watchListLegeals = {
+               "salt","saltr",
+                "sand","glass",
+                "rock", "cement",
+                "copperore", "copperr",
+                "silverore","silverr",
+                "platinumore","platinumr",
+                "ironore","ironr",
+                "oilu", "oilp",
+                "diamond", "diamondc"};
+        string[] watchListIllegals = {
+                "cannabis","marijuana",
+                "cocaine",  "cocainep",
+                "heroinu","heroinp",
+                "frog", "frogp",
+                "mushroom","mmushroom",
+                "ephedra", "lithium", "phosphorus","meth",
+                "yeast", "sugar", "corn","moonshine",
+                "goldbar" };
+        string[] watchListVehicles = { "Hellcat", "HEMTT Box", "HEMTT Fuel", "HEMTT Transport", "Hummingbird", "Huron", "Ifrit", "Offroad (Armed)", "Orca", "M900", "Mohawk", "SDV",
+                "Taru (Bench)", "Taru (Fuel)", "Taru (Transport)", "Tempest (Device)", "Tempest Fuel", "Tempest Transport", "Tempest Transport (Covered)", "Truck", "Truck Box", "Truck Fuel",
+                "Zamak Fuel", "Zamak Transport", "Zamak Transport (Covered)"};
 
 
         ListViewItemComparer _lvwItemComparer = new ListViewItemComparer();
@@ -165,44 +188,12 @@ namespace TrackerClient
             rtbDebugVehicle.Clear();
             List<Player> metaPlayers = new List<Player>();
 
-            string[] watchListItems = {
-               "salt", "glass","sand",
-                "rock", "cement",
-                "copperore", "copperr",
-                "silver",
-                "platinum",
-                "ironore","ironr",
-                "oilu", "oilp",
-                "diamond", "diamondc",
-                "cannabis","marijuana",
-                "cocaine",  "cocainep",
-                "heroinu","heroinp",
-                "frog", "frogp",
-                "mushroom","mmushroom",
-                "ephedra", "lithium", "phosphorus","meth",
-                "yeast", "sugar", "corn","moonshine",
-                "goldbar" };
-            string[] watchListVehicles = { "Hellcat", "HEMTT Box", "HEMTT Fuel", "HEMTT Transport", "Hummingbird", "Huron", "Ifrit", "Offroad (Armed)", "Orca", "M900", "Mohawk", "SDV",
-                "Taru (Bench)", "Taru (Fuel)", "Taru (Transport)", "Tempest (Device)", "Tempest Fuel", "Tempest Transport", "Tempest Transport (Covered)", "Truck", "Truck Box", "Truck Fuel",
-                "Zamak Fuel", "Zamak Transport", "Zamak Transport (Covered)"};
 
             foreach (Player p in sortedPlayers)
             {
                 string wItem = "";
                 string wVehicle = "";
-                if (p.Virtuals != null)
-                    foreach (VirtualItem item in p.Virtuals)
-                    {
-                        foreach (string watchItem in watchListItems)
-                        {
-                            if (watchItem == item.name)
-                            {
-                                wItem += item.name + "\r\n";
-                                if (!metaPlayers.Contains(p))
-                                    metaPlayers.Add(p);
-                            }
-                        }
-                    }
+                p.TargetLevel = -1;
                 if (p.civAir != null)
                     foreach (Vehicles vehicle in p.civAir)
                     {
@@ -213,6 +204,7 @@ namespace TrackerClient
                                 wVehicle += vehicle.name + "\r\n";
                                 if (!metaPlayers.Contains(p))
                                     metaPlayers.Add(p);
+                                p.TargetLevel = 0;
                             }
                         }
                     }
@@ -226,6 +218,7 @@ namespace TrackerClient
                                 wVehicle += vehicle.name + "\r\n";
                                 if (!metaPlayers.Contains(p))
                                     metaPlayers.Add(p);
+                                p.TargetLevel = 0;
                             }
                         }
                     }
@@ -239,6 +232,31 @@ namespace TrackerClient
                                 wVehicle += vehicle.name + "\r\n";
                                 if (!metaPlayers.Contains(p))
                                     metaPlayers.Add(p);
+                                p.TargetLevel = 0;
+                            }
+                        }
+                    }
+                if (p.Virtuals != null)
+                    foreach (VirtualItem item in p.Virtuals)
+                    {
+                        foreach (string watchItem in watchListLegeals)
+                        {
+                            if (watchItem == item.name)
+                            {
+                                wItem += item.name + "\r\n";
+                                if (!metaPlayers.Contains(p))
+                                    metaPlayers.Add(p);
+                                p.TargetLevel = 1;
+                            }
+                        }
+                        foreach (string watchItem in watchListIllegals)
+                        {
+                            if (watchItem == item.name)
+                            {
+                                wItem += item.name + "\r\n";
+                                if (!metaPlayers.Contains(p))
+                                    metaPlayers.Add(p);
+                                p.TargetLevel = 2;
                             }
                         }
                     }
@@ -293,18 +311,72 @@ namespace TrackerClient
             Player p = (Player)lbPlayersTargets.SelectedValue;
             DisplayPlayer(p);
         }
-        private void listBox_DrawItem(object sender, DrawItemEventArgs e)
+        private void lbPlayersTargets_DrawItem(object sender, DrawItemEventArgs e)
         {
             e.DrawBackground();
             Graphics g = e.Graphics;
             ListBox lb = (ListBox)sender;
-            Player p = (Player)lb.Items[e.Index];
-            if (p.adminLevel == 0)
-                g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
-            else
-                g.FillRectangle(new SolidBrush(Color.Red), e.Bounds);
-            g.DrawString(p.name, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
-            e.DrawFocusRectangle();
+            if (e.Index != -1)
+            {
+                Player p = (Player)lb.Items[e.Index];
+                bool selected = lb.SelectedIndex == e.Index ? true : false;
+                switch (p.TargetLevel)
+                {
+                    case 0:
+                        g.FillRectangle(new SolidBrush(Color.LightSlateGray), e.Bounds);
+                        break;
+                    case 1:
+                        g.FillRectangle(new SolidBrush(Color.LawnGreen), e.Bounds);
+                        break;
+                    case 2:
+                        g.FillRectangle(new SolidBrush(Color.Red), e.Bounds);
+                        break;
+                }
+                if (p.adminLevel == 0)
+                    g.DrawString(p.name, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+                else
+                    g.DrawString(p.name.Insert(p.name.Length, " [ADMIN]"), e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+                if (selected)
+                    g.DrawRectangle(new Pen(Color.Black), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
+                else
+                    g.DrawRectangle(new Pen(Color.Transparent), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
+                e.DrawFocusRectangle();
+            }
+        }
+        private void lbPlayersAll_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            e.DrawBackground();
+            Graphics g = e.Graphics;
+            ListBox lb = (ListBox)sender;
+            if (e.Index != -1)
+            {
+                Player p = (Player)lb.Items[e.Index];
+                bool selected = lb.SelectedIndex == e.Index ? true : false;
+                switch (p.TargetLevel)
+                {
+                    case 0:
+                        g.FillRectangle(new SolidBrush(Color.LightSlateGray), e.Bounds);
+                        break;
+                    case 1:
+                        g.FillRectangle(new SolidBrush(Color.LightSkyBlue), e.Bounds);
+                        break;
+                    case 2:
+                        g.FillRectangle(new SolidBrush(Color.Red), e.Bounds);
+                        break;
+                    default:
+                        g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
+                        break;
+                }
+                if (p.adminLevel == 0)
+                    g.DrawString(p.name, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+                else
+                    g.DrawString(p.name.Insert(p.name.Length, " [ADMIN]"), e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+                if (selected)
+                    g.DrawRectangle(new Pen(Color.Black), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
+                else
+                    g.DrawRectangle(new Pen(Color.Transparent), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
+                e.DrawFocusRectangle();
+            }
         }
         private void DisplayPlayer(Player p)
         {
@@ -407,8 +479,8 @@ namespace TrackerClient
         {
             openConnection();
             proxy.updateDB((List<string>)e.Argument);
-            unsortedPlayers = proxy.sendPlayers();
-            sortedPlayers = unsortedPlayers.OrderBy(p => p.name).ToList();
+            sortedPlayers = proxy.sendPlayers();
+            sortedPlayers = sortedPlayers.OrderBy(p => p.name).ToList();
             closeConnection();
         }
 
@@ -421,6 +493,7 @@ namespace TrackerClient
             lbPlayersAll.DataSource = sortedPlayers;
             METAGAMETHESENIGGAS();
         }
+
     }
 
 }
