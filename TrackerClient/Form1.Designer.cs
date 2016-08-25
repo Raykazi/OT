@@ -150,7 +150,7 @@
             this.lbPlayersAll.Name = "lbPlayersAll";
             this.lbPlayersAll.Size = new System.Drawing.Size(144, 510);
             this.lbPlayersAll.TabIndex = 35;
-            this.lbPlayersAll.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBox_DrawItem);
+            this.lbPlayersAll.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lbPlayersAll_DrawItem);
             this.lbPlayersAll.SelectedIndexChanged += new System.EventHandler(this.lbPlayers_SelectedIndexChanged);
             // 
             // tpPlayersTargets
@@ -167,12 +167,13 @@
             // lbPlayersTargets
             // 
             this.lbPlayersTargets.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbPlayersTargets.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.lbPlayersTargets.FormattingEnabled = true;
             this.lbPlayersTargets.Location = new System.Drawing.Point(3, 3);
             this.lbPlayersTargets.Name = "lbPlayersTargets";
             this.lbPlayersTargets.Size = new System.Drawing.Size(144, 510);
             this.lbPlayersTargets.TabIndex = 36;
-            this.lbPlayersTargets.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBox_DrawItem);
+            this.lbPlayersTargets.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lbPlayersTargets_DrawItem);
             this.lbPlayersTargets.SelectedIndexChanged += new System.EventHandler(this.lbPlayersMeta_SelectedIndexChanged);
             // 
             // pSearch
@@ -643,7 +644,6 @@
             this.ssMain.Name = "ssMain";
             this.ssMain.Size = new System.Drawing.Size(991, 22);
             this.ssMain.TabIndex = 2;
-            this.ssMain.Text = "statusStrip";
             // 
             // tspbMain
             // 
