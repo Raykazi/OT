@@ -48,11 +48,7 @@ namespace TrackerInterface
         [DataMember]
         //1-4 Space of the vehicle
         public int storageLevel { get; private set; }
-        //TODO: Remove CreateVehicle method and just use the contrustor
-        public Vehicles()
-        {
-        }
-        public Vehicles CreateVehicle(int ID, string name, int alive, int active, int iLvl, int tLvl, int secLvl, int stoLvl)
+        public Vehicles(int ID, string name, int alive, int active, int iLvl, int tLvl, int secLvl, int stoLvl)
         {
             this.ID = ID;
             this.name = name;
@@ -62,7 +58,6 @@ namespace TrackerInterface
             turboLevel = tLvl;
             secLevel = secLvl;
             storageLevel = stoLvl;
-            return this;
         }
     }
     //Class for the player
@@ -200,28 +195,6 @@ namespace TrackerInterface
             this.lastActive = Helper.FromUnixTime(lastActive);
             this.lastUpdated = Helper.FromUnixTime(lastUpdated);
             //Parsing JSON Strings from the DB, Biggest pain in my ass. Thank you FeDot
-            if (vCivAir.Length > 2)
-            {
-                vCivAir = vCivAir.Insert(0, "{\"vehicle_civ_air\": ");
-                vCivAir += "}";
-                vehiclesAir = JArray.Parse(JObject.Parse(vCivAir)["vehicle_civ_air"].ToString());
-                civAir = new Vehicles[vehiclesAir.Count];
-                int vaCounter = 0;
-                foreach (JObject vehicle in vehiclesAir)
-                {
-                    int ID = (int)vehicle["id"];
-                    string vName = (string)vehicle["vehicle"];
-                    int alive = (int)vehicle["alive"];
-                    int active = (int)vehicle["active"];
-                    int insured = (int)vehicle["modifications"]["insured"];
-                    int turbo = (int)vehicle["modifications"]["turbo"];
-                    int security = (int)vehicle["modifications"]["security"];
-                    int storage = (int)vehicle["modifications"]["storage"];
-                    civAir[vaCounter] = new Vehicles();
-                    civAir[vaCounter].CreateVehicle(ID, vName, alive, active, insured, turbo, security, storage);
-                    vaCounter++;
-                }
-            }
             if (gearCiv.Length > 2)
             {
                 gearCiv = gearCiv.Insert(0, "{\"civ_gear\": ");
@@ -254,6 +227,27 @@ namespace TrackerInterface
                     }
                 }
             }
+            if (vCivAir.Length > 2)
+            {
+                vCivAir = vCivAir.Insert(0, "{\"vehicle_civ_air\": ");
+                vCivAir += "}";
+                vehiclesAir = JArray.Parse(JObject.Parse(vCivAir)["vehicle_civ_air"].ToString());
+                civAir = new Vehicles[vehiclesAir.Count];
+                int vaCounter = 0;
+                foreach (JObject vehicle in vehiclesAir)
+                {
+                    int ID = (int)vehicle["id"];
+                    string vName = (string)vehicle["vehicle"];
+                    int alive = (int)vehicle["alive"];
+                    int active = (int)vehicle["active"];
+                    int insured = (int)vehicle["modifications"]["insured"];
+                    int turbo = (int)vehicle["modifications"]["turbo"];
+                    int security = (int)vehicle["modifications"]["security"];
+                    int storage = (int)vehicle["modifications"]["storage"];
+                    civAir[vaCounter] = new Vehicles(ID, vName, alive, active, insured, turbo, security, storage);
+                    vaCounter++;
+                }
+            }
             if (vCivCar.Length > 2)
             {
                 vCivCar = vCivCar.Insert(0, "{\"vehicle_civ_car\": ");
@@ -271,8 +265,7 @@ namespace TrackerInterface
                     int turbo = (int)vehicle["modifications"]["turbo"];
                     int security = (int)vehicle["modifications"]["security"];
                     int storage = (int)vehicle["modifications"]["storage"];
-                    civCar[vcCounter] = new Vehicles();
-                    civCar[vcCounter].CreateVehicle(ID, vName, alive, active, insured, turbo, security, storage);
+                    civCar[vcCounter] = new Vehicles(ID, vName, alive, active, insured, turbo, security, storage);
                     vcCounter++;
                 }
             }
@@ -293,8 +286,7 @@ namespace TrackerInterface
                     int turbo = (int)vehicle["modifications"]["turbo"];
                     int security = (int)vehicle["modifications"]["security"];
                     int storage = (int)vehicle["modifications"]["storage"];
-                    civShip[vsCounter] = new Vehicles();
-                    civShip[vsCounter].CreateVehicle(ID, vName, alive, active, insured, turbo, security, storage);
+                    civShip[vsCounter] = new Vehicles(ID, vName, alive, active, insured, turbo, security, storage);
                     vsCounter++;
                 }
             }
