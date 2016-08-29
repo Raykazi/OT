@@ -67,6 +67,7 @@ namespace TrackerClient
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            MessageBox.Show("This release is for an impatient autistic fuck named Zazhi...");
             wkbMain.Focus();
         }
 
