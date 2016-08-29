@@ -1,4 +1,4 @@
-﻿namespace TrackerClient
+namespace TrackerClient
 {
     partial class Map
     {
@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Map));
             this.lblCoords = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -44,11 +43,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(1584, 861);
+            this.BackgroundImage = global::TrackerClient.Properties.Resources.Altis_UltraHigh;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.ClientSize = new System.Drawing.Size(704, 681);
             this.Controls.Add(this.lblCoords);
+            this.DoubleBuffered = true;
+            this.MaximumSize = new System.Drawing.Size(720, 720);
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(720, 720);
             this.Name = "Map";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
