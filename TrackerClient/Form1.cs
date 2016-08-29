@@ -17,11 +17,11 @@ namespace TrackerClient
     {
         ChannelFactory<IWCFTrackerService> channelFactory;
         IWCFTrackerService proxy;
-        List<Player> targetPlayers = new List<Player>();
-        List<Player> sortedPlayers = new List<Player>();
+        List<Player> onlinePlayers = new List<Player>();
         List<Player> slackPostList = new List<Player>();
         List<string> debugListVeh = new List<string>();
         List<string> debugListEqu = new List<string>();
+        Map playerMap;
         SlackClient sc = new SlackClient("https://hooks.slack.com/services/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");
         string steamName = null;
         public HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
@@ -34,8 +34,8 @@ namespace TrackerClient
                 "sand","glass",
                 "rock", "cement",
                 "copperore", "copperr",
-                "silverore","silverr",
-                "platinumore","platinumr",
+                "silver","silverr",
+                "platinum","platinumr",
                 "ironore","ironr",
                 "oilu", "oilp",
                 "diamond", "diamondc"};
@@ -54,6 +54,8 @@ namespace TrackerClient
 
 
         ListViewItemComparer _lvwItemComparer = new ListViewItemComparer();
+        private ListBox activeListbox;
+
         public frmMain()
         {
             InitializeComponent();
@@ -65,6 +67,7 @@ namespace TrackerClient
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            wkbMain.Focus();
         }
 
         private void closeConnection()
@@ -164,9 +167,6 @@ namespace TrackerClient
                     if (bgwDone && !btnGetPlayers.Enabled)
                         btnGetPlayers.Enabled = true;
                     break;
-
-                case 180000:
-                    break;
             }
             if (tspbMain.ProgressBar.Value == tspbMain.Maximum)
             {
@@ -183,14 +183,13 @@ namespace TrackerClient
             sw.Reset();
         }
 
-        private void METAGAMETHESENIGGAS()
+        private void BuildTargetList()
         {
             rtbDebugVehicle.Clear();
-            List<Player> metaPlayers = new List<Player>();
-
-
-            foreach (Player p in sortedPlayers)
+            List<Player> targetPlayers = new List<Player>();
+            foreach (Player p in onlinePlayers)
             {
+                PaintMap(p.location);
                 string wItem = "";
                 string wVehicle = "";
                 p.TargetLevel = -1;
@@ -202,8 +201,8 @@ namespace TrackerClient
                             if (watchItem == vehicle.name && vehicle.active == 1)
                             {
                                 wVehicle += vehicle.name + "\r\n";
-                                if (!metaPlayers.Contains(p))
-                                    metaPlayers.Add(p);
+                                if (!targetPlayers.Contains(p))
+                                    targetPlayers.Add(p);
                                 p.TargetLevel = 0;
                             }
                         }
@@ -216,8 +215,8 @@ namespace TrackerClient
                             if (watchItem == vehicle.name && vehicle.active == 1)
                             {
                                 wVehicle += vehicle.name + "\r\n";
-                                if (!metaPlayers.Contains(p))
-                                    metaPlayers.Add(p);
+                                if (!targetPlayers.Contains(p))
+                                    targetPlayers.Add(p);
                                 p.TargetLevel = 0;
                             }
                         }
@@ -230,8 +229,8 @@ namespace TrackerClient
                             if (watchItem == vehicle.name && vehicle.active == 1)
                             {
                                 wVehicle += vehicle.name + "\r\n";
-                                if (!metaPlayers.Contains(p))
-                                    metaPlayers.Add(p);
+                                if (!targetPlayers.Contains(p))
+                                    targetPlayers.Add(p);
                                 p.TargetLevel = 0;
                             }
                         }
@@ -244,8 +243,8 @@ namespace TrackerClient
                             if (watchItem == item.name)
                             {
                                 wItem += item.name + "\r\n";
-                                if (!metaPlayers.Contains(p))
-                                    metaPlayers.Add(p);
+                                if (!targetPlayers.Contains(p))
+                                    targetPlayers.Add(p);
                                 p.TargetLevel = 1;
                             }
                         }
@@ -254,8 +253,8 @@ namespace TrackerClient
                             if (watchItem == item.name)
                             {
                                 wItem += item.name + "\r\n";
-                                if (!metaPlayers.Contains(p))
-                                    metaPlayers.Add(p);
+                                if (!targetPlayers.Contains(p))
+                                    targetPlayers.Add(p);
                                 p.TargetLevel = 2;
                             }
                         }
@@ -283,43 +282,47 @@ namespace TrackerClient
                     }
                 }
             }
-
-            metaPlayers = metaPlayers.OrderBy(p => p.name).ToList();
-
+            targetPlayers = targetPlayers.OrderBy(p => p.name).ToList();
             lbPlayersTargets.DisplayMember = "name";
-            lbPlayersTargets.DataSource = metaPlayers;
+            lbPlayersTargets.DataSource = targetPlayers;
         }
 
-        private void lbPlayers_SelectedIndexChanged(object sender, EventArgs e)
+        private void PaintMap(string[] coords)
         {
-            if (tcMain.SelectedTab != tpPI)
-            {
-                tcMain.SelectTab(1);
-                tcPlayerInfo.SelectTab(0);
-            }
-            Player p = (Player)lbPlayersAll.SelectedValue;
-            DisplayPlayer(p);
+
+
+
         }
 
-        private void lbPlayersMeta_SelectedIndexChanged(object sender, EventArgs e)
+        private void ListBox_MouseEnter(object sender, EventArgs e)
         {
-            if (tcMain.SelectedTab != tpPI)
+            ListBox lb = (ListBox)sender;
+            activeListbox = lb;
+        }
+
+        private void ListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ListBox lb = (ListBox)sender;
+            if (tcMain.SelectedTab != tpPlayerInfo)
             {
                 tcMain.SelectTab(1);
-                tcPlayerInfo.SelectTab(0);
             }
-            Player p = (Player)lbPlayersTargets.SelectedValue;
-            DisplayPlayer(p);
+            if (lb.SelectedIndices.Count == 1)
+            {
+                Player p = (Player)lb.SelectedValue;
+                DisplayPlayer(p);
+            }
         }
-        private void lbPlayersTargets_DrawItem(object sender, DrawItemEventArgs e)
+        private void ListBox_DrawItem(object sender, DrawItemEventArgs e)
         {
             e.DrawBackground();
             Graphics g = e.Graphics;
             ListBox lb = (ListBox)sender;
-            if (e.Index != -1)
+            if (e.Index > -1 && e.Index < lb.Items.Count)
             {
                 Player p = (Player)lb.Items[e.Index];
-                bool selected = lb.SelectedIndex == e.Index ? true : false;
+                bool selected = ((e.State & DrawItemState.Selected) == DrawItemState.Selected);
+                string text = p.adminLevel == 0 ? p.name : p.name.Insert(p.name.Length, " [ADMIN]");
                 switch (p.TargetLevel)
                 {
                     case 0:
@@ -331,50 +334,23 @@ namespace TrackerClient
                     case 2:
                         g.FillRectangle(new SolidBrush(Color.Red), e.Bounds);
                         break;
-                }
-                if (p.adminLevel == 0)
-                    g.DrawString(p.name, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
-                else
-                    g.DrawString(p.name.Insert(p.name.Length, " [ADMIN]"), e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
-                if (selected)
-                    g.DrawRectangle(new Pen(Color.Black), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
-                else
-                    g.DrawRectangle(new Pen(Color.Transparent), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
-                e.DrawFocusRectangle();
-            }
-        }
-        private void lbPlayersAll_DrawItem(object sender, DrawItemEventArgs e)
-        {
-            e.DrawBackground();
-            Graphics g = e.Graphics;
-            ListBox lb = (ListBox)sender;
-            if (e.Index != -1)
-            {
-                Player p = (Player)lb.Items[e.Index];
-                bool selected = lb.SelectedIndex == e.Index ? true : false;
-                switch (p.TargetLevel)
-                {
-                    case 0:
-                        g.FillRectangle(new SolidBrush(Color.LightSlateGray), e.Bounds);
-                        break;
-                    case 1:
-                        g.FillRectangle(new SolidBrush(Color.LightSkyBlue), e.Bounds);
-                        break;
-                    case 2:
-                        g.FillRectangle(new SolidBrush(Color.Red), e.Bounds);
-                        break;
                     default:
                         g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
                         break;
                 }
-                if (p.adminLevel == 0)
-                    g.DrawString(p.name, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
-                else
-                    g.DrawString(p.name.Insert(p.name.Length, " [ADMIN]"), e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
                 if (selected)
+                {
+                    Color Highlight = SystemColors.MenuHighlight;
+                    g.FillRectangle(new SolidBrush(Highlight), e.Bounds);
                     g.DrawRectangle(new Pen(Color.Black), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
+                    g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                }
                 else
+                {
+                    g.FillRectangle(new SolidBrush(Color.Transparent), e.Bounds);
                     g.DrawRectangle(new Pen(Color.Transparent), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
+                    g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+                }
                 e.DrawFocusRectangle();
             }
         }
@@ -404,6 +380,10 @@ namespace TrackerClient
             lblHelmet.Text = string.Format("Helmet: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[4]);
             lblGun.Text = string.Format("Gun: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[5]);
             lblUpdated.Text = string.Format("Last Updated (UTC): {0}", p.lastUpdated);
+            if (p.location.Length > 1)
+                lblLocation.Text = string.Format("Last Seen @ X:{0} Y:{1}", p.location[0], p.location[1]);
+            else
+                lblLocation.Text = string.Format("Last Seen @ Unknown");
             foreach (string equip in p.Equipment)
             {
                 if (!debugListEqu.Contains(equip) && equip.Length > 0)
@@ -411,7 +391,6 @@ namespace TrackerClient
                     debugListVeh.Add(equip);
                     rtbDebugEquipment.Text += string.Format("{0}{1}", equip, Environment.NewLine);
                 }
-
             }
             foreach (string alias in p.aliases)
             {
@@ -423,8 +402,6 @@ namespace TrackerClient
                     ListViewItem lviV = new ListViewItem(v.name);
                     lviV.SubItems.Add(v.amount.ToString());
                     lvVirtualItems.Items.Add(lviV);
-                    //if (!rtbDebugVehicle.Text.Contains(v.name))
-                    //    rtbDebugVehicle.Text += string.Format("{0}{1}", v.name, Environment.NewLine);
                 }
             if (p.civAir != null)
                 foreach (Vehicles v in p.civAir)
@@ -479,8 +456,8 @@ namespace TrackerClient
         {
             openConnection();
             proxy.updateDB((List<string>)e.Argument);
-            sortedPlayers = proxy.sendPlayers();
-            sortedPlayers = sortedPlayers.OrderBy(p => p.name).ToList();
+            onlinePlayers = proxy.sendPlayers();
+            onlinePlayers = onlinePlayers.OrderBy(p => p.name).ToList();
             closeConnection();
         }
 
@@ -490,10 +467,28 @@ namespace TrackerClient
                 sw.Start();
             bgwDone = true;
             lbPlayersAll.DisplayMember = "name";
-            lbPlayersAll.DataSource = sortedPlayers;
-            METAGAMETHESENIGGAS();
+            lbPlayersAll.DataSource = onlinePlayers;
+            BuildTargetList();
         }
 
+        private void cmsWatchlist_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (activeListbox != lbWatchlist)
+                removeFromWatchlistToolStripMenuItem.Enabled = false;
+            else
+                removeFromWatchlistToolStripMenuItem.Enabled = true;
+        }
+
+        private void tabPage1_MouseMove(object sender, MouseEventArgs e)
+        {
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            playerMap = new Map();
+            playerMap.players = onlinePlayers;
+            playerMap.Show();
+        }
     }
 
 }
