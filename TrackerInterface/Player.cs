@@ -145,16 +145,16 @@ namespace TrackerInterface
         [DataMember]
         //String list with their physical equipment
         public List<string> Equipment { get; private set; }
+        [DataMember]       
+        public VirtualItem[] Virtuals { get; private set; } //Custom item class for the palyers virtual items
         [DataMember]
-        //Custom item class for the palyers virtual items
-        public VirtualItem[] Virtuals { get; private set; }
+        public int TargetLevel = -1; //Because these ***holes wanted colors
         [DataMember]
-        //Because these ***holes wanted colors
-        public int TargetLevel = -1;
+        public string[] location; //Thank you FeDot
         //Constructor
         public Player(int UID, long steamID, string name, int cash, int bank, int cop, int medic, int admin, int donator, string aliases,
             int kills, int deaths, int revives, int arrests, int timeC, int timeA, int timeM, int bountyC, int bountyW, string gangN, int gangR, long lastActive,
-            string vCivAir, string vCivCar, string vCivShip, string gearCiv, long lastUpdated)
+            string vCivAir, string vCivCar, string vCivShip, string gearCiv, long lastUpdated, string location)
         {
             /*Initializing some variables*/
             this.aliases = new List<string>();
@@ -194,6 +194,10 @@ namespace TrackerInterface
             //Convert Unix time to C# DateTime
             this.lastActive = Helper.FromUnixTime(lastActive);
             this.lastUpdated = Helper.FromUnixTime(lastUpdated);
+            location = Encoding.ASCII.GetString(Convert.FromBase64String(location));
+            location = location.Remove(0, 2);
+            location = location.Remove(location.IndexOf("]"));
+            this.location = location.Split(',');
             //Parsing JSON Strings from the DB, Biggest pain in my ass. Thank you FeDot
             if (gearCiv.Length > 2)
             {
