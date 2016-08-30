@@ -46,14 +46,15 @@ namespace TrackerClient
                     string[] coords = p.location;
                     if (coords.Length < 2) continue;
                     double altisDim = 30720;
-                    double mapHeight = Size.Height;
-                    double mapWidth = Size.Width;
+
+                    double mapHeight = BackgroundImage.Height;
+                    double mapWidth = BackgroundImage.Width;
                     double ratioX = (mapWidth / altisDim);
                     double ratioY = (mapHeight / altisDim);
                     double coordX = Convert.ToDouble(coords[0]);
                     double coordY = Convert.ToDouble(coords[1]);
-                    double newX = ((mapWidth * coordX) / altisDim);
-                    double newY = ((mapHeight * coordY) / altisDim);
+                    double newX = ((mapWidth * coordX) / altisDim) * ratioX;
+                    double newY = ((mapHeight * coordY) / altisDim) * ratioY;
                     float testHeight = ((float)mapHeight - (float)newY);
                     PointF location = new PointF((float)newX, (float)testHeight);
                     //richTextBox1.Text += string.Format("oX: {0} oY: {1} nX:{2} nY:{3} {4}", coords[0], coords[1], newX, newY, Environment.NewLine);
