@@ -67,6 +67,7 @@ namespace TrackerClient
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            MessageBox.Show("This release is for an impatient autistic fuck named Zazhi...");
             wkbMain.Focus();
         }
 
@@ -459,6 +460,12 @@ namespace TrackerClient
             onlinePlayers = proxy.sendPlayers();
             onlinePlayers = onlinePlayers.OrderBy(p => p.name).ToList();
             closeConnection();
+            if (playerMap != null)
+            {
+                playerMap.players = onlinePlayers;
+                playerMap.canReset = true;
+                playerMap.Invalidate();
+            }
         }
 
         private void bwPlayerListRefresh_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
@@ -469,6 +476,7 @@ namespace TrackerClient
             lbPlayersAll.DisplayMember = "name";
             lbPlayersAll.DataSource = onlinePlayers;
             BuildTargetList();
+
         }
 
         private void cmsWatchlist_Opening(object sender, System.ComponentModel.CancelEventArgs e)

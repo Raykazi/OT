@@ -1,4 +1,4 @@
-﻿namespace TrackerClient
+namespace TrackerClient
 {
     partial class Map
     {
@@ -48,7 +48,6 @@
             this.ClientSize = new System.Drawing.Size(704, 681);
             this.Controls.Add(this.lblCoords);
             this.DoubleBuffered = true;
-            this.KeyPreview = true;
             this.MaximumSize = new System.Drawing.Size(720, 720);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(720, 720);
