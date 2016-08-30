@@ -16,13 +16,19 @@ namespace TrackerService
         }
         static void Main(string[] args)
         {
-            //Host the server
-            using (ServiceHost host = new ServiceHost(typeof(WCFTrackerService)))
+            try
             {
-                host.Open();
-                host.Opened += Host_Opened;
-                Program.ConsoleLog("Server is open");
-                Console.ReadLine();
+                //Host the server
+                using (ServiceHost host = new ServiceHost(typeof(WCFTrackerService)))
+                {
+                    host.Open();
+                    host.Opened += Host_Opened;
+                    Program.ConsoleLog("Server is open");
+                    Console.ReadLine();
+                }
+            }catch(Exception ex)
+            {
+                ConsoleLog("[EXCEPTION] "+ex.Message);
             }
         }
 

@@ -21,8 +21,8 @@ namespace TrackerClient
         {
             justOpened = true;
         }
-        internal void DrawMap()
-        {
+        public void DrawMap(){
+            Map_Paint(null, null);
         }
 
         private void Map_Paint(object sender, PaintEventArgs e)
@@ -30,7 +30,7 @@ namespace TrackerClient
             if (justOpened == true)
             {
                 e.Graphics.Clear(Color.Transparent);
-                BackgroundImage = Properties.Resources.Altis_UltraHigh;
+                BackgroundImage = Properties.Resources.Altis_UltraHigh; 
             }
             try
             {

@@ -460,6 +460,8 @@ namespace TrackerClient
             onlinePlayers = proxy.sendPlayers();
             onlinePlayers = onlinePlayers.OrderBy(p => p.name).ToList();
             closeConnection();
+            playerMap.players = onlinePlayers;
+            playerMap.DrawMap();
         }
 
         private void bwPlayerListRefresh_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
@@ -470,6 +472,7 @@ namespace TrackerClient
             lbPlayersAll.DisplayMember = "name";
             lbPlayersAll.DataSource = onlinePlayers;
             BuildTargetList();
+
         }
 
         private void cmsWatchlist_Opening(object sender, System.ComponentModel.CancelEventArgs e)
