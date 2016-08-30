@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -10,8 +10,7 @@ namespace TrackerClient
     public partial class Map : Form
     {
         internal List<Player> players;
-        GraphicsState resetState;
-        bool justOpened = false;
+        internal bool canReset = false;
         public Map()
         {
             InitializeComponent();
@@ -19,25 +18,18 @@ namespace TrackerClient
 
         private void Map_Load(object sender, EventArgs e)
         {
-            justOpened = true;
-        }
-        public void DrawMap(){
-            Map_Paint(null, null);
+            canReset = true;
         }
 
-        private void Map_Paint(object sender, PaintEventArgs e)
+        internal void Map_Paint(object sender, PaintEventArgs e)
         {
-            if (justOpened == true)
+            if (canReset == true)
             {
                 e.Graphics.Clear(Color.Transparent);
-                BackgroundImage = Properties.Resources.Altis_UltraHigh; 
+                BackgroundImage = Properties.Resources.Altis_UltraHigh;
             }
             try
             {
-                //GraphicsContainer containerState = e.Graphics.BeginContainer();
-                //e.Graphics.ScaleTransform(1.0F, -1.0F);
-                //e.Graphics.TranslateTransform(0.0F, -(float)Height);
-
                 if (players == null) return;
                 foreach (Player p in players)
                 {
@@ -52,24 +44,20 @@ namespace TrackerClient
                     double coordY = Convert.ToDouble(coords[1]);
                     double newX = ((mapWidth * coordX) / altisDim);
                     double newY = mapHeight - ((mapHeight * coordY) / altisDim);
-                    PointF location = new PointF((float)newX, (float) newY);
-                    //richTextBox1.Text += string.Format("oX: {0} oY: {1} nX:{2} nY:{3} {4}", coords[0], coords[1], newX, newY, Environment.NewLine);
+                    PointF location = new PointF((float)newX, (float)newY);
                     Graphics formGraphics = CreateGraphics();
                     e.Graphics.FillRectangle(myBrush, new RectangleF(location, new Size(4, 4)));
-                    e.Graphics.DrawString(p.name, font, new SolidBrush(Color.White), new PointF((float)newX + 2, (float) newY));
-                    //g.DrawString(p.name,new Font( , new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                    e.Graphics.DrawString(p.name, font, new SolidBrush(Color.White), new PointF((float)newX + 2, (float)newY));
                     myBrush.Dispose();
                     formGraphics.Dispose();
                 }
-                //e.Graphics.EndContainer(containerState);
             }
             catch (Exception ex)
             {
-                //richTextBox1.Text += ex.Message + Environment.NewLine;
             }
             finally
             {
-                justOpened = false;
+                canReset = false;
             }
 
         }

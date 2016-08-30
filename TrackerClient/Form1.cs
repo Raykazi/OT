@@ -460,8 +460,12 @@ namespace TrackerClient
             onlinePlayers = proxy.sendPlayers();
             onlinePlayers = onlinePlayers.OrderBy(p => p.name).ToList();
             closeConnection();
-            playerMap.players = onlinePlayers;
-            playerMap.DrawMap();
+            if (playerMap != null)
+            {
+                playerMap.players = onlinePlayers;
+                playerMap.canReset = true;
+                playerMap.Invalidate();
+            }
         }
 
         private void bwPlayerListRefresh_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
