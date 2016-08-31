@@ -26,5 +26,7 @@ namespace TrackerInterface
         [OperationContract]
         //Returns a list of player object to the client
         List<Player> sendPlayers();
+        [OperationContract]
+        string getMySteamID(string steamName);
     }
 }

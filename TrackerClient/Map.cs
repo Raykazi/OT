@@ -23,6 +23,15 @@ namespace TrackerClient
 
         internal void Map_Paint(object sender, PaintEventArgs e)
         {
+
+        }
+
+        private void Map_MouseMove(object sender, MouseEventArgs e)
+        {
+        }
+
+        private void pbMap_Paint(object sender, PaintEventArgs e)
+        {
             if (canReset == true)
             {
                 e.Graphics.Clear(Color.Transparent);
@@ -38,12 +47,13 @@ namespace TrackerClient
                     string[] coords = p.location;
                     if (coords.Length < 2) continue;
                     double altisDim = 30720;
-                    double mapHeight = Size.Height;
-                    double mapWidth = Size.Width;
+                    double offsetY = 100;
+                    double mapHeight = pbMap.Height;
+                    double mapWidth = pbMap.Width;
                     double coordX = Convert.ToDouble(coords[0]);
                     double coordY = Convert.ToDouble(coords[1]);
                     double newX = ((mapWidth * coordX) / altisDim);
-                    double newY = mapHeight - ((mapHeight * coordY) / altisDim);
+                    double newY = (mapHeight - ((mapHeight * coordY) / altisDim)) - offsetY;
                     PointF location = new PointF((float)newX, (float)newY);
                     Graphics formGraphics = CreateGraphics();
                     e.Graphics.FillRectangle(myBrush, new RectangleF(location, new Size(4, 4)));
@@ -59,12 +69,12 @@ namespace TrackerClient
             {
                 canReset = false;
             }
-
         }
 
-        private void Map_MouseMove(object sender, MouseEventArgs e)
+        private void pbMap_MouseMove(object sender, MouseEventArgs e)
         {
             lblCoords.Text = string.Format("X:{0} Y:{1}", e.X, e.Y);
+
         }
     }
 }
