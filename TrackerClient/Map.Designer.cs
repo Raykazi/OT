@@ -59,6 +59,7 @@
             // 
             this.panel1.AutoScroll = true;
             this.panel1.Controls.Add(this.pbMap);
+            this.panel1.Controls.Add(this.lblCoords);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -72,7 +73,6 @@
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(1165, 681);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.lblCoords);
             this.DoubleBuffered = true;
             this.MaximumSize = new System.Drawing.Size(1920, 1080);
             this.MinimizeBox = false;
@@ -88,7 +88,6 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
