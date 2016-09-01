@@ -46,14 +46,14 @@ namespace TrackerClient
                     Font font = new Font(FontFamily.GenericSansSerif, 7F, FontStyle.Regular);
                     string[] coords = p.location;
                     if (coords.Length < 2) continue;
-                    double altisDim = 30000;
+                    double altisDim = 30720;
                     double offsetY = 100;
                     double mapHeight = pbMap.Height;
                     double mapWidth = pbMap.Width;
                     double coordX = Convert.ToDouble(coords[0]);
                     double coordY = Convert.ToDouble(coords[1]);
                     double newX = ((mapWidth * coordX) / altisDim);
-                    double newY = (mapHeight - ((mapHeight * coordY) / altisDim)) - 0;
+                    double newY = (mapHeight - ((mapHeight * coordY) / altisDim));
                     PointF location = new PointF((float)newX, (float)newY);
                     Graphics formGraphics = CreateGraphics();
                     e.Graphics.FillRectangle(myBrush, new RectangleF(location, new Size(4, 4)));
