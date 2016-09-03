@@ -30,7 +30,7 @@ namespace TrackerInterface
         //Vehicle name
         [DataMember]
         public string name { get; private set; }
-        //
+        //If the vehicle is alive or not??
         [DataMember]
         public int alive { get; private set; }
         [DataMember]
@@ -43,21 +43,21 @@ namespace TrackerInterface
         //Tier 1-4, speed and manueverability level
         public int turboLevel { get; private set; }
         [DataMember]
-        //1 or 2Security level for the car
+        //1 or 2 Security level for the car
         public int secLevel { get; private set; }
         [DataMember]
         //1-4 Space of the vehicle
         public int storageLevel { get; private set; }
-        public Vehicles(int ID, string name, int alive, int active, int iLvl, int tLvl, int secLvl, int stoLvl)
+        public Vehicles(int ID, string name, int alive, int active, int insuranceLevel, int turboLevel, int secLevel, int storageLevel)
         {
             this.ID = ID;
             this.name = name;
             this.alive = alive;
             this.active = active;
-            insuranceLevel = iLvl;
-            turboLevel = tLvl;
-            secLevel = secLvl;
-            storageLevel = stoLvl;
+            this.insuranceLevel = insuranceLevel;
+            this.turboLevel = turboLevel;
+            this.secLevel = secLevel;
+            this.storageLevel = storageLevel;
         }
     }
     //Class for the player
@@ -156,30 +156,25 @@ namespace TrackerInterface
             int kills, int deaths, int revives, int arrests, int timeC, int timeA, int timeM, int bountyC, int bountyW, string gangN, int gangR, long lastActive,
             string vCivAir, string vCivCar, string vCivShip, string gearCiv, long lastUpdated, string location)
         {
-            /*Initializing some variables*/
-            this.aliases = new List<string>();
-            this.Equipment = new List<string>();
-            this.aliases.Clear();
+            /*Declarations */
             JArray vehiclesAir;
             JArray vehiclesCar;
             JArray vehiclesShip;
             JArray equipment;
+            /*Initializing variables*/
+            this.aliases = new List<string>();
+            this.Equipment = new List<string>();
+            this.aliases.Clear();
             /*Assigining variables*/
             this.UID = UID;
             this.steamID = steamID;
             this.name = name;
             this.cash = cash;
             this.bank = bank;
-            copLevel = cop;
-            medicLevel = medic;
-            adminLevel = admin;
-            donatorLevel = donator;
-            /* Splitting the data from the DB into segments*/
-            string[] alias = aliases.Split(';');
-            foreach (string aliasName in alias)
-                if (aliasName.Length > 0)
-                    this.aliases.Add(aliasName);
-            //Assigning more variables
+            this.copLevel = cop;
+            this.medicLevel = medic;
+            this.adminLevel = admin;
+            this.donatorLevel = donator;
             this.kills = kills;
             this.deaths = deaths;
             this.medicRevives = revives;
@@ -194,6 +189,12 @@ namespace TrackerInterface
             //Convert Unix time to C# DateTime
             this.lastActive = Helper.FromUnixTime(lastActive);
             this.lastUpdated = Helper.FromUnixTime(lastUpdated);
+            /* Splitting the data from the DB into segments*/
+            string[] alias = aliases.Split(';');
+            foreach (string aliasName in alias)
+                if (aliasName.Length > 0)
+                    this.aliases.Add(aliasName);
+            //Parsing last seen location of player
             location = Encoding.ASCII.GetString(Convert.FromBase64String(location));
             location = location.Remove(0, 2);
             location = location.Remove(location.IndexOf("]"));
