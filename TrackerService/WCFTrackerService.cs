@@ -21,6 +21,17 @@ namespace TrackerService
         int updateCount = 0;
         int insertCount = 0;
         int playerCount = 0;
+        public string getMySteamID(string steamName)
+        {
+            var client = new RestClient("http://api.steampowered.com");
+            var request = new RestRequest("ISteamUser/ResolveVanityURL/v0001/?key={key}&vanityurl={vanityurl}", Method.GET);
+            request.AddUrlSegment("key", "095A87F4340E4F2F21C22397D0E1376C"); // replaces matching token in request.Resource
+            request.AddUrlSegment("vanityurl", steamName); // replaces matching token in request.Resource
+            IRestResponse response = client.Execute(request);
+            var content = response.Content; // raw content as string
+            JObject o = JObject.Parse(content);
+            return (string)o["response"]["steamid"];
+        }
         //Curl method to fetch data from the API
         public string getPlayerIfno(long playerID)
         {

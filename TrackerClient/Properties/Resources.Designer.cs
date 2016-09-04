@@ -63,9 +63,9 @@ namespace TrackerClient.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Altis_UltraHigh {
+        internal static System.Drawing.Bitmap Altis3 {
             get {
-                object obj = ResourceManager.GetObject("Altis_UltraHigh", resourceCulture);
+                object obj = ResourceManager.GetObject("Altis3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

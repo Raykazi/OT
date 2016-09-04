@@ -9,6 +9,7 @@ using System.Collections;
 using System.Drawing;
 using System.Threading;
 using System.Diagnostics;
+using RestSharp;
 
 namespace TrackerClient
 {
@@ -16,7 +17,7 @@ namespace TrackerClient
     public partial class frmMain : Form
     {
         ChannelFactory<IWCFTrackerService> channelFactory;
-        IWCFTrackerService proxy;
+        IWCFTrackerService server;
         List<Player> onlinePlayers = new List<Player>();
         List<Player> slackPostList = new List<Player>();
         List<string> debugListVeh = new List<string>();
@@ -45,7 +46,7 @@ namespace TrackerClient
                 "heroinu","heroinp",
                 "frog", "frogp",
                 "mushroom","mmushroom",
-                "ephedra", "lithium", "phosphorus","meth",
+                "ephedra", "lithium", "phosphorus","crystalmeth",
                 "yeast", "sugar", "corn","moonshine",
                 "goldbar" };
         string[] watchListVehicles = { "Hellcat", "HEMTT Box", "HEMTT Fuel", "HEMTT Transport", "Hummingbird", "Huron", "Ifrit", "Offroad (Armed)", "Orca", "M900", "Mohawk", "SDV",
@@ -67,7 +68,6 @@ namespace TrackerClient
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            MessageBox.Show("This release is for an impatient autistic fuck named Zazhi...");
             wkbMain.Focus();
         }
 
@@ -82,7 +82,7 @@ namespace TrackerClient
         private void openConnection()
         {
             channelFactory = new ChannelFactory<IWCFTrackerService>("TrackerClientEndpoint");
-            proxy = channelFactory.CreateChannel();
+            server = channelFactory.CreateChannel();
         }
 
         private void btnGetPlayers_Click(object sender, EventArgs e)
@@ -125,6 +125,9 @@ namespace TrackerClient
             {
                 steamID.Clear();
                 bgwDone = false;
+                openConnection();
+                steamID.Add(server.getMySteamID(steamName));
+                closeConnection();
                 string src = wkbMain.DocumentText.ToString();
                 doc.LoadHtml(src);
                 if (src.Contains("You are not currently in a Steamworks game with other Steam players."))
@@ -456,15 +459,15 @@ namespace TrackerClient
         private void bwPlayerListRefresh_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             openConnection();
-            proxy.updateDB((List<string>)e.Argument);
-            onlinePlayers = proxy.sendPlayers();
+            server.updateDB((List<string>)e.Argument);
+            onlinePlayers = server.sendPlayers();
             onlinePlayers = onlinePlayers.OrderBy(p => p.name).ToList();
             closeConnection();
             if (playerMap != null)
             {
                 playerMap.players = onlinePlayers;
                 playerMap.canReset = true;
-                playerMap.Invalidate();
+                playerMap.pbMap.Invalidate();
             }
         }
 
