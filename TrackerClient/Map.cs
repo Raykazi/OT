@@ -16,18 +16,30 @@ namespace TrackerClient
         public Map()
         {
             InitializeComponent();
-            Locations.Add(new Location { X = 16014.1F, Y = 16959.6F, Name = "Federal Reserve", color = Color.Yellow });
+            Locations.Add(new Location { X = 16014.1F, Y = 16959.6F, Name = "Federal Reserve", color = Color.Yellow }); ;
+            /*HQ*/
+            Locations.Add(new Location { X = 14166.5F, Y = 16267.8F, Name = "Air HQ", color = Color.Blue });
+            Locations.Add(new Location { X = 3268.08F, Y = 12968.4F, Name = "Kavala HQ", color = Color.Blue });
+            Locations.Add(new Location { X = 13824.8F, Y = 18969F, Name = "Athira HQ", color = Color.Blue });
+            Locations.Add(new Location { X = 12409.6F, Y = 14093.9F, Name = "Neochori HQ", color = Color.Blue });
+            Locations.Add(new Location { X = 17416.9F, Y = 13177.4F, Name = "Pyrgos HQ", color = Color.Blue });
+
+            /*Hospitals*/
+            Locations.Add(new Location { X = 3771.83F, Y = 12985.1F, Name = "Hospital", color = Color.Pink });
+            Locations.Add(new Location { X = 15231.5F, Y = 17198.3F, Name = "Hospital", color = Color.Pink });
+            Locations.Add(new Location { X = 17522.8F, Y = 13287.8F, Name = "Hospital", color = Color.Pink });
+            Locations.Add(new Location { X = 25322F, Y = 20964.6F, Name = "Hospital", color = Color.Pink });
 
             /*Black Markets*/
             Locations.Add(new Location { X = 11693.3F, Y = 15915.6F, Name = "Black Market", color = Color.Red });
             Locations.Add(new Location { X = 4987.7F, Y = 14552F, Name = "Black Market", color = Color.Red });
             Locations.Add(new Location { X = 18399.6F, Y = 15280.7F, Name = "Black Market", color = Color.Red });
+
             /*Rebels */
             Locations.Add(new Location { X = 8316.77F, Y = 10065.2F, Name = "Rebel Outpost", color = Color.Red });
             Locations.Add(new Location { X = 15104F, Y = 22619.2F, Name = "Rebel Outpost", color = Color.Red });
             Locations.Add(new Location { X = 21841.4F, Y = 8386.78F, Name = "Rebel Outpost", color = Color.Red });
             Locations.Add(new Location { X = 27648.8F, Y = 23613.2F, Name = "Rebel Outpost", color = Color.Red });
-
 
             /*Fields*/
             Locations.Add(new Location { X = 19873F, Y = 17062.1F, Name = "Heroin Field", color = Color.Red });
@@ -39,7 +51,6 @@ namespace TrackerClient
             Locations.Add(new Location { X = 17564.8F, Y = 10272F, Name = "Yeast Field", color = Color.Orange });
             Locations.Add(new Location { X = 19654.9F, Y = 8093.64F, Name = "Corn Field", color = Color.Orange });
             Locations.Add(new Location { X = 22400.1F, Y = 13921F, Name = "Cow Manure Field", color = Color.Orange });
-
 
             /*Processors*/
             Locations.Add(new Location { X = 9743.13F, Y = 19434.5F, Name = "Oil Processing", color = Color.LightGreen });
@@ -77,9 +88,7 @@ namespace TrackerClient
             Locations.Add(new Location { X = 14856.3F, Y = 12226.4F, Name = "Turtle Poaching", color = Color.Red });
             Locations.Add(new Location { X = 1384.2F, Y = 10635.3F, Name = "Turtle Poaching", color = Color.Red });
             Locations.Add(new Location { X = 14483.2F, Y = 9528.17F, Name = "Turtle Poaching", color = Color.Red });
-            Locations.Add(new Location { X = 3597.28F, Y = 8247.33F, Name = "Turtle Poaching", color = Color.Red });
-            
-
+            Locations.Add(new Location { X = 3597.28F, Y = 8247.33F, Name = "Turtle Poaching", color = Color.Red });   
 
             /*Traders*/
             Locations.Add(new Location { X = 4243.81F, Y = 15026.6F, Name = "Copper Trader", color = Color.Orange });
@@ -92,7 +101,6 @@ namespace TrackerClient
             Locations.Add(new Location { X = 9559.76F, Y = 15647.6F, Name = "Silver Trader", color = Color.Orange });
             Locations.Add(new Location { X = 9007.71F, Y = 16057.7F, Name = "Diamond Trader", color = Color.Orange });
             Locations.Add(new Location { X = 17964.1F, Y = 18034.5F, Name = "Moonshine Distributor", color = Color.Red });
-
 
             /*Dealers*/
             Locations.Add(new Location { X = 3594.42F, Y = 13829.7F, Name = "Drug Dealer", color = Color.Red });
@@ -141,7 +149,7 @@ namespace TrackerClient
             if (canReset == true)
             {
                 e.Graphics.Clear(Color.Transparent);
-                BackgroundImage = Properties.Resources.Altis_UltraHigh;
+                pbMap.Image = Properties.Resources.Altis3;
             }
             PaintLocations(e);
             try
