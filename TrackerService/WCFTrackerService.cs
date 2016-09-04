@@ -42,14 +42,13 @@ namespace TrackerService
             var content = response.Content; // raw content as string
             return content;
         }
-        public string getPlayers(string IP, int port)
+        public string getPlayers(string serverID, int port)
         {
-            var client = new RestClient("http://162.243.235.105/");
-            var request = new RestRequest("getPlayers.php", Method.POST);
+            var client = new RestClient("http://olympusapi.xyz/apiv2/");
+            var request = new RestRequest("query/{serverNum}", Method.GET);
 
-            request.AddParameter("IP", IP); // replaces matching token in request.Resource
-            request.AddParameter("Port", port); // replaces matching token in request.Resource
-            Program.ConsoleLog(String.Format("Fetching players on server {0}:{1}", IP, port));
+            request.AddParameter("serverNum", serverID); // replaces matching token in request.Resource
+            Program.ConsoleLog(string.Format("Fetching players on server {0}", serverID));
             IRestResponse response = client.Execute(request);
             var content = response.Content; // raw content as string
             content = content.Replace(@"\""", "s");

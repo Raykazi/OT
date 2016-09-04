@@ -126,7 +126,6 @@ namespace TrackerClient
             float mapHeight = pbMap.Height;
             float mapWidth = pbMap.Width;
             float altisDim = 30720;
-            float offsetY = 100;
             float[] coords = new float[2];
             float coordX = x;
             float coordY = y;

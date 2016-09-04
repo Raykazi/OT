@@ -193,7 +193,6 @@ namespace TrackerClient
             List<Player> targetPlayers = new List<Player>();
             foreach (Player p in onlinePlayers)
             {
-                PaintMap(p.location);
                 string wItem = "";
                 string wVehicle = "";
                 p.TargetLevel = -1;
@@ -289,13 +288,6 @@ namespace TrackerClient
             targetPlayers = targetPlayers.OrderBy(p => p.name).ToList();
             lbPlayersTargets.DisplayMember = "name";
             lbPlayersTargets.DataSource = targetPlayers;
-        }
-
-        private void PaintMap(string[] coords)
-        {
-
-
-
         }
 
         private void ListBox_MouseEnter(object sender, EventArgs e)
@@ -488,10 +480,6 @@ namespace TrackerClient
                 removeFromWatchlistToolStripMenuItem.Enabled = false;
             else
                 removeFromWatchlistToolStripMenuItem.Enabled = true;
-        }
-
-        private void tabPage1_MouseMove(object sender, MouseEventArgs e)
-        {
         }
 
         private void button1_Click(object sender, EventArgs e)
