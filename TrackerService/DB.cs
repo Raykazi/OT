@@ -15,6 +15,7 @@ namespace TrackerService
 
         public DB()
         {
+            //string conString = string.Format("SERVER=50.192.51.66;Port=3306;DATABASE=olympus;UID=otracker;PASSWORD=9Ohz7b^5LG0*O'c;Convert Zero Datetime=True;");
             string conString = string.Format("SERVER=10.1.10.3;Port=3306;DATABASE=olympus;UID=otracker;PASSWORD=9Ohz7b^5LG0*O'c;Convert Zero Datetime=True;");
             _connection = new MySqlConnection(conString);
         }

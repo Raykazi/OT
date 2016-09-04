@@ -22,6 +22,7 @@ namespace TrackerClient
         List<Player> slackPostList = new List<Player>();
         List<string> debugListVeh = new List<string>();
         List<string> debugListEqu = new List<string>();
+        string serverID = "arma_1";
         Map playerMap;
         SlackClient sc = new SlackClient("https://hooks.slack.com/services/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");
         string steamName = null;
@@ -68,7 +69,6 @@ namespace TrackerClient
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            wkbMain.Focus();
         }
 
         private void closeConnection()
@@ -87,75 +87,71 @@ namespace TrackerClient
 
         private void btnGetPlayers_Click(object sender, EventArgs e)
         {
-            Reset();
-            btnGetPlayers.Enabled = false;
-            string currentURL = wkbMain.Url.ToString();
-            string targetPage;
-            tsslStatus.Text = "Getting players.";
-            if (currentURL.Contains("/home"))
-            {
-                string[] segments = currentURL.Split('/');
-                steamName = segments[4];
-                targetPage = string.Format("https://steamcommunity.com/id/{0}/friends/players/", steamName);
-                wkbMain.Url = new Uri(targetPage);
-            }
-            else if (currentURL.Contains("/friends/players"))
-            {
-                wkbMain.Reload();
-            }
-            else
-            {
-                if (steamName == null)
-                {
-                    targetPage = string.Format("https://steamcommunity.com/id/{0}/friends/players/", steamName);
-                    wkbMain.Url = new Uri(targetPage);
-                }
+            //Reset();
+            //btnGetPlayers.Enabled = false;
+            //string currentURL = wkbMain.Url.ToString();
+            //string targetPage;
+            //tsslStatus.Text = "Getting players.";
+            //if (currentURL.Contains("/home"))
+            //{
+            //    string[] segments = currentURL.Split('/');
+            //    steamName = segments[4];
+            //    targetPage = string.Format("https://steamcommunity.com/id/{0}/friends/players/", steamName);
+            //    wkbMain.Url = new Uri(targetPage);
+            //}
+            //else if (currentURL.Contains("/friends/players"))
+            //{
+            //    wkbMain.Reload();
+            //}
+            //else
+            //{
+            //    if (steamName == null)
+            //    {
+            //        targetPage = string.Format("https://steamcommunity.com/id/{0}/friends/players/", steamName);
+            //        wkbMain.Url = new Uri(targetPage);
+            //    }
 
-            }
-        }
-        private void wkbMain_Navigated(object sender, WebBrowserNavigatedEventArgs e)
-        {
-            tbURL.Text = wkbMain.Url.ToString();
+            //}
         }
 
         private void wkbMain_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            List<string> steamID = new List<string>();
-            if (wkbMain.Url.ToString().Contains("/friends/players/"))
-            {
-                steamID.Clear();
-                bgwDone = false;
-                openConnection();
-                steamID.Add(server.getMySteamID(steamName));
-                closeConnection();
-                string src = wkbMain.DocumentText.ToString();
-                doc.LoadHtml(src);
-                if (src.Contains("You are not currently in a Steamworks game with other Steam players."))
-                {
-                    btnGetPlayers.Enabled = true;
-                    tsslStatus.Text = "Not connected to an Olympus Server.";
-                    Reset();
-                    return;
-                }
-                HtmlNode node = doc.GetElementbyId("friendListForm");
-                if (node != null)
-                {
-                    IEnumerable<HtmlNode> allInputs = node.Descendants("input");
-                    foreach (HtmlNode input in allInputs)
-                    {
-                        if (input.Attributes.Contains("data-steamid"))
-                        {
-                            steamID.Add(input.Attributes["data-steamid"].Value);
-                        }
-                    }
-                }
-                bwPlayerListRefresh.RunWorkerAsync(steamID);
+            //List<string> steamID = new List<string>();
+            //if (wkbMain.Url.ToString().Contains("/friends/players/"))
+            //{
+            //    steamID.Clear();
+            //    bgwDone = false;
+            //    openConnection();
+            //    steamID.Add(server.getMySteamID(steamName));
+            //    closeConnection();
+            //    string src = wkbMain.DocumentText.ToString();
+            //    doc.LoadHtml(src);
+            //    if (src.Contains("You are not currently in a Steamworks game with other Steam players."))
+            //    {
+            //        btnGetPlayers.Enabled = true;
+            //        tsslStatus.Text = "Not connected to an Olympus Server.";
+            //        Reset();
+            //        return;
+            //    }
+            //    HtmlNode node = doc.GetElementbyId("friendListForm");
+            //    if (node != null)
+            //    {
+            //        IEnumerable<HtmlNode> allInputs = node.Descendants("input");
+            //        foreach (HtmlNode input in allInputs)
+            //        {
+            //            if (input.Attributes.Contains("data-steamid"))
+            //            {
+            //                steamID.Add(input.Attributes["data-steamid"].Value);
+            //            }
+            //        }
+            //    }
+            //    bwPlayerListRefresh.RunWorkerAsync(steamID);
 
-            }
-            else if (!wkbMain.Url.ToString().Contains("/friends/players"))
-            {
-                //tsslStatus.Text = "Not connected to a server.";
-            }
+            //}
+            //else if (!wkbMain.Url.ToString().Contains("/friends/players"))
+            //{
+            //    //tsslStatus.Text = "Not connected to a server.";
+            //}
         }
 
         private void timerPLRefresh_Tick(object sender, EventArgs e)
@@ -168,19 +164,17 @@ namespace TrackerClient
                         tspbMain.PerformStep();
                         tsslStatus.Text = string.Format("Refreshing player list in {0} seconds.", (tspbMain.Maximum - (sw.ElapsedMilliseconds / 1000)));
                     }
-                    if (bgwDone && !btnGetPlayers.Enabled)
-                        btnGetPlayers.Enabled = true;
                     break;
             }
             if (tspbMain.ProgressBar.Value == tspbMain.Maximum)
             {
                 Reset();
-                wkbMain.Reload();
             }
         }
 
         private void Reset()
         {
+            bwPlayerListRefresh.RunWorkerAsync();
             bgwDone = false;
             tspbMain.Value = 0;
             sw.Stop();
@@ -451,9 +445,9 @@ namespace TrackerClient
         private void bwPlayerListRefresh_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             openConnection();
-            server.updateDB((List<string>)e.Argument);
-            onlinePlayers = server.sendPlayers();
-            onlinePlayers = onlinePlayers.OrderBy(p => p.name).ToList();
+            server.PullPlayers(serverID);
+            //onlinePlayers = server.GetPlayerList();
+            //onlinePlayers = onlinePlayers.OrderBy(p => p.name).ToList();
             closeConnection();
             if (playerMap != null)
             {
@@ -482,11 +476,39 @@ namespace TrackerClient
                 removeFromWatchlistToolStripMenuItem.Enabled = true;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnMap_Click(object sender, EventArgs e)
         {
             playerMap = new Map();
             playerMap.players = onlinePlayers;
             playerMap.Show();
+
+        }
+
+        private void frmMain_Load(object sender, EventArgs e)
+        {
+            Reset();
+        }
+
+        private void ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Button b = (Button)sender;
+            switch (b.Text)
+            {
+                case "Server 1":
+                    serverID = "arma_1";
+                    break;
+                case "Server 2":
+                    serverID = "arma_2_blame_poseidon";
+                    break;
+                case "Server 3":
+                    serverID = "arma_3";
+                    break;
+            }
+        }
+
+        private void tspbMain_Click(object sender, EventArgs e)
+        {
+            Reset();
         }
     }
 

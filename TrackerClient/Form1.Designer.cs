@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.panelLeft = new System.Windows.Forms.Panel();
             this.tcPlayerLists = new System.Windows.Forms.TabControl();
             this.tpPlayersAll = new System.Windows.Forms.TabPage();
@@ -43,39 +44,13 @@
             this.pSearch = new System.Windows.Forms.Panel();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.pMain = new System.Windows.Forms.Panel();
-            this.ssMain = new System.Windows.Forms.StatusStrip();
-            this.tspbMain = new System.Windows.Forms.ToolStripProgressBar();
-            this.tsslStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.timerPLRefresh = new System.Windows.Forms.Timer(this.components);
-            this.bwPlayerListRefresh = new System.ComponentModel.BackgroundWorker();
-            this.bwPlayerListFilter = new System.ComponentModel.BackgroundWorker();
-            this.cbSlack = new System.Windows.Forms.CheckBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.tpDebug = new System.Windows.Forms.TabPage();
-            this.rtbDebugVehicle = new System.Windows.Forms.RichTextBox();
-            this.rtbDebugEquipment = new System.Windows.Forms.RichTextBox();
+            this.tcMain = new System.Windows.Forms.TabControl();
             this.tpPlayerInfo = new System.Windows.Forms.TabPage();
-            this.lblCash = new System.Windows.Forms.Label();
-            this.lblBank = new System.Windows.Forms.Label();
-            this.lblBounty = new System.Windows.Forms.Label();
-            this.lblKDR = new System.Windows.Forms.Label();
-            this.lblAliases = new System.Windows.Forms.Label();
-            this.lblName = new System.Windows.Forms.Label();
-            this.lblGang = new System.Windows.Forms.Label();
-            this.tbAliases = new System.Windows.Forms.TextBox();
-            this.lblCopRank = new System.Windows.Forms.Label();
-            this.lblMedicRank = new System.Windows.Forms.Label();
-            this.lblCopTime = new System.Windows.Forms.Label();
-            this.lblCivTime = new System.Windows.Forms.Label();
-            this.lblMedicTime = new System.Windows.Forms.Label();
-            this.lblCopArrest = new System.Windows.Forms.Label();
-            this.lblVigiBounty = new System.Windows.Forms.Label();
-            this.lblMedicRevives = new System.Windows.Forms.Label();
-            this.lblVirtuals = new System.Windows.Forms.Label();
-            this.lvVirtualItems = new System.Windows.Forms.ListView();
-            this.chItem = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chAmount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblLocation = new System.Windows.Forms.Label();
+            this.lblUpdated = new System.Windows.Forms.Label();
+            this.lblHelmet = new System.Windows.Forms.Label();
+            this.lblVest = new System.Windows.Forms.Label();
+            this.lblGun = new System.Windows.Forms.Label();
             this.lvVehicleInfo = new System.Windows.Forms.ListView();
             this.chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chActive = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -83,18 +58,41 @@
             this.chSecurity = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chStorage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chInsurance = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lblGun = new System.Windows.Forms.Label();
-            this.lblVest = new System.Windows.Forms.Label();
-            this.lblHelmet = new System.Windows.Forms.Label();
-            this.lblUpdated = new System.Windows.Forms.Label();
-            this.lblLocation = new System.Windows.Forms.Label();
-            this.tpBrowser = new System.Windows.Forms.TabPage();
-            this.panelBrowserTop = new System.Windows.Forms.Panel();
-            this.btnGetPlayers = new System.Windows.Forms.Button();
-            this.tbURL = new System.Windows.Forms.TextBox();
-            this.panelBrowserMid = new System.Windows.Forms.Panel();
-            this.wkbMain = new WebKit.WebKitBrowser();
-            this.tcMain = new System.Windows.Forms.TabControl();
+            this.label1 = new System.Windows.Forms.Label();
+            this.lvVirtualItems = new System.Windows.Forms.ListView();
+            this.chItem = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chAmount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tbAliases = new System.Windows.Forms.TextBox();
+            this.lblVirtuals = new System.Windows.Forms.Label();
+            this.lblMedicRevives = new System.Windows.Forms.Label();
+            this.lblVigiBounty = new System.Windows.Forms.Label();
+            this.lblCopArrest = new System.Windows.Forms.Label();
+            this.lblMedicTime = new System.Windows.Forms.Label();
+            this.lblCivTime = new System.Windows.Forms.Label();
+            this.lblCopTime = new System.Windows.Forms.Label();
+            this.lblMedicRank = new System.Windows.Forms.Label();
+            this.lblCopRank = new System.Windows.Forms.Label();
+            this.lblGang = new System.Windows.Forms.Label();
+            this.lblName = new System.Windows.Forms.Label();
+            this.lblAliases = new System.Windows.Forms.Label();
+            this.lblKDR = new System.Windows.Forms.Label();
+            this.lblBounty = new System.Windows.Forms.Label();
+            this.lblBank = new System.Windows.Forms.Label();
+            this.lblCash = new System.Windows.Forms.Label();
+            this.tpDebug = new System.Windows.Forms.TabPage();
+            this.rtbDebugEquipment = new System.Windows.Forms.RichTextBox();
+            this.rtbDebugVehicle = new System.Windows.Forms.RichTextBox();
+            this.ssMain = new System.Windows.Forms.StatusStrip();
+            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.server1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.server2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.server3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tspbMain = new System.Windows.Forms.ToolStripProgressBar();
+            this.tsslStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.timerPLRefresh = new System.Windows.Forms.Timer(this.components);
+            this.bwPlayerListRefresh = new System.ComponentModel.BackgroundWorker();
+            this.bwPlayerListFilter = new System.ComponentModel.BackgroundWorker();
+            this.btnMap = new System.Windows.Forms.Button();
             this.panelLeft.SuspendLayout();
             this.tcPlayerLists.SuspendLayout();
             this.tpPlayersAll.SuspendLayout();
@@ -103,13 +101,10 @@
             this.tpWatchlist.SuspendLayout();
             this.pSearch.SuspendLayout();
             this.pMain.SuspendLayout();
-            this.ssMain.SuspendLayout();
-            this.tpDebug.SuspendLayout();
-            this.tpPlayerInfo.SuspendLayout();
-            this.tpBrowser.SuspendLayout();
-            this.panelBrowserTop.SuspendLayout();
-            this.panelBrowserMid.SuspendLayout();
             this.tcMain.SuspendLayout();
+            this.tpPlayerInfo.SuspendLayout();
+            this.tpDebug.SuspendLayout();
+            this.ssMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelLeft
@@ -259,87 +254,18 @@
             this.pMain.Size = new System.Drawing.Size(991, 576);
             this.pMain.TabIndex = 29;
             // 
-            // ssMain
+            // tcMain
             // 
-            this.ssMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tspbMain,
-            this.tsslStatus});
-            this.ssMain.Location = new System.Drawing.Point(0, 576);
-            this.ssMain.Name = "ssMain";
-            this.ssMain.Size = new System.Drawing.Size(991, 22);
-            this.ssMain.TabIndex = 2;
-            // 
-            // tspbMain
-            // 
-            this.tspbMain.Maximum = 180;
-            this.tspbMain.Name = "tspbMain";
-            this.tspbMain.Size = new System.Drawing.Size(100, 16);
-            this.tspbMain.Step = 1;
-            // 
-            // tsslStatus
-            // 
-            this.tsslStatus.Name = "tsslStatus";
-            this.tsslStatus.Size = new System.Drawing.Size(0, 17);
-            // 
-            // timerPLRefresh
-            // 
-            this.timerPLRefresh.Interval = 1000;
-            this.timerPLRefresh.Tick += new System.EventHandler(this.timerPLRefresh_Tick);
-            // 
-            // bwPlayerListRefresh
-            // 
-            this.bwPlayerListRefresh.WorkerReportsProgress = true;
-            this.bwPlayerListRefresh.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwPlayerListRefresh_DoWork);
-            this.bwPlayerListRefresh.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwPlayerListRefresh_RunWorkerCompleted);
-            // 
-            // cbSlack
-            // 
-            this.cbSlack.AutoSize = true;
-            this.cbSlack.Location = new System.Drawing.Point(864, 582);
-            this.cbSlack.Name = "cbSlack";
-            this.cbSlack.Size = new System.Drawing.Size(99, 17);
-            this.cbSlack.TabIndex = 30;
-            this.cbSlack.Text = "Post To Slack?";
-            this.cbSlack.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(807, 578);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(51, 21);
-            this.button1.TabIndex = 31;
-            this.button1.Text = "Map";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // tpDebug
-            // 
-            this.tpDebug.Controls.Add(this.rtbDebugEquipment);
-            this.tpDebug.Controls.Add(this.rtbDebugVehicle);
-            this.tpDebug.Location = new System.Drawing.Point(4, 4);
-            this.tpDebug.Name = "tpDebug";
-            this.tpDebug.Padding = new System.Windows.Forms.Padding(3);
-            this.tpDebug.Size = new System.Drawing.Size(806, 568);
-            this.tpDebug.TabIndex = 2;
-            this.tpDebug.Text = "Debug Info";
-            this.tpDebug.UseVisualStyleBackColor = true;
-            // 
-            // rtbDebugVehicle
-            // 
-            this.rtbDebugVehicle.Location = new System.Drawing.Point(3, 6);
-            this.rtbDebugVehicle.Name = "rtbDebugVehicle";
-            this.rtbDebugVehicle.Size = new System.Drawing.Size(339, 556);
-            this.rtbDebugVehicle.TabIndex = 0;
-            this.rtbDebugVehicle.Text = "";
-            // 
-            // rtbDebugEquipment
-            // 
-            this.rtbDebugEquipment.Location = new System.Drawing.Point(348, 6);
-            this.rtbDebugEquipment.Name = "rtbDebugEquipment";
-            this.rtbDebugEquipment.Size = new System.Drawing.Size(339, 556);
-            this.rtbDebugEquipment.TabIndex = 1;
-            this.rtbDebugEquipment.Text = "";
+            this.tcMain.Alignment = System.Windows.Forms.TabAlignment.Right;
+            this.tcMain.Controls.Add(this.tpPlayerInfo);
+            this.tcMain.Controls.Add(this.tpDebug);
+            this.tcMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tcMain.Location = new System.Drawing.Point(158, 0);
+            this.tcMain.Multiline = true;
+            this.tcMain.Name = "tcMain";
+            this.tcMain.SelectedIndex = 0;
+            this.tcMain.Size = new System.Drawing.Size(833, 576);
+            this.tcMain.TabIndex = 30;
             // 
             // tpPlayerInfo
             // 
@@ -376,189 +302,50 @@
             this.tpPlayerInfo.Text = "Player Info";
             this.tpPlayerInfo.UseVisualStyleBackColor = true;
             // 
-            // lblCash
+            // lblLocation
             // 
-            this.lblCash.AutoSize = true;
-            this.lblCash.Location = new System.Drawing.Point(40, 35);
-            this.lblCash.Name = "lblCash";
-            this.lblCash.Size = new System.Drawing.Size(34, 13);
-            this.lblCash.TabIndex = 44;
-            this.lblCash.Text = "Cash:";
+            this.lblLocation.AutoSize = true;
+            this.lblLocation.Location = new System.Drawing.Point(7, 527);
+            this.lblLocation.Name = "lblLocation";
+            this.lblLocation.Size = new System.Drawing.Size(46, 13);
+            this.lblLocation.TabIndex = 65;
+            this.lblLocation.Text = "Coords: ";
             // 
-            // lblBank
+            // lblUpdated
             // 
-            this.lblBank.AutoSize = true;
-            this.lblBank.Location = new System.Drawing.Point(294, 35);
-            this.lblBank.Name = "lblBank";
-            this.lblBank.Size = new System.Drawing.Size(35, 13);
-            this.lblBank.TabIndex = 45;
-            this.lblBank.Text = "Bank:";
+            this.lblUpdated.AutoSize = true;
+            this.lblUpdated.Location = new System.Drawing.Point(7, 503);
+            this.lblUpdated.Name = "lblUpdated";
+            this.lblUpdated.Size = new System.Drawing.Size(51, 13);
+            this.lblUpdated.TabIndex = 64;
+            this.lblUpdated.Text = "Updated:";
             // 
-            // lblBounty
+            // lblHelmet
             // 
-            this.lblBounty.AutoSize = true;
-            this.lblBounty.Location = new System.Drawing.Point(31, 62);
-            this.lblBounty.Name = "lblBounty";
-            this.lblBounty.Size = new System.Drawing.Size(43, 13);
-            this.lblBounty.TabIndex = 46;
-            this.lblBounty.Text = "Bounty:";
+            this.lblHelmet.AutoSize = true;
+            this.lblHelmet.Location = new System.Drawing.Point(432, 62);
+            this.lblHelmet.Name = "lblHelmet";
+            this.lblHelmet.Size = new System.Drawing.Size(46, 13);
+            this.lblHelmet.TabIndex = 63;
+            this.lblHelmet.Text = "Helmet: ";
             // 
-            // lblKDR
+            // lblVest
             // 
-            this.lblKDR.AutoSize = true;
-            this.lblKDR.Location = new System.Drawing.Point(28, 89);
-            this.lblKDR.Name = "lblKDR";
-            this.lblKDR.Size = new System.Drawing.Size(46, 13);
-            this.lblKDR.TabIndex = 42;
-            this.lblKDR.Text = "K/D/R: ";
+            this.lblVest.AutoSize = true;
+            this.lblVest.Location = new System.Drawing.Point(432, 35);
+            this.lblVest.Name = "lblVest";
+            this.lblVest.Size = new System.Drawing.Size(31, 13);
+            this.lblVest.TabIndex = 62;
+            this.lblVest.Text = "Vest:";
             // 
-            // lblAliases
+            // lblGun
             // 
-            this.lblAliases.AutoSize = true;
-            this.lblAliases.Location = new System.Drawing.Point(10, 198);
-            this.lblAliases.Name = "lblAliases";
-            this.lblAliases.Size = new System.Drawing.Size(43, 13);
-            this.lblAliases.TabIndex = 47;
-            this.lblAliases.Text = "Aliases:";
-            // 
-            // lblName
-            // 
-            this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(36, 8);
-            this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(38, 13);
-            this.lblName.TabIndex = 43;
-            this.lblName.Text = "Name:";
-            // 
-            // lblGang
-            // 
-            this.lblGang.AutoSize = true;
-            this.lblGang.Location = new System.Drawing.Point(293, 8);
-            this.lblGang.Name = "lblGang";
-            this.lblGang.Size = new System.Drawing.Size(36, 13);
-            this.lblGang.TabIndex = 48;
-            this.lblGang.Text = "Gang:";
-            // 
-            // tbAliases
-            // 
-            this.tbAliases.Location = new System.Drawing.Point(10, 214);
-            this.tbAliases.Multiline = true;
-            this.tbAliases.Name = "tbAliases";
-            this.tbAliases.ReadOnly = true;
-            this.tbAliases.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbAliases.Size = new System.Drawing.Size(195, 276);
-            this.tbAliases.TabIndex = 41;
-            // 
-            // lblCopRank
-            // 
-            this.lblCopRank.AutoSize = true;
-            this.lblCopRank.Location = new System.Drawing.Point(13, 116);
-            this.lblCopRank.Name = "lblCopRank";
-            this.lblCopRank.Size = new System.Drawing.Size(61, 13);
-            this.lblCopRank.TabIndex = 49;
-            this.lblCopRank.Text = "APD Rank:";
-            // 
-            // lblMedicRank
-            // 
-            this.lblMedicRank.AutoSize = true;
-            this.lblMedicRank.Location = new System.Drawing.Point(268, 116);
-            this.lblMedicRank.Name = "lblMedicRank";
-            this.lblMedicRank.Size = new System.Drawing.Size(61, 13);
-            this.lblMedicRank.TabIndex = 50;
-            this.lblMedicRank.Text = "R&&R Rank:";
-            // 
-            // lblCopTime
-            // 
-            this.lblCopTime.AutoSize = true;
-            this.lblCopTime.Location = new System.Drawing.Point(16, 143);
-            this.lblCopTime.Name = "lblCopTime";
-            this.lblCopTime.Size = new System.Drawing.Size(58, 13);
-            this.lblCopTime.TabIndex = 51;
-            this.lblCopTime.Text = "APD Time:";
-            // 
-            // lblCivTime
-            // 
-            this.lblCivTime.AutoSize = true;
-            this.lblCivTime.Location = new System.Drawing.Point(278, 89);
-            this.lblCivTime.Name = "lblCivTime";
-            this.lblCivTime.Size = new System.Drawing.Size(51, 13);
-            this.lblCivTime.TabIndex = 52;
-            this.lblCivTime.Text = "Civ Time:";
-            // 
-            // lblMedicTime
-            // 
-            this.lblMedicTime.AutoSize = true;
-            this.lblMedicTime.Location = new System.Drawing.Point(271, 143);
-            this.lblMedicTime.Name = "lblMedicTime";
-            this.lblMedicTime.Size = new System.Drawing.Size(58, 13);
-            this.lblMedicTime.TabIndex = 53;
-            this.lblMedicTime.Text = "R&&R Time:";
-            // 
-            // lblCopArrest
-            // 
-            this.lblCopArrest.AutoSize = true;
-            this.lblCopArrest.Location = new System.Drawing.Point(7, 170);
-            this.lblCopArrest.Name = "lblCopArrest";
-            this.lblCopArrest.Size = new System.Drawing.Size(67, 13);
-            this.lblCopArrest.TabIndex = 56;
-            this.lblCopArrest.Text = "APD Arrests:";
-            // 
-            // lblVigiBounty
-            // 
-            this.lblVigiBounty.AutoSize = true;
-            this.lblVigiBounty.Location = new System.Drawing.Point(239, 62);
-            this.lblVigiBounty.Name = "lblVigiBounty";
-            this.lblVigiBounty.Size = new System.Drawing.Size(90, 13);
-            this.lblVigiBounty.TabIndex = 54;
-            this.lblVigiBounty.Text = "Bounty Collected:";
-            // 
-            // lblMedicRevives
-            // 
-            this.lblMedicRevives.AutoSize = true;
-            this.lblMedicRevives.Location = new System.Drawing.Point(255, 170);
-            this.lblMedicRevives.Name = "lblMedicRevives";
-            this.lblMedicRevives.Size = new System.Drawing.Size(74, 13);
-            this.lblMedicRevives.TabIndex = 55;
-            this.lblMedicRevives.Text = "R&&R Revives:";
-            // 
-            // lblVirtuals
-            // 
-            this.lblVirtuals.AutoSize = true;
-            this.lblVirtuals.Location = new System.Drawing.Point(211, 198);
-            this.lblVirtuals.Name = "lblVirtuals";
-            this.lblVirtuals.Size = new System.Drawing.Size(35, 13);
-            this.lblVirtuals.TabIndex = 57;
-            this.lblVirtuals.Text = "Items:";
-            // 
-            // lvVirtualItems
-            // 
-            this.lvVirtualItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.chItem,
-            this.chAmount});
-            this.lvVirtualItems.Location = new System.Drawing.Point(211, 214);
-            this.lvVirtualItems.Name = "lvVirtualItems";
-            this.lvVirtualItems.Size = new System.Drawing.Size(155, 276);
-            this.lvVirtualItems.TabIndex = 58;
-            this.lvVirtualItems.UseCompatibleStateImageBehavior = false;
-            this.lvVirtualItems.View = System.Windows.Forms.View.Details;
-            // 
-            // chItem
-            // 
-            this.chItem.Text = "Item";
-            this.chItem.Width = 91;
-            // 
-            // chAmount
-            // 
-            this.chAmount.Text = "Amount";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(369, 198);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(50, 13);
-            this.label1.TabIndex = 59;
-            this.label1.Text = "Vehicles:";
+            this.lblGun.AutoSize = true;
+            this.lblGun.Location = new System.Drawing.Point(432, 8);
+            this.lblGun.Name = "lblGun";
+            this.lblGun.Size = new System.Drawing.Size(33, 13);
+            this.lblGun.TabIndex = 61;
+            this.lblGun.Text = "Gun: ";
             // 
             // lvVehicleInfo
             // 
@@ -602,133 +389,306 @@
             // 
             this.chInsurance.Text = "Insurance";
             // 
-            // lblGun
+            // label1
             // 
-            this.lblGun.AutoSize = true;
-            this.lblGun.Location = new System.Drawing.Point(432, 8);
-            this.lblGun.Name = "lblGun";
-            this.lblGun.Size = new System.Drawing.Size(33, 13);
-            this.lblGun.TabIndex = 61;
-            this.lblGun.Text = "Gun: ";
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(369, 198);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(50, 13);
+            this.label1.TabIndex = 59;
+            this.label1.Text = "Vehicles:";
             // 
-            // lblVest
+            // lvVirtualItems
             // 
-            this.lblVest.AutoSize = true;
-            this.lblVest.Location = new System.Drawing.Point(432, 35);
-            this.lblVest.Name = "lblVest";
-            this.lblVest.Size = new System.Drawing.Size(31, 13);
-            this.lblVest.TabIndex = 62;
-            this.lblVest.Text = "Vest:";
+            this.lvVirtualItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.chItem,
+            this.chAmount});
+            this.lvVirtualItems.Location = new System.Drawing.Point(211, 214);
+            this.lvVirtualItems.Name = "lvVirtualItems";
+            this.lvVirtualItems.Size = new System.Drawing.Size(155, 276);
+            this.lvVirtualItems.TabIndex = 58;
+            this.lvVirtualItems.UseCompatibleStateImageBehavior = false;
+            this.lvVirtualItems.View = System.Windows.Forms.View.Details;
             // 
-            // lblHelmet
+            // chItem
             // 
-            this.lblHelmet.AutoSize = true;
-            this.lblHelmet.Location = new System.Drawing.Point(432, 62);
-            this.lblHelmet.Name = "lblHelmet";
-            this.lblHelmet.Size = new System.Drawing.Size(46, 13);
-            this.lblHelmet.TabIndex = 63;
-            this.lblHelmet.Text = "Helmet: ";
+            this.chItem.Text = "Item";
+            this.chItem.Width = 91;
             // 
-            // lblUpdated
+            // chAmount
             // 
-            this.lblUpdated.AutoSize = true;
-            this.lblUpdated.Location = new System.Drawing.Point(7, 503);
-            this.lblUpdated.Name = "lblUpdated";
-            this.lblUpdated.Size = new System.Drawing.Size(51, 13);
-            this.lblUpdated.TabIndex = 64;
-            this.lblUpdated.Text = "Updated:";
+            this.chAmount.Text = "Amount";
             // 
-            // lblLocation
+            // tbAliases
             // 
-            this.lblLocation.AutoSize = true;
-            this.lblLocation.Location = new System.Drawing.Point(7, 527);
-            this.lblLocation.Name = "lblLocation";
-            this.lblLocation.Size = new System.Drawing.Size(46, 13);
-            this.lblLocation.TabIndex = 65;
-            this.lblLocation.Text = "Coords: ";
+            this.tbAliases.Location = new System.Drawing.Point(10, 214);
+            this.tbAliases.Multiline = true;
+            this.tbAliases.Name = "tbAliases";
+            this.tbAliases.ReadOnly = true;
+            this.tbAliases.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbAliases.Size = new System.Drawing.Size(195, 276);
+            this.tbAliases.TabIndex = 41;
             // 
-            // tpBrowser
+            // lblVirtuals
             // 
-            this.tpBrowser.Controls.Add(this.panelBrowserMid);
-            this.tpBrowser.Controls.Add(this.panelBrowserTop);
-            this.tpBrowser.Location = new System.Drawing.Point(4, 4);
-            this.tpBrowser.Name = "tpBrowser";
-            this.tpBrowser.Padding = new System.Windows.Forms.Padding(3);
-            this.tpBrowser.Size = new System.Drawing.Size(806, 568);
-            this.tpBrowser.TabIndex = 0;
-            this.tpBrowser.Text = "Player List";
-            this.tpBrowser.UseVisualStyleBackColor = true;
+            this.lblVirtuals.AutoSize = true;
+            this.lblVirtuals.Location = new System.Drawing.Point(211, 198);
+            this.lblVirtuals.Name = "lblVirtuals";
+            this.lblVirtuals.Size = new System.Drawing.Size(35, 13);
+            this.lblVirtuals.TabIndex = 57;
+            this.lblVirtuals.Text = "Items:";
             // 
-            // panelBrowserTop
+            // lblMedicRevives
             // 
-            this.panelBrowserTop.Controls.Add(this.tbURL);
-            this.panelBrowserTop.Controls.Add(this.btnGetPlayers);
-            this.panelBrowserTop.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelBrowserTop.Location = new System.Drawing.Point(3, 3);
-            this.panelBrowserTop.Name = "panelBrowserTop";
-            this.panelBrowserTop.Size = new System.Drawing.Size(800, 34);
-            this.panelBrowserTop.TabIndex = 3;
+            this.lblMedicRevives.AutoSize = true;
+            this.lblMedicRevives.Location = new System.Drawing.Point(255, 170);
+            this.lblMedicRevives.Name = "lblMedicRevives";
+            this.lblMedicRevives.Size = new System.Drawing.Size(74, 13);
+            this.lblMedicRevives.TabIndex = 55;
+            this.lblMedicRevives.Text = "R&&R Revives:";
             // 
-            // btnGetPlayers
+            // lblVigiBounty
             // 
-            this.btnGetPlayers.Location = new System.Drawing.Point(468, 3);
-            this.btnGetPlayers.Name = "btnGetPlayers";
-            this.btnGetPlayers.Size = new System.Drawing.Size(75, 23);
-            this.btnGetPlayers.TabIndex = 2;
-            this.btnGetPlayers.Text = "Get Players";
-            this.btnGetPlayers.UseVisualStyleBackColor = true;
-            this.btnGetPlayers.Click += new System.EventHandler(this.btnGetPlayers_Click);
+            this.lblVigiBounty.AutoSize = true;
+            this.lblVigiBounty.Location = new System.Drawing.Point(239, 62);
+            this.lblVigiBounty.Name = "lblVigiBounty";
+            this.lblVigiBounty.Size = new System.Drawing.Size(90, 13);
+            this.lblVigiBounty.TabIndex = 54;
+            this.lblVigiBounty.Text = "Bounty Collected:";
             // 
-            // tbURL
+            // lblCopArrest
             // 
-            this.tbURL.Location = new System.Drawing.Point(6, 3);
-            this.tbURL.Name = "tbURL";
-            this.tbURL.ReadOnly = true;
-            this.tbURL.Size = new System.Drawing.Size(456, 20);
-            this.tbURL.TabIndex = 3;
+            this.lblCopArrest.AutoSize = true;
+            this.lblCopArrest.Location = new System.Drawing.Point(7, 170);
+            this.lblCopArrest.Name = "lblCopArrest";
+            this.lblCopArrest.Size = new System.Drawing.Size(67, 13);
+            this.lblCopArrest.TabIndex = 56;
+            this.lblCopArrest.Text = "APD Arrests:";
             // 
-            // panelBrowserMid
+            // lblMedicTime
             // 
-            this.panelBrowserMid.Controls.Add(this.wkbMain);
-            this.panelBrowserMid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBrowserMid.Location = new System.Drawing.Point(3, 37);
-            this.panelBrowserMid.Name = "panelBrowserMid";
-            this.panelBrowserMid.Size = new System.Drawing.Size(800, 528);
-            this.panelBrowserMid.TabIndex = 2;
+            this.lblMedicTime.AutoSize = true;
+            this.lblMedicTime.Location = new System.Drawing.Point(271, 143);
+            this.lblMedicTime.Name = "lblMedicTime";
+            this.lblMedicTime.Size = new System.Drawing.Size(58, 13);
+            this.lblMedicTime.TabIndex = 53;
+            this.lblMedicTime.Text = "R&&R Time:";
             // 
-            // wkbMain
+            // lblCivTime
             // 
-            this.wkbMain.BackColor = System.Drawing.Color.White;
-            this.wkbMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.wkbMain.Location = new System.Drawing.Point(0, 0);
-            this.wkbMain.Name = "wkbMain";
-            this.wkbMain.Size = new System.Drawing.Size(800, 528);
-            this.wkbMain.TabIndex = 1;
-            this.wkbMain.Url = new System.Uri("https://steamcommunity.com/login/home/?goto=0", System.UriKind.Absolute);
-            this.wkbMain.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.wkbMain_DocumentCompleted);
-            this.wkbMain.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.wkbMain_Navigated);
+            this.lblCivTime.AutoSize = true;
+            this.lblCivTime.Location = new System.Drawing.Point(278, 89);
+            this.lblCivTime.Name = "lblCivTime";
+            this.lblCivTime.Size = new System.Drawing.Size(51, 13);
+            this.lblCivTime.TabIndex = 52;
+            this.lblCivTime.Text = "Civ Time:";
             // 
-            // tcMain
+            // lblCopTime
             // 
-            this.tcMain.Alignment = System.Windows.Forms.TabAlignment.Right;
-            this.tcMain.Controls.Add(this.tpBrowser);
-            this.tcMain.Controls.Add(this.tpPlayerInfo);
-            this.tcMain.Controls.Add(this.tpDebug);
-            this.tcMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tcMain.Location = new System.Drawing.Point(158, 0);
-            this.tcMain.Multiline = true;
-            this.tcMain.Name = "tcMain";
-            this.tcMain.SelectedIndex = 0;
-            this.tcMain.Size = new System.Drawing.Size(833, 576);
-            this.tcMain.TabIndex = 30;
+            this.lblCopTime.AutoSize = true;
+            this.lblCopTime.Location = new System.Drawing.Point(16, 143);
+            this.lblCopTime.Name = "lblCopTime";
+            this.lblCopTime.Size = new System.Drawing.Size(58, 13);
+            this.lblCopTime.TabIndex = 51;
+            this.lblCopTime.Text = "APD Time:";
+            // 
+            // lblMedicRank
+            // 
+            this.lblMedicRank.AutoSize = true;
+            this.lblMedicRank.Location = new System.Drawing.Point(268, 116);
+            this.lblMedicRank.Name = "lblMedicRank";
+            this.lblMedicRank.Size = new System.Drawing.Size(61, 13);
+            this.lblMedicRank.TabIndex = 50;
+            this.lblMedicRank.Text = "R&&R Rank:";
+            // 
+            // lblCopRank
+            // 
+            this.lblCopRank.AutoSize = true;
+            this.lblCopRank.Location = new System.Drawing.Point(13, 116);
+            this.lblCopRank.Name = "lblCopRank";
+            this.lblCopRank.Size = new System.Drawing.Size(61, 13);
+            this.lblCopRank.TabIndex = 49;
+            this.lblCopRank.Text = "APD Rank:";
+            // 
+            // lblGang
+            // 
+            this.lblGang.AutoSize = true;
+            this.lblGang.Location = new System.Drawing.Point(293, 8);
+            this.lblGang.Name = "lblGang";
+            this.lblGang.Size = new System.Drawing.Size(36, 13);
+            this.lblGang.TabIndex = 48;
+            this.lblGang.Text = "Gang:";
+            // 
+            // lblName
+            // 
+            this.lblName.AutoSize = true;
+            this.lblName.Location = new System.Drawing.Point(36, 8);
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(38, 13);
+            this.lblName.TabIndex = 43;
+            this.lblName.Text = "Name:";
+            // 
+            // lblAliases
+            // 
+            this.lblAliases.AutoSize = true;
+            this.lblAliases.Location = new System.Drawing.Point(10, 198);
+            this.lblAliases.Name = "lblAliases";
+            this.lblAliases.Size = new System.Drawing.Size(43, 13);
+            this.lblAliases.TabIndex = 47;
+            this.lblAliases.Text = "Aliases:";
+            // 
+            // lblKDR
+            // 
+            this.lblKDR.AutoSize = true;
+            this.lblKDR.Location = new System.Drawing.Point(28, 89);
+            this.lblKDR.Name = "lblKDR";
+            this.lblKDR.Size = new System.Drawing.Size(46, 13);
+            this.lblKDR.TabIndex = 42;
+            this.lblKDR.Text = "K/D/R: ";
+            // 
+            // lblBounty
+            // 
+            this.lblBounty.AutoSize = true;
+            this.lblBounty.Location = new System.Drawing.Point(31, 62);
+            this.lblBounty.Name = "lblBounty";
+            this.lblBounty.Size = new System.Drawing.Size(43, 13);
+            this.lblBounty.TabIndex = 46;
+            this.lblBounty.Text = "Bounty:";
+            // 
+            // lblBank
+            // 
+            this.lblBank.AutoSize = true;
+            this.lblBank.Location = new System.Drawing.Point(294, 35);
+            this.lblBank.Name = "lblBank";
+            this.lblBank.Size = new System.Drawing.Size(35, 13);
+            this.lblBank.TabIndex = 45;
+            this.lblBank.Text = "Bank:";
+            // 
+            // lblCash
+            // 
+            this.lblCash.AutoSize = true;
+            this.lblCash.Location = new System.Drawing.Point(40, 35);
+            this.lblCash.Name = "lblCash";
+            this.lblCash.Size = new System.Drawing.Size(34, 13);
+            this.lblCash.TabIndex = 44;
+            this.lblCash.Text = "Cash:";
+            // 
+            // tpDebug
+            // 
+            this.tpDebug.Controls.Add(this.rtbDebugEquipment);
+            this.tpDebug.Controls.Add(this.rtbDebugVehicle);
+            this.tpDebug.Location = new System.Drawing.Point(4, 4);
+            this.tpDebug.Name = "tpDebug";
+            this.tpDebug.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDebug.Size = new System.Drawing.Size(806, 568);
+            this.tpDebug.TabIndex = 2;
+            this.tpDebug.Text = "Debug Info";
+            this.tpDebug.UseVisualStyleBackColor = true;
+            // 
+            // rtbDebugEquipment
+            // 
+            this.rtbDebugEquipment.Location = new System.Drawing.Point(348, 6);
+            this.rtbDebugEquipment.Name = "rtbDebugEquipment";
+            this.rtbDebugEquipment.Size = new System.Drawing.Size(339, 556);
+            this.rtbDebugEquipment.TabIndex = 1;
+            this.rtbDebugEquipment.Text = "";
+            // 
+            // rtbDebugVehicle
+            // 
+            this.rtbDebugVehicle.Location = new System.Drawing.Point(3, 6);
+            this.rtbDebugVehicle.Name = "rtbDebugVehicle";
+            this.rtbDebugVehicle.Size = new System.Drawing.Size(339, 556);
+            this.rtbDebugVehicle.TabIndex = 0;
+            this.rtbDebugVehicle.Text = "";
+            // 
+            // ssMain
+            // 
+            this.ssMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripDropDownButton1,
+            this.tspbMain,
+            this.tsslStatus});
+            this.ssMain.Location = new System.Drawing.Point(0, 576);
+            this.ssMain.Name = "ssMain";
+            this.ssMain.Size = new System.Drawing.Size(991, 22);
+            this.ssMain.TabIndex = 2;
+            // 
+            // toolStripDropDownButton1
+            // 
+            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.server1ToolStripMenuItem,
+            this.server2ToolStripMenuItem,
+            this.server3ToolStripMenuItem});
+            this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
+            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(52, 20);
+            this.toolStripDropDownButton1.Text = "Server";
+            this.toolStripDropDownButton1.ToolTipText = "Select Server";
+            // 
+            // server1ToolStripMenuItem
+            // 
+            this.server1ToolStripMenuItem.Name = "server1ToolStripMenuItem";
+            this.server1ToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.server1ToolStripMenuItem.Text = "Server 1";
+            this.server1ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_Click);
+            // 
+            // server2ToolStripMenuItem
+            // 
+            this.server2ToolStripMenuItem.Name = "server2ToolStripMenuItem";
+            this.server2ToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.server2ToolStripMenuItem.Text = "Server 2";
+            this.server2ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_Click);
+            // 
+            // server3ToolStripMenuItem
+            // 
+            this.server3ToolStripMenuItem.Name = "server3ToolStripMenuItem";
+            this.server3ToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.server3ToolStripMenuItem.Text = "Server 3";
+            this.server3ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItem_Click);
+            // 
+            // tspbMain
+            // 
+            this.tspbMain.Maximum = 180;
+            this.tspbMain.Name = "tspbMain";
+            this.tspbMain.Size = new System.Drawing.Size(100, 16);
+            this.tspbMain.Step = 1;
+            this.tspbMain.Click += new System.EventHandler(this.tspbMain_Click);
+            // 
+            // tsslStatus
+            // 
+            this.tsslStatus.Name = "tsslStatus";
+            this.tsslStatus.Size = new System.Drawing.Size(39, 17);
+            this.tsslStatus.Text = "Status";
+            // 
+            // timerPLRefresh
+            // 
+            this.timerPLRefresh.Interval = 1000;
+            this.timerPLRefresh.Tick += new System.EventHandler(this.timerPLRefresh_Tick);
+            // 
+            // bwPlayerListRefresh
+            // 
+            this.bwPlayerListRefresh.WorkerReportsProgress = true;
+            this.bwPlayerListRefresh.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwPlayerListRefresh_DoWork);
+            this.bwPlayerListRefresh.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwPlayerListRefresh_RunWorkerCompleted);
+            // 
+            // btnMap
+            // 
+            this.btnMap.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMap.Location = new System.Drawing.Point(917, 576);
+            this.btnMap.Name = "btnMap";
+            this.btnMap.Size = new System.Drawing.Size(51, 21);
+            this.btnMap.TabIndex = 31;
+            this.btnMap.Text = "Map";
+            this.btnMap.UseVisualStyleBackColor = true;
+            this.btnMap.Click += new System.EventHandler(this.btnMap_Click);
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(991, 598);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.cbSlack);
+            this.Controls.Add(this.btnMap);
             this.Controls.Add(this.pMain);
             this.Controls.Add(this.ssMain);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -736,8 +696,7 @@
             this.Name = "frmMain";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Olympus Tracker";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Load += new System.EventHandler(this.frmMain_Load);
             this.panelLeft.ResumeLayout(false);
             this.tcPlayerLists.ResumeLayout(false);
             this.tpPlayersAll.ResumeLayout(false);
@@ -747,16 +706,12 @@
             this.pSearch.ResumeLayout(false);
             this.pSearch.PerformLayout();
             this.pMain.ResumeLayout(false);
-            this.ssMain.ResumeLayout(false);
-            this.ssMain.PerformLayout();
-            this.tpDebug.ResumeLayout(false);
+            this.tcMain.ResumeLayout(false);
             this.tpPlayerInfo.ResumeLayout(false);
             this.tpPlayerInfo.PerformLayout();
-            this.tpBrowser.ResumeLayout(false);
-            this.panelBrowserTop.ResumeLayout(false);
-            this.panelBrowserTop.PerformLayout();
-            this.panelBrowserMid.ResumeLayout(false);
-            this.tcMain.ResumeLayout(false);
+            this.tpDebug.ResumeLayout(false);
+            this.ssMain.ResumeLayout(false);
+            this.ssMain.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -778,20 +733,13 @@
         private System.Windows.Forms.ListBox lbPlayersTargets;
         private System.Windows.Forms.ToolStripStatusLabel tsslStatus;
         private System.Windows.Forms.ToolStripProgressBar tspbMain;
-        private System.Windows.Forms.CheckBox cbSlack;
         private System.Windows.Forms.TabPage tpWatchlist;
         private System.Windows.Forms.ListBox lbWatchlist;
         private System.Windows.Forms.ContextMenuStrip cmsWatchlist;
         private System.Windows.Forms.ToolStripMenuItem addToWatchlistToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem removeFromWatchlistToolStripMenuItem;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnMap;
         private System.Windows.Forms.TabControl tcMain;
-        private System.Windows.Forms.TabPage tpBrowser;
-        private System.Windows.Forms.Panel panelBrowserMid;
-        private WebKit.WebKitBrowser wkbMain;
-        private System.Windows.Forms.Panel panelBrowserTop;
-        private System.Windows.Forms.TextBox tbURL;
-        private System.Windows.Forms.Button btnGetPlayers;
         private System.Windows.Forms.TabPage tpPlayerInfo;
         private System.Windows.Forms.Label lblLocation;
         private System.Windows.Forms.Label lblUpdated;
@@ -829,6 +777,10 @@
         private System.Windows.Forms.TabPage tpDebug;
         private System.Windows.Forms.RichTextBox rtbDebugEquipment;
         private System.Windows.Forms.RichTextBox rtbDebugVehicle;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripMenuItem server3ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem server2ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem server1ToolStripMenuItem;
     }
 }
 

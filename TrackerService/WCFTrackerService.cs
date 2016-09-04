@@ -42,20 +42,26 @@ namespace TrackerService
             var content = response.Content; // raw content as string
             return content;
         }
-        public string getPlayers(string serverID, int port)
+        public List<string> GetPlayers(string serverID)
         {
-            var client = new RestClient("http://olympusapi.xyz/apiv2/");
+            List<string> playerNames = new List<string>();
+            var client = new RestClient("http://olympusapi.xyz/apiv2");
             var request = new RestRequest("query/{serverNum}", Method.GET);
-
-            request.AddParameter("serverNum", serverID); // replaces matching token in request.Resource
+            request.AddUrlSegment("serverNum", serverID); // replaces matching token in request.Resource
             Program.ConsoleLog(string.Format("Fetching players on server {0}", serverID));
             IRestResponse response = client.Execute(request);
             var content = response.Content; // raw content as string
             content = content.Replace(@"\""", "s");
             content = content.Replace(@"\", "");
-            JObject o = JObject.Parse(content);
-            JArray a = (JArray)o["Players"];
-            return content;
+            JObject jsonObject = JObject.Parse(content);
+            JArray jsonArray = jsonObject["players"] as JArray;
+            dynamic playerArray = jsonArray;
+            foreach (dynamic player in playerArray)
+            {
+                string name = player["Name"];
+                playerNames.Add(name);
+            }
+            return playerNames;
         }
         public long getSteamID(string name)
         {
@@ -63,14 +69,14 @@ namespace TrackerService
             IRestResponse response = null;
             try
             {
-
-                var client = new RestClient("http://162.243.235.105/");
-                var request = new RestRequest("getAlias.php", Method.POST);
-                request.AddParameter("Name", name); // replaces matching token in request.Resource
+                var client = new RestClient("http://olympusapi.xyz/apiv2");
+                var request = new RestRequest("aliases/{name}", Method.GET);
+                request.AddUrlSegment("name", name); // replaces matching token in request.Resource
                 Program.ConsoleLog(String.Format("Fetching alias for {0}", name));
                 response = client.Execute(request);
                 string content = response.Content;
-                if (long.TryParse(content, out steamID))
+                string ID = content.Substring(content.IndexOf("Player ID:") + 11, 17);
+                if (long.TryParse(ID, out steamID))
                     content = null;
                 else
                     steamID = -1;
@@ -83,7 +89,7 @@ namespace TrackerService
             return steamID;
 
         }
-        public List<Player> sendPlayers()
+        public List<Player> GetPlayerList()
         {
             //Player[] players = new Player[playerCount];
             Player player;
@@ -99,25 +105,26 @@ namespace TrackerService
             return playerList;
         }
         //Updates the players in the database
-        public void updateDB(List<string> steamIDs)
+        public void PullPlayers(string serverID)
         {
+            List<string> onlinePlayerNames = GetPlayers(serverID);
             //Gets the number of players for a loop later down the line
-            playerCount = steamIDs.Count;
-            //Some Linq query i dont really understand but here we go
-            //Starts a new thread foreach ID in the list,
-            steamIDs.Select(id =>
-            {
-                Thread tr = new Thread(() => storeInfo(id));
-                tr.Start();
-                return tr;
+            playerCount = onlinePlayerNames.Count;
+            onlinePlayerNames.Select(name =>
+           {
+               long steamID = getSteamID(name);
+               Program.ConsoleLog(string.Format("{0}:{1}", steamID, name));
+               Thread tr = new Thread(() => SavePlayer(steamID));
+               tr.Start();
+               return tr;
 
-            }).ToList().ForEach(t => t.Join());
+           }).ToList().ForEach(t => t.Join());
             //Log it to the console.
             Program.ConsoleLog(string.Format("{0} player added. {1} player updated", insertCount, updateCount));
             //return playerCount;
         }
 
-        private void storeInfo(string id)
+        private void SavePlayer(long id)
         {
             string aliases = "";
             int result = 0;
