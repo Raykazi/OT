@@ -136,10 +136,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Altis-UltraHigh.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Altis-UltraHigh2.png" />
+    <None Include="Altis3.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

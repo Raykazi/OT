@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.lblCoords = new System.Windows.Forms.Label();
-            this.pbMap = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            ((System.ComponentModel.ISupportInitialize)(this.pbMap)).BeginInit();
+            this.pbMap = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbMap)).BeginInit();
             this.SuspendLayout();
             // 
             // lblCoords
@@ -42,18 +42,6 @@
             this.lblCoords.Name = "lblCoords";
             this.lblCoords.Size = new System.Drawing.Size(0, 13);
             this.lblCoords.TabIndex = 0;
-            // 
-            // pbMap
-            // 
-            this.pbMap.Image = global::TrackerClient.Properties.Resources.Altis_UltraHigh2;
-            this.pbMap.Location = new System.Drawing.Point(0, 0);
-            this.pbMap.Name = "pbMap";
-            this.pbMap.Size = new System.Drawing.Size(5775, 4397);
-            this.pbMap.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pbMap.TabIndex = 1;
-            this.pbMap.TabStop = false;
-            this.pbMap.Paint += new System.Windows.Forms.PaintEventHandler(this.pbMap_Paint);
-            this.pbMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pbMap_MouseMove);
             // 
             // panel1
             // 
@@ -65,6 +53,19 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1165, 681);
             this.panel1.TabIndex = 2;
+            // 
+            // pbMap
+            // 
+            this.pbMap.Image = global::TrackerClient.Properties.Resources.Altis3;
+            this.pbMap.InitialImage = global::TrackerClient.Properties.Resources.Altis3;
+            this.pbMap.Location = new System.Drawing.Point(0, 0);
+            this.pbMap.Name = "pbMap";
+            this.pbMap.Size = new System.Drawing.Size(3370, 3370);
+            this.pbMap.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pbMap.TabIndex = 1;
+            this.pbMap.TabStop = false;
+            this.pbMap.Paint += new System.Windows.Forms.PaintEventHandler(this.pbMap_Paint);
+            this.pbMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pbMap_MouseMove);
             // 
             // Map
             // 
@@ -82,11 +83,9 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Map";
             this.Load += new System.EventHandler(this.Map_Load);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.Map_Paint);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Map_MouseMove);
-            ((System.ComponentModel.ISupportInitialize)(this.pbMap)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbMap)).EndInit();
             this.ResumeLayout(false);
 
         }
