@@ -11,7 +11,7 @@ namespace TrackerClient
     {
         internal List<Player> players;
         private List<Location> Locations = new List<Location>();
-        private Font font = new Font(FontFamily.GenericSansSerif, 7F, FontStyle.Regular);
+        private Font font = new Font("Tahoma", 7F, FontStyle.Regular);
         internal bool canReset = false;
         public Map()
         {
@@ -139,7 +139,7 @@ namespace TrackerClient
             {
                 float[] newCords = performCordScale(l.X, l.Y);
                 e.Graphics.FillEllipse(new SolidBrush(l.color), new RectangleF(new PointF(newCords[0], newCords[1]), new Size(12, 12)));
-                e.Graphics.DrawString(l.Name, new Font(FontFamily.GenericSansSerif, 9F, FontStyle.Bold), new SolidBrush(l.color), new PointF(newCords[0] + 12, newCords[1]));
+                e.Graphics.DrawString(l.Name, new Font("Tahoma", 9F, FontStyle.Bold), new SolidBrush(l.color), new PointF(newCords[0] + 12, newCords[1]));
             }
         }
 
@@ -164,6 +164,7 @@ namespace TrackerClient
             }
             catch (Exception ex)
             {
+                MessageBox.Show(ex.Message);
             }
             finally
             {
