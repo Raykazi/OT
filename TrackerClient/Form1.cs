@@ -25,11 +25,10 @@ namespace TrackerClient
         string serverID = "arma_1";
         Map playerMap;
         SlackClient sc = new SlackClient("https://hooks.slack.com/services/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");
-        string steamName = null;
-        public HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
         object locker = new object();
-        bool bgwDone = false;
+
         Stopwatch sw = new Stopwatch();
+        public int refreshTime = 180000;
 
         string[] watchListLegeals = {
                "salt","saltr",
@@ -67,10 +66,6 @@ namespace TrackerClient
             timerPLRefresh.Start();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-        }
-
         private void closeConnection()
         {
             if (channelFactory.State < CommunicationState.Closing)
@@ -85,75 +80,6 @@ namespace TrackerClient
             server = channelFactory.CreateChannel();
         }
 
-        private void btnGetPlayers_Click(object sender, EventArgs e)
-        {
-            //Reset();
-            //btnGetPlayers.Enabled = false;
-            //string currentURL = wkbMain.Url.ToString();
-            //string targetPage;
-            //tsslStatus.Text = "Getting players.";
-            //if (currentURL.Contains("/home"))
-            //{
-            //    string[] segments = currentURL.Split('/');
-            //    steamName = segments[4];
-            //    targetPage = string.Format("https://steamcommunity.com/id/{0}/friends/players/", steamName);
-            //    wkbMain.Url = new Uri(targetPage);
-            //}
-            //else if (currentURL.Contains("/friends/players"))
-            //{
-            //    wkbMain.Reload();
-            //}
-            //else
-            //{
-            //    if (steamName == null)
-            //    {
-            //        targetPage = string.Format("https://steamcommunity.com/id/{0}/friends/players/", steamName);
-            //        wkbMain.Url = new Uri(targetPage);
-            //    }
-
-            //}
-        }
-
-        private void wkbMain_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-        {
-            //List<string> steamID = new List<string>();
-            //if (wkbMain.Url.ToString().Contains("/friends/players/"))
-            //{
-            //    steamID.Clear();
-            //    bgwDone = false;
-            //    openConnection();
-            //    steamID.Add(server.getMySteamID(steamName));
-            //    closeConnection();
-            //    string src = wkbMain.DocumentText.ToString();
-            //    doc.LoadHtml(src);
-            //    if (src.Contains("You are not currently in a Steamworks game with other Steam players."))
-            //    {
-            //        btnGetPlayers.Enabled = true;
-            //        tsslStatus.Text = "Not connected to an Olympus Server.";
-            //        Reset();
-            //        return;
-            //    }
-            //    HtmlNode node = doc.GetElementbyId("friendListForm");
-            //    if (node != null)
-            //    {
-            //        IEnumerable<HtmlNode> allInputs = node.Descendants("input");
-            //        foreach (HtmlNode input in allInputs)
-            //        {
-            //            if (input.Attributes.Contains("data-steamid"))
-            //            {
-            //                steamID.Add(input.Attributes["data-steamid"].Value);
-            //            }
-            //        }
-            //    }
-            //    bwPlayerListRefresh.RunWorkerAsync(steamID);
-
-            //}
-            //else if (!wkbMain.Url.ToString().Contains("/friends/players"))
-            //{
-            //    //tsslStatus.Text = "Not connected to a server.";
-            //}
-        }
-
         private void timerPLRefresh_Tick(object sender, EventArgs e)
         {
             switch (sw.ElapsedMilliseconds)
@@ -161,22 +87,19 @@ namespace TrackerClient
                 default:
                     if (sw.IsRunning)
                     {
-                        tspbMain.PerformStep();
-                        tsslStatus.Text = string.Format("Refreshing player list in {0} seconds.", (tspbMain.Maximum - (sw.ElapsedMilliseconds / 1000)));
+                        tsslStatus.Text = string.Format("Refreshing player list in {0} seconds.", (refreshTime - sw.ElapsedMilliseconds) / 1000);
+                        if (sw.ElapsedMilliseconds >= refreshTime)
+                            Reset();
+
                     }
                     break;
-            }
-            if (tspbMain.ProgressBar.Value == tspbMain.Maximum)
-            {
-                Reset();
             }
         }
 
         private void Reset()
         {
+            tsslStatus.Text = string.Format("Refreshing player list now.");
             bwPlayerListRefresh.RunWorkerAsync();
-            bgwDone = false;
-            tspbMain.Value = 0;
             sw.Stop();
             sw.Reset();
         }
@@ -191,7 +114,7 @@ namespace TrackerClient
                 string wVehicle = "";
                 p.TargetLevel = -1;
                 if (p.civAir != null)
-                    foreach (Vehicles vehicle in p.civAir)
+                    foreach (Vehicle vehicle in p.civAir)
                     {
                         foreach (string watchItem in watchListVehicles)
                         {
@@ -205,7 +128,7 @@ namespace TrackerClient
                         }
                     }
                 if (p.civCar != null)
-                    foreach (Vehicles vehicle in p.civCar)
+                    foreach (Vehicle vehicle in p.civCar)
                     {
                         foreach (string watchItem in watchListVehicles)
                         {
@@ -219,7 +142,7 @@ namespace TrackerClient
                         }
                     }
                 if (p.civShip != null)
-                    foreach (Vehicles vehicle in p.civShip)
+                    foreach (Vehicle vehicle in p.civShip)
                     {
                         foreach (string watchItem in watchListVehicles)
                         {
@@ -346,7 +269,7 @@ namespace TrackerClient
         }
         private void DisplayPlayer(Player p)
         {
-            List<Vehicles> sortedList = new List<Vehicles>();
+            List<Vehicle> sortedList = new List<Vehicle>();
             tbAliases.Clear();
             lvVehicleInfo.Items.Clear();
             lvVirtualItems.Items.Clear();
@@ -358,14 +281,12 @@ namespace TrackerClient
             lblKDR.Text = string.Format("K/D/R: {0:0,0}/{1:0,0}/{2:0.##}", p.kills, p.deaths, Convert.ToDecimal(Convert.ToDecimal(p.kills) / Convert.ToDecimal(p.deaths)));
             lblCopRank.Text = string.Format("APD Rank: {0}", p.copLevel);
             lblCopTime.Text = string.Format("APD Time: {0:0,0}", (p.timeApd.ToString() == "-1") ? "N/A" : p.timeApd.ToString());
-            lblCopArrest.Text = string.Format("APD Arrests: {0:0,0}", (p.copArrest.ToString() == "-1") ? "N/A" : p.copArrest.ToString());
             lblGang.Text = string.Format("Gang: {0}", p.gangName == "-1" ? "N/A" : p.gangName);
             lblBank.Text = string.Format("Bank: {0:C}", p.bank);
             lblVigiBounty.Text = string.Format("Bounty Collected: {0:C}", p.bountyCollected == -1 ? 0 : p.bountyCollected);
             lblCivTime.Text = string.Format("Civ Time: {0:0,0}", p.timeCiv);
             lblMedicRank.Text = string.Format("R&R Rank: {0}", p.medicLevel);
             lblMedicTime.Text = string.Format("R&R Time: {0:0,0}", p.timeMed.ToString() == "-1" ? "N/A" : p.timeMed.ToString());
-            lblMedicRevives.Text = string.Format("R&R Revives: {0:0,0}", p.medicRevives.ToString() == "-1" ? "N/A" : p.medicRevives.ToString());
             lblVest.Text = string.Format("Vest: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[1]);
             lblHelmet.Text = string.Format("Helmet: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[4]);
             lblGun.Text = string.Format("Gun: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[5]);
@@ -394,22 +315,22 @@ namespace TrackerClient
                     lvVirtualItems.Items.Add(lviV);
                 }
             if (p.civAir != null)
-                foreach (Vehicles v in p.civAir)
+                foreach (Vehicle v in p.civAir)
                 {
                     sortedList.Add(v);
                 }
             if (p.civCar != null)
-                foreach (Vehicles v in p.civCar)
+                foreach (Vehicle v in p.civCar)
                 {
                     sortedList.Add(v);
                 }
             if (p.civShip != null)
-                foreach (Vehicles v in p.civShip)
+                foreach (Vehicle v in p.civShip)
                 {
                     sortedList.Add(v);
                 }
             sortedList = sortedList.OrderByDescending(v => v.active).ToList();
-            foreach (Vehicles v in sortedList)
+            foreach (Vehicle v in sortedList)
             {
                 ListViewItem lviV = new ListViewItem(v.name);
                 lviV.SubItems.Add(v.active.ToString());
@@ -446,8 +367,8 @@ namespace TrackerClient
         {
             openConnection();
             server.PullPlayers(serverID);
-            //onlinePlayers = server.GetPlayerList();
-            //onlinePlayers = onlinePlayers.OrderBy(p => p.name).ToList();
+            onlinePlayers = server.GetPlayerList();
+            onlinePlayers = onlinePlayers.OrderBy(p => p.name).ToList();
             closeConnection();
             if (playerMap != null)
             {
@@ -461,7 +382,6 @@ namespace TrackerClient
         {
             if (!sw.IsRunning)
                 sw.Start();
-            bgwDone = true;
             lbPlayersAll.DisplayMember = "name";
             lbPlayersAll.DataSource = onlinePlayers;
             BuildTargetList();
@@ -476,7 +396,12 @@ namespace TrackerClient
                 removeFromWatchlistToolStripMenuItem.Enabled = true;
         }
 
-        private void btnMap_Click(object sender, EventArgs e)
+        private void frmMain_Load(object sender, EventArgs e)
+        {
+            Reset();
+        }
+
+        private void mapToolStripMenuItem_Click(object sender, EventArgs e)
         {
             playerMap = new Map();
             playerMap.players = onlinePlayers;
@@ -484,29 +409,25 @@ namespace TrackerClient
 
         }
 
-        private void frmMain_Load(object sender, EventArgs e)
+        private void serverToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Reset();
-        }
-
-        private void ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Button b = (Button)sender;
+            ToolStripMenuItem b = (ToolStripMenuItem)sender;
             switch (b.Text)
             {
-                case "Server 1":
+                case "Server #1":
                     serverID = "arma_1";
                     break;
-                case "Server 2":
+                case "Server #2":
                     serverID = "arma_2_blame_poseidon";
                     break;
-                case "Server 3":
+                case "Server #3":
                     serverID = "arma_3";
                     break;
             }
+
         }
 
-        private void tspbMain_Click(object sender, EventArgs e)
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Reset();
         }
