@@ -14,7 +14,7 @@ namespace TrackerInterface
         //TODO Clean up un-needed service calls
         #region No longer needed
         [OperationContract]
-        string getPlayerIfno(long playerID);
+        string getPlayerInfo(long playerID);
         [OperationContract]
         List<string> GetPlayers(string serverID);
         [OperationContract]
