@@ -18,11 +18,34 @@ namespace TrackerInterface
         //Amount of item on the player
         [DataMember]
         public int amount { get; set; }
+    }
+    [DataContract]
+    public class House
+    {
+        [DataMember]
+        public int ID { get; set; }
+        [DataMember]
+        public string Location { get; set; }
+        [DataMember]
+        public VirtualItem[] Virtual { get; set; }
+        [DataMember]
+        public Crate[] Crates { get; set; }
+        [DataMember]
+        public DateTime LastAccessed { get; set; }
+    }
+    public class Crate
+    {
+        [DataMember]
+        public int ID { get; set; }
+        [DataMember]
+        public List<string> Items { get; set; }
+        [DataMember]
+        public DateTime LastAccessed { get; set; }
 
     }
     //Class for vehicles owned by the player.
     [DataContract]
-    public class Vehicles
+    public class Vehicle
     {
         //Olympus vehicle ID
         [DataMember]
@@ -48,7 +71,7 @@ namespace TrackerInterface
         [DataMember]
         //1-4 Space of the vehicle
         public int storageLevel { get; private set; }
-        public Vehicles(int ID, string name, int alive, int active, int insuranceLevel, int turboLevel, int secLevel, int storageLevel)
+        public Vehicle(int ID, string name, int alive, int active, int insuranceLevel, int turboLevel, int secLevel, int storageLevel)
         {
             this.ID = ID;
             this.name = name;
@@ -135,17 +158,19 @@ namespace TrackerInterface
         public DateTime lastUpdated { get; private set; }
         [DataMember]
         //Custom vehicle class array  with the players vehicle info
-        public Vehicles[] civAir { get; private set; }
+        public Vehicle[] civAir { get; private set; }
         [DataMember]
         //Custom vehicle class array  with the players vehicle info
-        public Vehicles[] civCar { get; private set; }
+        public Vehicle[] civCar { get; private set; }
         [DataMember]
         //Custom vehicle class array  with the players vehicle info
-        public Vehicles[] civShip { get; private set; }
+        public Vehicle[] civShip { get; private set; }
+        [DataMember]
+        public House[] houses { get; set; } //Thank you FeDot
         [DataMember]
         //String list with their physical equipment
         public List<string> Equipment { get; private set; }
-        [DataMember]       
+        [DataMember]
         public VirtualItem[] Virtuals { get; private set; } //Custom item class for the palyers virtual items
         [DataMember]
         public int TargetLevel = -1; //Because these ***holes wanted colors
@@ -237,7 +262,7 @@ namespace TrackerInterface
                 vCivAir = vCivAir.Insert(0, "{\"vehicle_civ_air\": ");
                 vCivAir += "}";
                 vehiclesAir = JArray.Parse(JObject.Parse(vCivAir)["vehicle_civ_air"].ToString());
-                civAir = new Vehicles[vehiclesAir.Count];
+                civAir = new Vehicle[vehiclesAir.Count];
                 int vaCounter = 0;
                 foreach (JObject vehicle in vehiclesAir)
                 {
@@ -249,7 +274,7 @@ namespace TrackerInterface
                     int turbo = (int)vehicle["modifications"]["turbo"];
                     int security = (int)vehicle["modifications"]["security"];
                     int storage = (int)vehicle["modifications"]["storage"];
-                    civAir[vaCounter] = new Vehicles(ID, vName, alive, active, insured, turbo, security, storage);
+                    civAir[vaCounter] = new Vehicle(ID, vName, alive, active, insured, turbo, security, storage);
                     vaCounter++;
                 }
             }
@@ -258,7 +283,7 @@ namespace TrackerInterface
                 vCivCar = vCivCar.Insert(0, "{\"vehicle_civ_car\": ");
                 vCivCar += "}";
                 vehiclesCar = JArray.Parse(JObject.Parse(vCivCar)["vehicle_civ_car"].ToString());
-                civCar = new Vehicles[vehiclesCar.Count];
+                civCar = new Vehicle[vehiclesCar.Count];
                 int vcCounter = 0;
                 foreach (JObject vehicle in vehiclesCar)
                 {
@@ -270,7 +295,7 @@ namespace TrackerInterface
                     int turbo = (int)vehicle["modifications"]["turbo"];
                     int security = (int)vehicle["modifications"]["security"];
                     int storage = (int)vehicle["modifications"]["storage"];
-                    civCar[vcCounter] = new Vehicles(ID, vName, alive, active, insured, turbo, security, storage);
+                    civCar[vcCounter] = new Vehicle(ID, vName, alive, active, insured, turbo, security, storage);
                     vcCounter++;
                 }
             }
@@ -279,7 +304,7 @@ namespace TrackerInterface
                 vCivShip = vCivShip.Insert(0, "{\"vehicle_civ_ship\": ");
                 vCivShip += "}";
                 vehiclesShip = JArray.Parse(JObject.Parse(vCivShip)["vehicle_civ_ship"].ToString());
-                civShip = new Vehicles[vehiclesShip.Count];
+                civShip = new Vehicle[vehiclesShip.Count];
                 int vsCounter = 0;
                 foreach (JObject vehicle in vehiclesShip)
                 {
@@ -291,11 +316,59 @@ namespace TrackerInterface
                     int turbo = (int)vehicle["modifications"]["turbo"];
                     int security = (int)vehicle["modifications"]["security"];
                     int storage = (int)vehicle["modifications"]["storage"];
-                    civShip[vsCounter] = new Vehicles(ID, vName, alive, active, insured, turbo, security, storage);
+                    civShip[vsCounter] = new Vehicle(ID, vName, alive, active, insured, turbo, security, storage);
                     vsCounter++;
                 }
             }
 
+        }
+        public void AddHouses(List<string>[] hr, int houseCount)
+        {
+            if (houseCount > 0)
+            {
+                houses = new House[houseCount];
+                for (int j = 0; j < houseCount; j++)
+                {
+                    houses[j] = new House { ID = Convert.ToInt32(hr[0][j]), LastAccessed = Helper.FromUnixTime(Convert.ToInt64(hr[3][j])), Location = hr[2][j] };
+                    string v = Helper.ToJson(hr[4][j]);
+                    string crate = Helper.ToJson(hr[5][j]);
+                    string ss1 = "\"\\\"";
+                    string ss2 = "\\\"\"";
+                    IEnumerable<int> remove1 = crate.AllIndexesOf(ss1);
+                    IEnumerable<int> remove2 = crate.AllIndexesOf(ss2);
+                    for (int i = 0; i < remove1.Count(); i++)
+                        crate = crate.Remove(crate.IndexOf(ss1), 3);
+                    for (int i = 0; i < remove1.Count(); i++)
+                        crate = crate.Remove(crate.IndexOf(ss2), 3);
+
+                    JArray virtuals = JArray.Parse(v);
+                    JArray crates = JArray.Parse(crate);
+                    int crateCount;
+                    crateCount = crates.Count == 0 ? 0 : crates[0].Count();
+                    int virtualCount = virtuals[0].Count();
+                    if (virtualCount > 0)
+                    {
+                        houses[j].Virtual = new VirtualItem[virtualCount];
+                        int vCounter = 0;
+                        foreach (JArray item in virtuals[0])
+                        {
+                            houses[j].Virtual[vCounter] = new VirtualItem { name = (string)item[0], amount = (int)item[1] };
+                            vCounter++;
+                        }
+                    }
+                    if (crateCount > 0)
+                    {
+                        houses[j].Crates = new Crate[crateCount];
+                        int cCounter = 0;
+                        foreach (JObject c in crates)
+                        {
+                            houses[j].Crates[cCounter] = new Crate();
+                            houses[j].Crates[cCounter].ID = (int)c["id"];
+                            houses[j].Crates[cCounter].LastAccessed = DateTime.Parse((string)c["last_active"]);
+                        }
+                    }
+                }
+            }
         }
     }
 }
