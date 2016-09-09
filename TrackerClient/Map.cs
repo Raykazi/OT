@@ -62,6 +62,7 @@ namespace TrackerClient
             Locations.Add(new Location { X = 25696.2F, Y = 23554.6F, Name = "Salt Processing", color = Color.LightGreen });
             Locations.Add(new Location { X = 9357.22F, Y = 21150.7F, Name = "Platinum Processing", color = Color.LightGreen });
             Locations.Add(new Location { X = 19028F, Y = 14565.9F, Name = "Rock Mixing", color = Color.LightGreen });
+
             Locations.Add(new Location { X = 21257.4F, Y = 11032.1F, Name = "Heroin Processing", color = Color.Red });
             Locations.Add(new Location { X = 8440.54F, Y = 12757.9F, Name = "Cocaine Processing", color = Color.Red });
             Locations.Add(new Location { X = 24600F, Y = 23776.6F, Name = "Magic Mushroom Processing", color = Color.Red });
@@ -119,25 +120,13 @@ namespace TrackerClient
         {
             float coordX = float.Parse(location[0]);
             float coordY = float.Parse(location[1]);
-            return performCordScale(coordX, coordY);
-        }
-        public float[] performCordScale(float x, float y)
-        {
-            float mapHeight = pbMap.Height;
-            float mapWidth = pbMap.Width;
-            float altisDim = 30720;
-            float[] coords = new float[2];
-            float coordX = x;
-            float coordY = y;
-            coords[0] = ((mapWidth * coordX) / altisDim);
-            coords[1] = (mapHeight - ((mapHeight * coordY) / altisDim));
-            return coords;
+            return Helper.performCordScale(coordX, coordY, pbMap);
         }
         private void PaintLocations(PaintEventArgs e)
         {
             foreach (Location l in Locations)
             {
-                float[] newCords = performCordScale(l.X, l.Y);
+                float[] newCords = Helper.performCordScale(l.X, l.Y, pbMap);
                 e.Graphics.FillEllipse(new SolidBrush(l.color), new RectangleF(new PointF(newCords[0], newCords[1]), new Size(12, 12)));
                 e.Graphics.DrawString(l.Name, new Font("Tahoma", 9F, FontStyle.Bold), new SolidBrush(l.color), new PointF(newCords[0] + 12, newCords[1]));
             }
@@ -176,12 +165,5 @@ namespace TrackerClient
             Text = string.Format("Map X:{0} Y:{1}", e.X, e.Y);
 
         }
-    }
-    class Location
-    {
-        public float X { get; set; }
-        public float Y { get; set; }
-        public string Name { get; set; }
-        public Color color { get; set; }
     }
 }

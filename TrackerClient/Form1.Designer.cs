@@ -44,24 +44,8 @@
             this.pMain = new System.Windows.Forms.Panel();
             this.tcMain = new System.Windows.Forms.TabControl();
             this.tpPlayerInfo = new System.Windows.Forms.TabPage();
-            this.tpDebug = new System.Windows.Forms.TabPage();
-            this.rtbDebugEquipment = new System.Windows.Forms.RichTextBox();
-            this.rtbDebugVehicle = new System.Windows.Forms.RichTextBox();
-            this.ssMain = new System.Windows.Forms.StatusStrip();
-            this.tsslStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.timerPLRefresh = new System.Windows.Forms.Timer(this.components);
-            this.bwPlayerListRefresh = new System.ComponentModel.BackgroundWorker();
-            this.bwPlayerListFilter = new System.ComponentModel.BackgroundWorker();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.serverToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.server1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.server2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.server3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tpInfo = new System.Windows.Forms.TabPage();
             this.lvVehicleInfo = new System.Windows.Forms.ListView();
             this.chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chActive = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -93,7 +77,32 @@
             this.lblBounty = new System.Windows.Forms.Label();
             this.lblBank = new System.Windows.Forms.Label();
             this.lblCash = new System.Windows.Forms.Label();
-            this.pbHouses = new System.Windows.Forms.PictureBox();
+            this.tpHouses = new System.Windows.Forms.TabPage();
+            this.lvHInventory = new System.Windows.Forms.ListView();
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.pPictureBox = new System.Windows.Forms.Panel();
+            this.lvHVirtuals = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lbHouses = new System.Windows.Forms.ListBox();
+            this.tpDebug = new System.Windows.Forms.TabPage();
+            this.rtbDebugEquipment = new System.Windows.Forms.RichTextBox();
+            this.rtbDebugVehicle = new System.Windows.Forms.RichTextBox();
+            this.ssMain = new System.Windows.Forms.StatusStrip();
+            this.tsslStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.timerPLRefresh = new System.Windows.Forms.Timer(this.components);
+            this.bwPlayerListRefresh = new System.ComponentModel.BackgroundWorker();
+            this.bwPlayerListFilter = new System.ComponentModel.BackgroundWorker();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.serverToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.server1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.server2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.server3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panelHouses = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panelLeft.SuspendLayout();
             this.pPlayerList.SuspendLayout();
             this.tcPlayerLists.SuspendLayout();
@@ -104,13 +113,15 @@
             this.pMain.SuspendLayout();
             this.tcMain.SuspendLayout();
             this.tpPlayerInfo.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tpInfo.SuspendLayout();
+            this.tpHouses.SuspendLayout();
+            this.pPictureBox.SuspendLayout();
             this.tpDebug.SuspendLayout();
             this.ssMain.SuspendLayout();
             this.menuStrip1.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbHouses)).BeginInit();
+            this.panelHouses.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // panelLeft
@@ -197,7 +208,7 @@
             this.tpPlayersTargets.Location = new System.Drawing.Point(4, 4);
             this.tpPlayersTargets.Name = "tpPlayersTargets";
             this.tpPlayersTargets.Padding = new System.Windows.Forms.Padding(3);
-            this.tpPlayersTargets.Size = new System.Drawing.Size(150, 492);
+            this.tpPlayersTargets.Size = new System.Drawing.Size(150, 485);
             this.tpPlayersTargets.TabIndex = 1;
             this.tpPlayersTargets.Text = "Targets";
             this.tpPlayersTargets.UseVisualStyleBackColor = true;
@@ -211,7 +222,7 @@
             this.lbPlayersTargets.Location = new System.Drawing.Point(3, 3);
             this.lbPlayersTargets.Name = "lbPlayersTargets";
             this.lbPlayersTargets.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbPlayersTargets.Size = new System.Drawing.Size(144, 486);
+            this.lbPlayersTargets.Size = new System.Drawing.Size(144, 479);
             this.lbPlayersTargets.TabIndex = 36;
             this.lbPlayersTargets.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
             this.lbPlayersTargets.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
@@ -222,7 +233,7 @@
             this.tpWatchlist.Controls.Add(this.lbWatchlist);
             this.tpWatchlist.Location = new System.Drawing.Point(4, 4);
             this.tpWatchlist.Name = "tpWatchlist";
-            this.tpWatchlist.Size = new System.Drawing.Size(150, 492);
+            this.tpWatchlist.Size = new System.Drawing.Size(150, 485);
             this.tpWatchlist.TabIndex = 2;
             this.tpWatchlist.Text = "Watchlist";
             this.tpWatchlist.UseVisualStyleBackColor = true;
@@ -236,7 +247,7 @@
             this.lbWatchlist.Location = new System.Drawing.Point(0, 0);
             this.lbWatchlist.Name = "lbWatchlist";
             this.lbWatchlist.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbWatchlist.Size = new System.Drawing.Size(150, 492);
+            this.lbWatchlist.Size = new System.Drawing.Size(150, 485);
             this.lbWatchlist.TabIndex = 37;
             this.lbWatchlist.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
             this.lbWatchlist.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
@@ -276,122 +287,11 @@
             this.tpPlayerInfo.Text = "Player Info";
             this.tpPlayerInfo.UseVisualStyleBackColor = true;
             // 
-            // tpDebug
-            // 
-            this.tpDebug.Controls.Add(this.rtbDebugEquipment);
-            this.tpDebug.Controls.Add(this.rtbDebugVehicle);
-            this.tpDebug.Location = new System.Drawing.Point(4, 4);
-            this.tpDebug.Name = "tpDebug";
-            this.tpDebug.Padding = new System.Windows.Forms.Padding(3);
-            this.tpDebug.Size = new System.Drawing.Size(806, 544);
-            this.tpDebug.TabIndex = 2;
-            this.tpDebug.Text = "Debug Info";
-            this.tpDebug.UseVisualStyleBackColor = true;
-            // 
-            // rtbDebugEquipment
-            // 
-            this.rtbDebugEquipment.Location = new System.Drawing.Point(348, 6);
-            this.rtbDebugEquipment.Name = "rtbDebugEquipment";
-            this.rtbDebugEquipment.Size = new System.Drawing.Size(339, 556);
-            this.rtbDebugEquipment.TabIndex = 1;
-            this.rtbDebugEquipment.Text = "";
-            // 
-            // rtbDebugVehicle
-            // 
-            this.rtbDebugVehicle.Location = new System.Drawing.Point(3, 6);
-            this.rtbDebugVehicle.Name = "rtbDebugVehicle";
-            this.rtbDebugVehicle.Size = new System.Drawing.Size(339, 556);
-            this.rtbDebugVehicle.TabIndex = 0;
-            this.rtbDebugVehicle.Text = "";
-            // 
-            // ssMain
-            // 
-            this.ssMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsslStatus});
-            this.ssMain.Location = new System.Drawing.Point(0, 535);
-            this.ssMain.Name = "ssMain";
-            this.ssMain.Size = new System.Drawing.Size(991, 22);
-            this.ssMain.TabIndex = 2;
-            // 
-            // tsslStatus
-            // 
-            this.tsslStatus.Name = "tsslStatus";
-            this.tsslStatus.Size = new System.Drawing.Size(39, 17);
-            this.tsslStatus.Text = "Status";
-            // 
-            // timerPLRefresh
-            // 
-            this.timerPLRefresh.Interval = 1000;
-            this.timerPLRefresh.Tick += new System.EventHandler(this.timerPLRefresh_Tick);
-            // 
-            // bwPlayerListRefresh
-            // 
-            this.bwPlayerListRefresh.WorkerReportsProgress = true;
-            this.bwPlayerListRefresh.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwPlayerListRefresh_DoWork);
-            this.bwPlayerListRefresh.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwPlayerListRefresh_RunWorkerCompleted);
-            // 
-            // menuStrip1
-            // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.serverToolStripMenuItem,
-            this.mapToolStripMenuItem,
-            this.refreshToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(991, 24);
-            this.menuStrip1.TabIndex = 66;
-            this.menuStrip1.Text = "menuStrip1";
-            // 
-            // serverToolStripMenuItem
-            // 
-            this.serverToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.server1ToolStripMenuItem,
-            this.server2ToolStripMenuItem,
-            this.server3ToolStripMenuItem});
-            this.serverToolStripMenuItem.Name = "serverToolStripMenuItem";
-            this.serverToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
-            this.serverToolStripMenuItem.Text = "&Server";
-            // 
-            // server1ToolStripMenuItem
-            // 
-            this.server1ToolStripMenuItem.Name = "server1ToolStripMenuItem";
-            this.server1ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
-            this.server1ToolStripMenuItem.Text = "Server #1";
-            this.server1ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
-            // 
-            // server2ToolStripMenuItem
-            // 
-            this.server2ToolStripMenuItem.Name = "server2ToolStripMenuItem";
-            this.server2ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
-            this.server2ToolStripMenuItem.Text = "Server #2";
-            this.server2ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
-            // 
-            // server3ToolStripMenuItem
-            // 
-            this.server3ToolStripMenuItem.Name = "server3ToolStripMenuItem";
-            this.server3ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
-            this.server3ToolStripMenuItem.Text = "Server #3";
-            this.server3ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
-            // 
-            // mapToolStripMenuItem
-            // 
-            this.mapToolStripMenuItem.Name = "mapToolStripMenuItem";
-            this.mapToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
-            this.mapToolStripMenuItem.Text = "&Map";
-            this.mapToolStripMenuItem.Click += new System.EventHandler(this.mapToolStripMenuItem_Click);
-            // 
-            // refreshToolStripMenuItem
-            // 
-            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
-            this.refreshToolStripMenuItem.Text = "&Refresh";
-            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
-            // 
             // tabControl1
             // 
             this.tabControl1.Alignment = System.Windows.Forms.TabAlignment.Bottom;
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tpInfo);
+            this.tabControl1.Controls.Add(this.tpHouses);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
@@ -399,49 +299,38 @@
             this.tabControl1.Size = new System.Drawing.Size(800, 497);
             this.tabControl1.TabIndex = 66;
             // 
-            // tabPage1
+            // tpInfo
             // 
-            this.tabPage1.Controls.Add(this.lvVehicleInfo);
-            this.tabPage1.Controls.Add(this.lvVirtualItems);
-            this.tabPage1.Controls.Add(this.tbAliases);
-            this.tabPage1.Controls.Add(this.lblLocation);
-            this.tabPage1.Controls.Add(this.lblUpdated);
-            this.tabPage1.Controls.Add(this.lblHelmet);
-            this.tabPage1.Controls.Add(this.lblVest);
-            this.tabPage1.Controls.Add(this.lblGun);
-            this.tabPage1.Controls.Add(this.lblVehicles);
-            this.tabPage1.Controls.Add(this.lblVirtuals);
-            this.tabPage1.Controls.Add(this.lblVigiBounty);
-            this.tabPage1.Controls.Add(this.lblMedicTime);
-            this.tabPage1.Controls.Add(this.lblCivTime);
-            this.tabPage1.Controls.Add(this.lblCopTime);
-            this.tabPage1.Controls.Add(this.lblMedicRank);
-            this.tabPage1.Controls.Add(this.lblCopRank);
-            this.tabPage1.Controls.Add(this.lblGang);
-            this.tabPage1.Controls.Add(this.lblName);
-            this.tabPage1.Controls.Add(this.lblAliases);
-            this.tabPage1.Controls.Add(this.lblKDR);
-            this.tabPage1.Controls.Add(this.lblBounty);
-            this.tabPage1.Controls.Add(this.lblBank);
-            this.tabPage1.Controls.Add(this.lblCash);
-            this.tabPage1.Location = new System.Drawing.Point(4, 4);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(792, 471);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.pbHouses);
-            this.tabPage2.Location = new System.Drawing.Point(4, 4);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(792, 471);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.tpInfo.Controls.Add(this.lvVehicleInfo);
+            this.tpInfo.Controls.Add(this.lvVirtualItems);
+            this.tpInfo.Controls.Add(this.tbAliases);
+            this.tpInfo.Controls.Add(this.lblLocation);
+            this.tpInfo.Controls.Add(this.lblUpdated);
+            this.tpInfo.Controls.Add(this.lblHelmet);
+            this.tpInfo.Controls.Add(this.lblVest);
+            this.tpInfo.Controls.Add(this.lblGun);
+            this.tpInfo.Controls.Add(this.lblVehicles);
+            this.tpInfo.Controls.Add(this.lblVirtuals);
+            this.tpInfo.Controls.Add(this.lblVigiBounty);
+            this.tpInfo.Controls.Add(this.lblMedicTime);
+            this.tpInfo.Controls.Add(this.lblCivTime);
+            this.tpInfo.Controls.Add(this.lblCopTime);
+            this.tpInfo.Controls.Add(this.lblMedicRank);
+            this.tpInfo.Controls.Add(this.lblCopRank);
+            this.tpInfo.Controls.Add(this.lblGang);
+            this.tpInfo.Controls.Add(this.lblName);
+            this.tpInfo.Controls.Add(this.lblAliases);
+            this.tpInfo.Controls.Add(this.lblKDR);
+            this.tpInfo.Controls.Add(this.lblBounty);
+            this.tpInfo.Controls.Add(this.lblBank);
+            this.tpInfo.Controls.Add(this.lblCash);
+            this.tpInfo.Location = new System.Drawing.Point(4, 4);
+            this.tpInfo.Name = "tpInfo";
+            this.tpInfo.Padding = new System.Windows.Forms.Padding(3);
+            this.tpInfo.Size = new System.Drawing.Size(792, 471);
+            this.tpInfo.TabIndex = 0;
+            this.tpInfo.Text = "Info";
+            this.tpInfo.UseVisualStyleBackColor = true;
             // 
             // lvVehicleInfo
             // 
@@ -696,14 +585,212 @@
             this.lblCash.TabIndex = 69;
             this.lblCash.Text = "Cash:";
             // 
-            // pbHouses
+            // tpHouses
             // 
-            this.pbHouses.Dock = System.Windows.Forms.DockStyle.Right;
-            this.pbHouses.Location = new System.Drawing.Point(342, 3);
-            this.pbHouses.Name = "pbHouses";
-            this.pbHouses.Size = new System.Drawing.Size(447, 465);
-            this.pbHouses.TabIndex = 0;
-            this.pbHouses.TabStop = false;
+            this.tpHouses.Controls.Add(this.pPictureBox);
+            this.tpHouses.Controls.Add(this.panelHouses);
+            this.tpHouses.Location = new System.Drawing.Point(4, 4);
+            this.tpHouses.Name = "tpHouses";
+            this.tpHouses.Padding = new System.Windows.Forms.Padding(3);
+            this.tpHouses.Size = new System.Drawing.Size(792, 471);
+            this.tpHouses.TabIndex = 1;
+            this.tpHouses.Text = "Houses";
+            this.tpHouses.UseVisualStyleBackColor = true;
+            // 
+            // lvHInventory
+            // 
+            this.lvHInventory.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader3,
+            this.columnHeader4});
+            this.lvHInventory.Location = new System.Drawing.Point(164, 133);
+            this.lvHInventory.Name = "lvHInventory";
+            this.lvHInventory.Size = new System.Drawing.Size(152, 329);
+            this.lvHInventory.TabIndex = 85;
+            this.lvHInventory.UseCompatibleStateImageBehavior = false;
+            this.lvHInventory.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Item";
+            this.columnHeader3.Width = 80;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Amount";
+            // 
+            // pPictureBox
+            // 
+            this.pPictureBox.AutoScroll = true;
+            this.pPictureBox.Controls.Add(this.pictureBox1);
+            this.pPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pPictureBox.Location = new System.Drawing.Point(346, 3);
+            this.pPictureBox.Name = "pPictureBox";
+            this.pPictureBox.Size = new System.Drawing.Size(443, 465);
+            this.pPictureBox.TabIndex = 84;
+            // 
+            // lvHVirtuals
+            // 
+            this.lvHVirtuals.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+            this.lvHVirtuals.Location = new System.Drawing.Point(6, 133);
+            this.lvHVirtuals.Name = "lvHVirtuals";
+            this.lvHVirtuals.Size = new System.Drawing.Size(152, 329);
+            this.lvHVirtuals.TabIndex = 83;
+            this.lvHVirtuals.UseCompatibleStateImageBehavior = false;
+            this.lvHVirtuals.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Item";
+            this.columnHeader1.Width = 80;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Amount";
+            // 
+            // lbHouses
+            // 
+            this.lbHouses.FormattingEnabled = true;
+            this.lbHouses.Location = new System.Drawing.Point(3, 3);
+            this.lbHouses.Name = "lbHouses";
+            this.lbHouses.Size = new System.Drawing.Size(155, 108);
+            this.lbHouses.TabIndex = 1;
+            this.lbHouses.SelectedIndexChanged += new System.EventHandler(this.lbHouses_SelectedIndexChanged);
+            // 
+            // tpDebug
+            // 
+            this.tpDebug.Controls.Add(this.rtbDebugEquipment);
+            this.tpDebug.Controls.Add(this.rtbDebugVehicle);
+            this.tpDebug.Location = new System.Drawing.Point(4, 4);
+            this.tpDebug.Name = "tpDebug";
+            this.tpDebug.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDebug.Size = new System.Drawing.Size(806, 503);
+            this.tpDebug.TabIndex = 2;
+            this.tpDebug.Text = "Debug Info";
+            this.tpDebug.UseVisualStyleBackColor = true;
+            // 
+            // rtbDebugEquipment
+            // 
+            this.rtbDebugEquipment.Location = new System.Drawing.Point(348, 6);
+            this.rtbDebugEquipment.Name = "rtbDebugEquipment";
+            this.rtbDebugEquipment.Size = new System.Drawing.Size(339, 556);
+            this.rtbDebugEquipment.TabIndex = 1;
+            this.rtbDebugEquipment.Text = "";
+            // 
+            // rtbDebugVehicle
+            // 
+            this.rtbDebugVehicle.Location = new System.Drawing.Point(3, 6);
+            this.rtbDebugVehicle.Name = "rtbDebugVehicle";
+            this.rtbDebugVehicle.Size = new System.Drawing.Size(339, 556);
+            this.rtbDebugVehicle.TabIndex = 0;
+            this.rtbDebugVehicle.Text = "";
+            // 
+            // ssMain
+            // 
+            this.ssMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsslStatus});
+            this.ssMain.Location = new System.Drawing.Point(0, 535);
+            this.ssMain.Name = "ssMain";
+            this.ssMain.Size = new System.Drawing.Size(991, 22);
+            this.ssMain.TabIndex = 2;
+            // 
+            // tsslStatus
+            // 
+            this.tsslStatus.Name = "tsslStatus";
+            this.tsslStatus.Size = new System.Drawing.Size(39, 17);
+            this.tsslStatus.Text = "Status";
+            // 
+            // timerPLRefresh
+            // 
+            this.timerPLRefresh.Interval = 1000;
+            this.timerPLRefresh.Tick += new System.EventHandler(this.timerPLRefresh_Tick);
+            // 
+            // bwPlayerListRefresh
+            // 
+            this.bwPlayerListRefresh.WorkerReportsProgress = true;
+            this.bwPlayerListRefresh.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwPlayerListRefresh_DoWork);
+            this.bwPlayerListRefresh.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwPlayerListRefresh_RunWorkerCompleted);
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.serverToolStripMenuItem,
+            this.mapToolStripMenuItem,
+            this.refreshToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(991, 24);
+            this.menuStrip1.TabIndex = 66;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // serverToolStripMenuItem
+            // 
+            this.serverToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.server1ToolStripMenuItem,
+            this.server2ToolStripMenuItem,
+            this.server3ToolStripMenuItem});
+            this.serverToolStripMenuItem.Name = "serverToolStripMenuItem";
+            this.serverToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
+            this.serverToolStripMenuItem.Text = "&Server";
+            // 
+            // server1ToolStripMenuItem
+            // 
+            this.server1ToolStripMenuItem.Name = "server1ToolStripMenuItem";
+            this.server1ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.server1ToolStripMenuItem.Text = "Server #1";
+            this.server1ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
+            // 
+            // server2ToolStripMenuItem
+            // 
+            this.server2ToolStripMenuItem.Name = "server2ToolStripMenuItem";
+            this.server2ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.server2ToolStripMenuItem.Text = "Server #2";
+            this.server2ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
+            // 
+            // server3ToolStripMenuItem
+            // 
+            this.server3ToolStripMenuItem.Name = "server3ToolStripMenuItem";
+            this.server3ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.server3ToolStripMenuItem.Text = "Server #3";
+            this.server3ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
+            // 
+            // mapToolStripMenuItem
+            // 
+            this.mapToolStripMenuItem.Name = "mapToolStripMenuItem";
+            this.mapToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
+            this.mapToolStripMenuItem.Text = "&Map";
+            this.mapToolStripMenuItem.Click += new System.EventHandler(this.mapToolStripMenuItem_Click);
+            // 
+            // refreshToolStripMenuItem
+            // 
+            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
+            this.refreshToolStripMenuItem.Text = "&Refresh";
+            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
+            // 
+            // panelHouses
+            // 
+            this.panelHouses.AutoScroll = true;
+            this.panelHouses.Controls.Add(this.lbHouses);
+            this.panelHouses.Controls.Add(this.lvHInventory);
+            this.panelHouses.Controls.Add(this.lvHVirtuals);
+            this.panelHouses.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panelHouses.Location = new System.Drawing.Point(3, 3);
+            this.panelHouses.Name = "panelHouses";
+            this.panelHouses.Size = new System.Drawing.Size(343, 465);
+            this.panelHouses.TabIndex = 85;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Image = global::TrackerClient.Properties.Resources.Altis3;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(443, 465);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
             // 
             // frmMain
             // 
@@ -729,16 +816,19 @@
             this.pMain.ResumeLayout(false);
             this.tcMain.ResumeLayout(false);
             this.tpPlayerInfo.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tpInfo.ResumeLayout(false);
+            this.tpInfo.PerformLayout();
+            this.tpHouses.ResumeLayout(false);
+            this.pPictureBox.ResumeLayout(false);
+            this.pPictureBox.PerformLayout();
             this.tpDebug.ResumeLayout(false);
             this.ssMain.ResumeLayout(false);
             this.ssMain.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pbHouses)).EndInit();
+            this.panelHouses.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -776,8 +866,8 @@
         private System.Windows.Forms.ToolStripMenuItem server3ToolStripMenuItem;
         private System.Windows.Forms.Panel pPlayerList;
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tpInfo;
+        private System.Windows.Forms.TabPage tpHouses;
         private System.Windows.Forms.ListView lvVehicleInfo;
         private System.Windows.Forms.ColumnHeader chName;
         private System.Windows.Forms.ColumnHeader chActive;
@@ -809,7 +899,16 @@
         private System.Windows.Forms.Label lblBounty;
         private System.Windows.Forms.Label lblBank;
         private System.Windows.Forms.Label lblCash;
-        private System.Windows.Forms.PictureBox pbHouses;
+        private System.Windows.Forms.ListBox lbHouses;
+        private System.Windows.Forms.ListView lvHVirtuals;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.Panel pPictureBox;
+        private System.Windows.Forms.ListView lvHInventory;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.Panel panelHouses;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
 

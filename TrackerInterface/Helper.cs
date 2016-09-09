@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace TrackerInterface
 {
@@ -40,5 +39,38 @@ namespace TrackerInterface
                 yield return index;
             }
         }
+        public static float[] performCordScale(float x, float y, PictureBox pb)
+        {
+            float mapHeight = pb.Height;
+            float mapWidth = pb.Width;
+            float altisDim = 30720;
+            float[] coords = new float[2];
+            float coordX = x;
+            float coordY = y;
+            coords[0] = ((mapWidth * coordX) / altisDim);
+            coords[1] = (mapHeight - ((mapHeight * coordY) / altisDim));
+            return coords;
+        }
+
+        public static float[] performCordScale(float x, float y, int height, int width)
+        {
+            float mapHeight = height;
+            float mapWidth = width;
+            float altisDim = 30720;
+            float[] coords = new float[2];
+            float coordX = x;
+            float coordY = y;
+            coords[0] = ((mapWidth * coordX) / altisDim);
+            coords[1] = (mapHeight - ((mapHeight * coordY) / altisDim));
+            return coords;
+        }
+    }
+
+    public class Location
+    {
+        public float X { get; set; }
+        public float Y { get; set; }
+        public string Name { get; set; }
+        public Color color { get; set; }
     }
 }

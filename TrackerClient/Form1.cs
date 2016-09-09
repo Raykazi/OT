@@ -64,6 +64,7 @@ namespace TrackerClient
             lvVehicleInfo.ListViewItemSorter = _lvwItemComparer;
             timerPLRefresh.Enabled = true;
             timerPLRefresh.Start();
+            pictureBox1.Image = Properties.Resources.Altis3;
         }
 
         private void closeConnection()
@@ -98,10 +99,17 @@ namespace TrackerClient
 
         private void Reset()
         {
-            tsslStatus.Text = string.Format("Refreshing player list now.");
-            bwPlayerListRefresh.RunWorkerAsync();
-            sw.Stop();
-            sw.Reset();
+            try
+            {
+                tsslStatus.Text = string.Format("Refreshing player list now.");
+                bwPlayerListRefresh.RunWorkerAsync();
+                sw.Stop();
+                sw.Reset();
+            }
+            catch
+            {
+
+            }
         }
 
         private void BuildTargetList()
@@ -212,7 +220,12 @@ namespace TrackerClient
             ListBox lb = (ListBox)sender;
             activeListbox = lb;
         }
-
+        private void lbHouses_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ListBox lb = (ListBox)sender;
+            House h = (House)lb.SelectedValue;
+            DisplayHouse(h);
+        }
         private void ListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             ListBox lb = (ListBox)sender;
@@ -267,9 +280,37 @@ namespace TrackerClient
                 e.DrawFocusRectangle();
             }
         }
+
+        private void DisplayHouse(House h)
+        {
+            pictureBox1.Invalidate();
+            lvHVirtuals.Items.Clear();
+            if (h.Virtual != null)
+                foreach (VirtualItem v in h.Virtual)
+                {
+                    ListViewItem lviV = new ListViewItem(v.name);
+                    lviV.SubItems.Add(v.amount.ToString());
+                    lvHVirtuals.Items.Add(lviV);
+                }
+
+        }
+
+        private void pbHouses_Paint(object sender, PaintEventArgs e)
+        {
+            if (lbHouses.SelectedValue == null) return;
+            House h = (House)lbHouses.SelectedValue;
+            string[] coords = h.Location.Split(',');
+            float x = float.Parse(coords[0]);
+            float y = float.Parse(coords[1]);
+            float[] newCords = Helper.performCordScale(x, y, pictureBox1.Image.Height, pictureBox1.Image.Width);
+            e.Graphics.FillRectangle(new SolidBrush(Color.Green), new RectangleF(new PointF(newCords[0], newCords[1]), new Size(4, 4)));
+
+
+        }
         private void DisplayPlayer(Player p)
         {
             List<Vehicle> sortedList = new List<Vehicle>();
+            List<House> houses = new List<House>();
             tbAliases.Clear();
             lvVehicleInfo.Items.Clear();
             lvVirtualItems.Items.Clear();
@@ -340,6 +381,14 @@ namespace TrackerClient
                 lviV.SubItems.Add(v.insuranceLevel.ToString());
                 lvVehicleInfo.Items.Add(lviV);
             }
+            if (p.houses != null)
+                foreach (House h in p.houses)
+                {
+                    houses.Add(h);
+                }
+            houses = houses.OrderBy(h => h.ID).ToList();
+            lbHouses.DisplayMember = "id";
+            lbHouses.DataSource = houses;
         }
 
         private void lvVehicleInfo_ColumnClick(object sender, ColumnClickEventArgs e)
