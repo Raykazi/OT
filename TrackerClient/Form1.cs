@@ -315,7 +315,7 @@ namespace TrackerClient
             lvVehicleInfo.Items.Clear();
             lvVirtualItems.Items.Clear();
 
-            this.Text = string.Format("Olympus Tracker - {0} | {1}", p.name, p.steamID);
+            this.Text = string.Format("{0} | {1}", p.name, p.steamID);
             lblName.Text = string.Format("Name: {0}", p.name);
             lblCash.Text = string.Format("Cash: {0:C}", p.cash);
             lblBounty.Text = string.Format("Bounty: {0:C}", p.bountyWanted);
@@ -434,7 +434,6 @@ namespace TrackerClient
             lbPlayersAll.DisplayMember = "name";
             lbPlayersAll.DataSource = onlinePlayers;
             BuildTargetList();
-
         }
 
         private void cmsWatchlist_Opening(object sender, System.ComponentModel.CancelEventArgs e)
