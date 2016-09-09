@@ -220,19 +220,20 @@ namespace TrackerService
                         long last_used = Helper.ToUnixTime(DateTime.Parse(house["last_active"].ToString()));
                         string crates = Helper.ToJson(house["crates"].ToString());
                         string virtuals = house["inventory"].ToString();
+                        int maxStorage = (int)house["storage"];
 
                         List<string>[] data2 = db.ExecuteReader("SELECT houseID FROM houses WHERE houseID =?", hid);
                         if (data2[0].Count == 0)
                         {
                             //Add the player to the DB
-                            sql = "INSERT INTO houses (`houseID`, `steamID`, `location`, `lastAccessed`, `virtual`, `crates`)  VALUES (?, ?, ?, ?, ?, ?)";
-                            result_h += db.ExecuteNonQuery(sql, hid, steamID, pos, last_used, virtuals, crates) == 1 ? 1 : 0;
+                            sql = "INSERT INTO houses (`houseID`, `steamID`, `location`, `lastAccessed`, `virtual`, `crates`, `storage`)  VALUES (?, ?, ?, ?, ?, ?, ?)";
+                            result_h += db.ExecuteNonQuery(sql, hid, steamID, pos, last_used, virtuals, crates, maxStorage) == 1 ? 1 : 0;
                         }
                         else
                         {
                             //Update the player's house
-                            sql = "UPDATE houses SET `steamID` = ?, `location` = ?, `lastAccessed` = ?, `crates` = ?, `virtual` = ? WHERE `houseID` = ?";
-                            result_h += db.ExecuteNonQuery(sql, steamID, pos, last_used, crates, virtuals, hid) == 1 ? 1 : 0;
+                            sql = "UPDATE houses SET `steamID` = ?, `location` = ?, `lastAccessed` = ?, `crates` = ?, `virtual` = ?, `storage`= ? WHERE `houseID` = ?";
+                            result_h += db.ExecuteNonQuery(sql, steamID, pos, last_used, crates, virtuals, maxStorage, hid) == 1 ? 1 : 0;
                         }
                     }
                 }
