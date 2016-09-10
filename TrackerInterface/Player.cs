@@ -25,7 +25,7 @@ namespace TrackerInterface
         [DataMember]
         public int ID { get; set; }
         [DataMember]
-        public string Location { get; set; }
+        public string[] Location { get; set; }
         [DataMember]
         public VirtualItem[] Virtual { get; set; }
         [DataMember]
@@ -329,7 +329,8 @@ namespace TrackerInterface
                 houses = new House[houseCount];
                 for (int j = 0; j < houseCount; j++)
                 {
-                    houses[j] = new House { ID = Convert.ToInt32(hr[0][j]), LastAccessed = Helper.FromUnixTime(Convert.ToInt64(hr[3][j])), Location = hr[2][j] };
+                    string[] location = hr[2][j].Split(',');
+                    houses[j] = new House { ID = Convert.ToInt32(hr[0][j]), LastAccessed = Helper.FromUnixTime(Convert.ToInt64(hr[3][j])), Location = location };
                     string v = Helper.ToJson(hr[4][j]);
                     string crate = Helper.ToJson(hr[5][j]);
                     string ss1 = "\"\\\"";
