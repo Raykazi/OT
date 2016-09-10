@@ -22,8 +22,9 @@ namespace TrackerClient
         List<Player> slackPostList = new List<Player>();
         List<string> debugListVeh = new List<string>();
         List<string> debugListEqu = new List<string>();
+        bool doingWork = false;
         string serverID = "arma_1";
-        Map playerMap;
+        internal Map playerMap;
         SlackClient sc = new SlackClient("https://hooks.slack.com/services/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");
         object locker = new object();
 
@@ -64,7 +65,7 @@ namespace TrackerClient
             lvVehicleInfo.ListViewItemSorter = _lvwItemComparer;
             timerPLRefresh.Enabled = true;
             timerPLRefresh.Start();
-            pictureBox1.Image = Properties.Resources.Altis3;
+            pbMap.Image = Properties.Resources.Altis3;
         }
 
         private void closeConnection()
@@ -86,12 +87,12 @@ namespace TrackerClient
             switch (sw.ElapsedMilliseconds)
             {
                 default:
+                    //if (doingWork == false && refreshToolStripMenuItem.Enabled)
                     if (sw.IsRunning)
                     {
                         tsslStatus.Text = string.Format("Refreshing player list in {0} seconds.", (refreshTime - sw.ElapsedMilliseconds) / 1000);
                         if (sw.ElapsedMilliseconds >= refreshTime)
                             Reset();
-
                     }
                     break;
             }
@@ -101,6 +102,7 @@ namespace TrackerClient
         {
             try
             {
+                doingWork = true;
                 tsslStatus.Text = string.Format("Refreshing player list now.");
                 bwPlayerListRefresh.RunWorkerAsync();
                 sw.Stop();
@@ -283,7 +285,7 @@ namespace TrackerClient
 
         private void DisplayHouse(House h)
         {
-            pictureBox1.Invalidate();
+            pbMap.Invalidate();
             lvHVirtuals.Items.Clear();
             if (h.Virtual != null)
                 foreach (VirtualItem v in h.Virtual)
@@ -292,20 +294,32 @@ namespace TrackerClient
                     lviV.SubItems.Add(v.amount.ToString());
                     lvHVirtuals.Items.Add(lviV);
                 }
+            if (playerMap != null)
+            {
+                if (h.Location.Length > 1)
+                    pbHouses_CenterPlayer(h.Location);
 
+            }
+        }
+        internal void pbHouses_CenterPlayer(string[] location)
+        {
+            float[] newCords = Helper.performCordScale(location, pbMap);
+            int X = Convert.ToInt32(newCords[0]);
+            int Y = Convert.ToInt32(newCords[1]);
+            Point panelcenter = new Point((this.panelPictureBox.Width / 2), (this.panelPictureBox.Height / 2)); // find the centerpoint of the panel
+            Point offsetinpicturebox = new Point((this.pbMap.Location.X + X), (this.pbMap.Location.Y + Y)); // find the offset of the mouse click
+            Point offsetfromcenter = new Point((panelcenter.X - offsetinpicturebox.X), (panelcenter.Y - offsetinpicturebox.Y)); // find the difference between the mouse click and the center
+            this.panelPictureBox.AutoScrollPosition = new Point((Math.Abs(this.panelPictureBox.AutoScrollPosition.X) + (-1 * offsetfromcenter.X)), (Math.Abs(this.panelPictureBox.AutoScrollPosition.Y) + (-1 * offsetfromcenter.Y)));
         }
 
         private void pbHouses_Paint(object sender, PaintEventArgs e)
         {
             if (lbHouses.SelectedValue == null) return;
             House h = (House)lbHouses.SelectedValue;
-            string[] coords = h.Location.Split(',');
-            float x = float.Parse(coords[0]);
-            float y = float.Parse(coords[1]);
-            float[] newCords = Helper.performCordScale(x, y, pictureBox1.Image.Height, pictureBox1.Image.Width);
-            e.Graphics.FillRectangle(new SolidBrush(Color.Green), new RectangleF(new PointF(newCords[0], newCords[1]), new Size(4, 4)));
-
-
+            float x = float.Parse(h.Location[0]);
+            float y = float.Parse(h.Location[1]);
+            float[] newCords = Helper.performCordScale(x, y, pbMap.Height, pbMap.Width);
+            e.Graphics.FillRectangle(new SolidBrush(Color.White), new RectangleF(new PointF(newCords[0], newCords[1]), new Size(4, 4)));
         }
         private void DisplayPlayer(Player p)
         {
@@ -389,6 +403,12 @@ namespace TrackerClient
             houses = houses.OrderBy(h => h.ID).ToList();
             lbHouses.DisplayMember = "id";
             lbHouses.DataSource = houses;
+            if (playerMap != null)
+            {
+                if (p.location.Length > 1)
+                    playerMap.pbMap_CenterPlayer(p.location);
+
+            }
         }
 
         private void lvVehicleInfo_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -429,6 +449,7 @@ namespace TrackerClient
 
         private void bwPlayerListRefresh_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
+            doingWork = false;
             if (!sw.IsRunning)
                 sw.Start();
             lbPlayersAll.DisplayMember = "name";
@@ -454,12 +475,13 @@ namespace TrackerClient
             playerMap = new Map();
             playerMap.players = onlinePlayers;
             playerMap.Show();
-
         }
 
         private void serverToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem b = (ToolStripMenuItem)sender;
+            //foreach
+            b.Checked = true;
             switch (b.Text)
             {
                 case "Server #1":
@@ -472,7 +494,6 @@ namespace TrackerClient
                     serverID = "arma_3";
                     break;
             }
-
         }
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)

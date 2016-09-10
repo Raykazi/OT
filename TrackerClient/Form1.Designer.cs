@@ -78,14 +78,16 @@
             this.lblBank = new System.Windows.Forms.Label();
             this.lblCash = new System.Windows.Forms.Label();
             this.tpHouses = new System.Windows.Forms.TabPage();
+            this.panelPictureBox = new System.Windows.Forms.Panel();
+            this.pbMap = new System.Windows.Forms.PictureBox();
+            this.panelHouses = new System.Windows.Forms.Panel();
+            this.lbHouses = new System.Windows.Forms.ListBox();
             this.lvHInventory = new System.Windows.Forms.ListView();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.pPictureBox = new System.Windows.Forms.Panel();
             this.lvHVirtuals = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lbHouses = new System.Windows.Forms.ListBox();
             this.tpDebug = new System.Windows.Forms.TabPage();
             this.rtbDebugEquipment = new System.Windows.Forms.RichTextBox();
             this.rtbDebugVehicle = new System.Windows.Forms.RichTextBox();
@@ -101,8 +103,6 @@
             this.server3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.panelHouses = new System.Windows.Forms.Panel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panelLeft.SuspendLayout();
             this.pPlayerList.SuspendLayout();
             this.tcPlayerLists.SuspendLayout();
@@ -116,12 +116,12 @@
             this.tabControl1.SuspendLayout();
             this.tpInfo.SuspendLayout();
             this.tpHouses.SuspendLayout();
-            this.pPictureBox.SuspendLayout();
+            this.panelPictureBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbMap)).BeginInit();
+            this.panelHouses.SuspendLayout();
             this.tpDebug.SuspendLayout();
             this.ssMain.SuspendLayout();
             this.menuStrip1.SuspendLayout();
-            this.panelHouses.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // panelLeft
@@ -587,7 +587,7 @@
             // 
             // tpHouses
             // 
-            this.tpHouses.Controls.Add(this.pPictureBox);
+            this.tpHouses.Controls.Add(this.panelPictureBox);
             this.tpHouses.Controls.Add(this.panelHouses);
             this.tpHouses.Location = new System.Drawing.Point(4, 4);
             this.tpHouses.Name = "tpHouses";
@@ -596,6 +596,49 @@
             this.tpHouses.TabIndex = 1;
             this.tpHouses.Text = "Houses";
             this.tpHouses.UseVisualStyleBackColor = true;
+            // 
+            // panelPictureBox
+            // 
+            this.panelPictureBox.AutoScroll = true;
+            this.panelPictureBox.Controls.Add(this.pbMap);
+            this.panelPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelPictureBox.Location = new System.Drawing.Point(346, 3);
+            this.panelPictureBox.Name = "panelPictureBox";
+            this.panelPictureBox.Size = new System.Drawing.Size(443, 465);
+            this.panelPictureBox.TabIndex = 86;
+            // 
+            // pbMap
+            // 
+            this.pbMap.Image = global::TrackerClient.Properties.Resources.Altis3;
+            this.pbMap.InitialImage = global::TrackerClient.Properties.Resources.Altis3;
+            this.pbMap.Location = new System.Drawing.Point(0, 0);
+            this.pbMap.Name = "pbMap";
+            this.pbMap.Size = new System.Drawing.Size(3370, 3370);
+            this.pbMap.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pbMap.TabIndex = 1;
+            this.pbMap.TabStop = false;
+            this.pbMap.Paint += new System.Windows.Forms.PaintEventHandler(this.pbHouses_Paint);
+            // 
+            // panelHouses
+            // 
+            this.panelHouses.AutoScroll = true;
+            this.panelHouses.Controls.Add(this.lbHouses);
+            this.panelHouses.Controls.Add(this.lvHInventory);
+            this.panelHouses.Controls.Add(this.lvHVirtuals);
+            this.panelHouses.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panelHouses.Location = new System.Drawing.Point(3, 3);
+            this.panelHouses.Name = "panelHouses";
+            this.panelHouses.Size = new System.Drawing.Size(343, 465);
+            this.panelHouses.TabIndex = 85;
+            // 
+            // lbHouses
+            // 
+            this.lbHouses.FormattingEnabled = true;
+            this.lbHouses.Location = new System.Drawing.Point(3, 3);
+            this.lbHouses.Name = "lbHouses";
+            this.lbHouses.Size = new System.Drawing.Size(155, 108);
+            this.lbHouses.TabIndex = 1;
+            this.lbHouses.SelectedIndexChanged += new System.EventHandler(this.lbHouses_SelectedIndexChanged);
             // 
             // lvHInventory
             // 
@@ -618,16 +661,6 @@
             // 
             this.columnHeader4.Text = "Amount";
             // 
-            // pPictureBox
-            // 
-            this.pPictureBox.AutoScroll = true;
-            this.pPictureBox.Controls.Add(this.pictureBox1);
-            this.pPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pPictureBox.Location = new System.Drawing.Point(346, 3);
-            this.pPictureBox.Name = "pPictureBox";
-            this.pPictureBox.Size = new System.Drawing.Size(443, 465);
-            this.pPictureBox.TabIndex = 84;
-            // 
             // lvHVirtuals
             // 
             this.lvHVirtuals.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -648,15 +681,6 @@
             // columnHeader2
             // 
             this.columnHeader2.Text = "Amount";
-            // 
-            // lbHouses
-            // 
-            this.lbHouses.FormattingEnabled = true;
-            this.lbHouses.Location = new System.Drawing.Point(3, 3);
-            this.lbHouses.Name = "lbHouses";
-            this.lbHouses.Size = new System.Drawing.Size(155, 108);
-            this.lbHouses.TabIndex = 1;
-            this.lbHouses.SelectedIndexChanged += new System.EventHandler(this.lbHouses_SelectedIndexChanged);
             // 
             // tpDebug
             // 
@@ -736,15 +760,17 @@
             // 
             // server1ToolStripMenuItem
             // 
+            this.server1ToolStripMenuItem.Checked = true;
+            this.server1ToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.server1ToolStripMenuItem.Name = "server1ToolStripMenuItem";
-            this.server1ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.server1ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.server1ToolStripMenuItem.Text = "Server #1";
             this.server1ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
             // 
             // server2ToolStripMenuItem
             // 
             this.server2ToolStripMenuItem.Name = "server2ToolStripMenuItem";
-            this.server2ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.server2ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.server2ToolStripMenuItem.Text = "Server #2";
             this.server2ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
             // 
@@ -768,30 +794,6 @@
             this.refreshToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
             this.refreshToolStripMenuItem.Text = "&Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
-            // 
-            // panelHouses
-            // 
-            this.panelHouses.AutoScroll = true;
-            this.panelHouses.Controls.Add(this.lbHouses);
-            this.panelHouses.Controls.Add(this.lvHInventory);
-            this.panelHouses.Controls.Add(this.lvHVirtuals);
-            this.panelHouses.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panelHouses.Location = new System.Drawing.Point(3, 3);
-            this.panelHouses.Name = "panelHouses";
-            this.panelHouses.Size = new System.Drawing.Size(343, 465);
-            this.panelHouses.TabIndex = 85;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Image = global::TrackerClient.Properties.Resources.Altis3;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(443, 465);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pbHouses_Paint);
             // 
             // frmMain
             // 
@@ -821,14 +823,15 @@
             this.tpInfo.ResumeLayout(false);
             this.tpInfo.PerformLayout();
             this.tpHouses.ResumeLayout(false);
-            this.pPictureBox.ResumeLayout(false);
+            this.panelPictureBox.ResumeLayout(false);
+            this.panelPictureBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbMap)).EndInit();
+            this.panelHouses.ResumeLayout(false);
             this.tpDebug.ResumeLayout(false);
             this.ssMain.ResumeLayout(false);
             this.ssMain.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.panelHouses.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -903,12 +906,12 @@
         private System.Windows.Forms.ListView lvHVirtuals;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.Panel pPictureBox;
         private System.Windows.Forms.ListView lvHInventory;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.Panel panelHouses;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Panel panelPictureBox;
+        internal System.Windows.Forms.PictureBox pbMap;
     }
 }
 
