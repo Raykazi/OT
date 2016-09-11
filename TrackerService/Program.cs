@@ -21,9 +21,8 @@ namespace TrackerService
                 //Host the server
                 using (ServiceHost host = new ServiceHost(typeof(WCFTrackerService)))
                 {
-                    host.Open();
                     host.Opened += Host_Opened;
-                    Program.ConsoleLog("Server is open");
+                    host.Open();
                     Console.ReadLine();
                 }
             }catch(Exception ex)
@@ -34,7 +33,7 @@ namespace TrackerService
 
         private static void Host_Opened(object sender, EventArgs e)
         {
-            ConsoleLog("Connection Opened");
+            ConsoleLog("Accepting Connections");
         }
     }
 }
