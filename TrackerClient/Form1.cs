@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using TrackerInterface;
 using System.Linq;
 using System.Collections.Generic;
-using HtmlAgilityPack;
 using System.Collections;
 using System.Drawing;
 using System.Threading;
@@ -61,7 +60,6 @@ namespace TrackerClient
         public frmMain()
         {
             InitializeComponent();
-            HtmlNode.ElementsFlags.Remove("form");
             lvVehicleInfo.ListViewItemSorter = _lvwItemComparer;
             timerPLRefresh.Enabled = true;
             timerPLRefresh.Start();
