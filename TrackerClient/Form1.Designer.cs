@@ -96,7 +96,7 @@
             this.timerPLRefresh = new System.Windows.Forms.Timer(this.components);
             this.bwPlayerListRefresh = new System.ComponentModel.BackgroundWorker();
             this.bwPlayerListFilter = new System.ComponentModel.BackgroundWorker();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.serverToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.server1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.server2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -121,7 +121,7 @@
             this.panelHouses.SuspendLayout();
             this.tpDebug.SuspendLayout();
             this.ssMain.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
+            this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelLeft
@@ -736,17 +736,17 @@
             this.bwPlayerListRefresh.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwPlayerListRefresh_DoWork);
             this.bwPlayerListRefresh.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwPlayerListRefresh_RunWorkerCompleted);
             // 
-            // menuStrip1
+            // menuStrip
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.serverToolStripMenuItem,
             this.mapToolStripMenuItem,
             this.refreshToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(991, 24);
-            this.menuStrip1.TabIndex = 66;
-            this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Size = new System.Drawing.Size(991, 24);
+            this.menuStrip.TabIndex = 66;
+            this.menuStrip.Text = "menuStrip1";
             // 
             // serverToolStripMenuItem
             // 
@@ -763,14 +763,14 @@
             this.server1ToolStripMenuItem.Checked = true;
             this.server1ToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.server1ToolStripMenuItem.Name = "server1ToolStripMenuItem";
-            this.server1ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.server1ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.server1ToolStripMenuItem.Text = "Server #1";
             this.server1ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
             // 
             // server2ToolStripMenuItem
             // 
             this.server2ToolStripMenuItem.Name = "server2ToolStripMenuItem";
-            this.server2ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.server2ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.server2ToolStripMenuItem.Text = "Server #2";
             this.server2ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
             // 
@@ -802,7 +802,7 @@
             this.ClientSize = new System.Drawing.Size(991, 557);
             this.Controls.Add(this.pMain);
             this.Controls.Add(this.ssMain);
-            this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.menuStrip);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Name = "frmMain";
@@ -830,8 +830,8 @@
             this.tpDebug.ResumeLayout(false);
             this.ssMain.ResumeLayout(false);
             this.ssMain.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -860,7 +860,7 @@
         private System.Windows.Forms.TabPage tpDebug;
         private System.Windows.Forms.RichTextBox rtbDebugEquipment;
         private System.Windows.Forms.RichTextBox rtbDebugVehicle;
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem mapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem serverToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;

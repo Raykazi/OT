@@ -87,7 +87,8 @@ namespace TrackerClient
             switch (sw.ElapsedMilliseconds)
             {
                 default:
-                    //if (doingWork == false && refreshToolStripMenuItem.Enabled)
+                    server1ToolStripMenuItem.Enabled = server2ToolStripMenuItem.Enabled = server3ToolStripMenuItem.Enabled = refreshToolStripMenuItem.Enabled = !doingWork;
+
                     if (sw.IsRunning)
                     {
                         tsslStatus.Text = string.Format("Refreshing player list in {0} seconds.", (refreshTime - sw.ElapsedMilliseconds) / 1000);
@@ -270,13 +271,13 @@ namespace TrackerClient
                 {
                     Color Highlight = SystemColors.MenuHighlight;
                     g.FillRectangle(new SolidBrush(Highlight), e.Bounds);
-                    g.DrawRectangle(new Pen(Color.Black), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
+                    //g.DrawRectangle(new Pen(Color.Black), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
                     g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                 }
                 else
                 {
                     g.FillRectangle(new SolidBrush(Color.Transparent), e.Bounds);
-                    g.DrawRectangle(new Pen(Color.Transparent), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
+                    //g.DrawRectangle(new Pen(Color.Transparent), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
                     g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
                 }
                 e.DrawFocusRectangle();
@@ -294,12 +295,8 @@ namespace TrackerClient
                     lviV.SubItems.Add(v.amount.ToString());
                     lvHVirtuals.Items.Add(lviV);
                 }
-            if (playerMap != null)
-            {
-                if (h.Location.Length > 1)
-                    pbHouses_CenterPlayer(h.Location);
-
-            }
+            if (h.Location.Length > 1)
+                pbHouses_CenterPlayer(h.Location);
         }
         internal void pbHouses_CenterPlayer(string[] location)
         {
@@ -401,7 +398,7 @@ namespace TrackerClient
                     houses.Add(h);
                 }
             houses = houses.OrderBy(h => h.ID).ToList();
-            lbHouses.DisplayMember = "id";
+            lbHouses.DisplayMember = "lbname";
             lbHouses.DataSource = houses;
             if (playerMap != null)
             {
@@ -480,8 +477,8 @@ namespace TrackerClient
         private void serverToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem b = (ToolStripMenuItem)sender;
-            //foreach
-            b.Checked = true;
+            foreach (ToolStripMenuItem item in serverToolStripMenuItem.DropDownItems)
+                item.Checked = item == b ? true : false;
             switch (b.Text)
             {
                 case "Server #1":
@@ -494,6 +491,7 @@ namespace TrackerClient
                     serverID = "arma_3";
                     break;
             }
+            Reset();
         }
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
