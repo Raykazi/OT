@@ -379,12 +379,12 @@ namespace TrackerInterface
                                 houses[j].Crates[cCounter] = new Crate();
                                 houses[j].Crates[cCounter].ID = (int)c["id"];
                                 houses[j].Crates[cCounter].LastAccessed = DateTime.Parse((string)c["last_active"]);
+                                string json = c["inventory"].ToString();
+
                             }
                         }
                     }
                 }
-
-
             }
             catch (Exception e)
             {

@@ -116,24 +116,24 @@ namespace TrackerService
             return steamID;
 
         }
-        public List<Player> GetPlayerList()
+        public List<Player> GetPlayerList(string serverID)
         {
             try
             {
+                string sql = "SELECT * FROM servers WHERE `serverName` = ? ";
+                List<string>[] sr = db.ExecuteReader(sql, serverID);
+                playerCount = Convert.ToInt32(sr[2][0]);
                 //Player[] players = new Player[playerCount];
                 Player player;
                 List<Player> playerList = new List<Player>();
-                string sql = "SELECT * FROM player WHERE `server` = ? ORDER BY lastActive DESC LIMIT ?";
-                List<string>[] r = db.ExecuteReader(sql, server, playerCount);
+                sql = "SELECT * FROM player WHERE `server` = ? ORDER BY lastActive DESC LIMIT ?";
+                List<string>[] pr = db.ExecuteReader(sql, serverID, playerCount);
                 for (int i = 0; i < playerCount; i++)
                 {
-                    player = new Player(Convert.ToInt32(r[0][i]), Convert.ToInt64(r[1][i]), r[2][i], Convert.ToInt32(r[3][i]), Convert.ToInt32(r[4][i]), Convert.ToInt32(r[5][i]), Convert.ToInt32(r[6][i]), Convert.ToInt32(r[7][i]), Convert.ToInt32(r[8][i]), r[9][i], Convert.ToInt32(r[10][i]), Convert.ToInt32(r[11][i]), Convert.ToInt32(r[12][i]), Convert.ToInt32(r[14][i]), Convert.ToInt32(r[15][i]), Convert.ToInt32(r[16][i]), Convert.ToInt32(r[17][i]), Convert.ToInt32(r[13][i]), Convert.ToInt32(r[18][i]), r[19][i], Convert.ToInt32(r[20][i]), Convert.ToInt64(r[21][i]), r[28][i], r[29][i], r[30][i], r[23][i], Convert.ToInt64(r[34][i]), r[35][i]);
+                    player = new Player(Convert.ToInt32(pr[0][i]), Convert.ToInt64(pr[1][i]), pr[2][i], Convert.ToInt32(pr[3][i]), Convert.ToInt32(pr[4][i]), Convert.ToInt32(pr[5][i]), Convert.ToInt32(pr[6][i]), Convert.ToInt32(pr[7][i]), Convert.ToInt32(pr[8][i]), pr[9][i], Convert.ToInt32(pr[10][i]), Convert.ToInt32(pr[11][i]), Convert.ToInt32(pr[12][i]), Convert.ToInt32(pr[14][i]), Convert.ToInt32(pr[15][i]), Convert.ToInt32(pr[16][i]), Convert.ToInt32(pr[17][i]), Convert.ToInt32(pr[13][i]), Convert.ToInt32(pr[18][i]), pr[19][i], Convert.ToInt32(pr[20][i]), Convert.ToInt64(pr[21][i]), pr[28][i], pr[29][i], pr[30][i], pr[23][i], Convert.ToInt64(pr[34][i]), pr[35][i]);
                     sql = "SELECT * FROM houses WHERE steamID = ?";
-                    List<string>[] hr = db.ExecuteReader(sql, Convert.ToInt64(r[1][i]));
+                    List<string>[] hr = db.ExecuteReader(sql, Convert.ToInt64(pr[1][i]));
                     player.AddHouses(hr, hr[0].Count);
-
-
-
                     playerList.Add(player);
                     player = null;
                 }
@@ -148,22 +148,32 @@ namespace TrackerService
         //Updates the players in the database
         public void PullPlayers(string serverID)
         {
-            server = serverID;
-            List<string> onlinePlayerNames = GetPlayers(serverID);
-            //Gets the number of players for a loop later down the line
-            playerCount = onlinePlayerNames.Count;
-            onlinePlayerNames.Select(name =>
-           {
-               long steamID = getSteamID(name);
-               //Program.ConsoleLog(string.Format("{0}:{1}", steamID, name));
-               Thread tr = new Thread(() => SavePlayer(steamID));
-               tr.Start();
-               return tr;
+            try
+            {
+                server = serverID;
+                List<string> onlinePlayerNames = GetPlayers(server);
+                //Gets the number of players for a loop later down the line
+                playerCount = onlinePlayerNames.Count;
+                string sql = "UPDATE servers SET `playerCount` = ? WHERE `serverName` = ? ";
+                db.ExecuteNonQuery(sql, playerCount, server);
+                onlinePlayerNames.Select(name =>
+                {
+                    long steamID = getSteamID(name);
+                    //Program.ConsoleLog(string.Format("{0}:{1}", steamID, name));
+                    Thread tr = new Thread(() => SavePlayer(steamID));
+                    tr.Start();
+                    return tr;
 
-           }).ToList().ForEach(t => t.Join());
-            //Log it to the console.
-            Program.ConsoleLog(string.Format("{0} added. {1} updated. {2} skipped", insertCount, updateCount, skipCount));
-            //return playerCount;
+                }).ToList().ForEach(t => t.Join());
+                //Log it to the console.
+                Program.ConsoleLog(string.Format("{3}: {0} added. {1} updated. {2} skipped ", insertCount, updateCount, skipCount, server));
+                //return playerCount;
+
+            }
+            catch (Exception e)
+            {
+                Program.ConsoleLog(e.Message);
+            }
         }
 
         private void SavePlayer(long id)

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ServiceModel;
-using System.Windows.Forms;
 using TrackerInterface;
+using System.Windows.Forms;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
@@ -28,7 +28,7 @@ namespace TrackerClient
         object locker = new object();
 
         Stopwatch sw = new Stopwatch();
-        public int refreshTime = 180000;
+        public int refreshTime = 60000;
 
         string[] watchListLegeals = {
                "salt","saltr",
@@ -86,7 +86,6 @@ namespace TrackerClient
             {
                 default:
                     server1ToolStripMenuItem.Enabled = server2ToolStripMenuItem.Enabled = server3ToolStripMenuItem.Enabled = refreshToolStripMenuItem.Enabled = !doingWork;
-
                     if (sw.IsRunning)
                     {
                         tsslStatus.Text = string.Format("Refreshing player list in {0} seconds.", (refreshTime - sw.ElapsedMilliseconds) / 1000);
@@ -104,7 +103,6 @@ namespace TrackerClient
                 doingWork = true;
                 tsslStatus.Text = string.Format("Refreshing player list now.");
                 bwPlayerListRefresh.RunWorkerAsync();
-                sw.Stop();
                 sw.Reset();
             }
             catch
@@ -430,8 +428,7 @@ namespace TrackerClient
         private void bwPlayerListRefresh_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             openConnection();
-            server.PullPlayers(serverID);
-            onlinePlayers = server.GetPlayerList();
+            onlinePlayers = server.GetPlayerList(serverID);
             onlinePlayers = onlinePlayers.OrderBy(p => p.name).ToList();
             closeConnection();
             if (playerMap != null)
