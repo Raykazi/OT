@@ -51,19 +51,6 @@ namespace TrackerInterface
             coords[1] = (mapHeight - ((mapHeight * coordY) / altisDim));
             return coords;
         }
-
-        public static float[] performCordScale(float x, float y, int height, int width)
-        {
-            float mapHeight = height;
-            float mapWidth = width;
-            float altisDim = 30720;
-            float[] coords = new float[2];
-            float coordX = x;
-            float coordY = y;
-            coords[0] = ((mapWidth * coordX) / altisDim);
-            coords[1] = (mapHeight - ((mapHeight * coordY) / altisDim));
-            return coords;
-        }
         public static float[] performCordScale(string[] location, PictureBox pbMap)
         {
             float coordX = float.Parse(location[0]);
@@ -174,10 +161,14 @@ namespace TrackerInterface
         {
             foreach (Location l in BuildPOI())
             {
-                float[] newCords = Helper.performCordScale(l.X, l.Y, pbMap);
+                float[] newCords = performCordScale(l.X, l.Y, pbMap);
                 e.Graphics.FillEllipse(new SolidBrush(l.color), new RectangleF(new PointF(newCords[0], newCords[1]), new Size(12, 12)));
                 e.Graphics.DrawString(l.Name, new Font("Tahoma", 9F, FontStyle.Bold), new SolidBrush(l.color), new PointF(newCords[0] + 12, newCords[1]));
             }
+        }
+        public static void ConsoleLog(string msg)
+        {
+            Console.WriteLine(string.Format("[{0}] {1}", DateTime.Now, msg));
         }
 
     }
