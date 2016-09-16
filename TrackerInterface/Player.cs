@@ -10,7 +10,7 @@ namespace TrackerInterface
 {
     //Class for the virtual items
     [DataContract]
-    public class VirtualItem
+    public class Item
     {
         //Name of the item on the player
         [DataMember]
@@ -18,6 +18,7 @@ namespace TrackerInterface
         //Amount of item on the player
         [DataMember]
         public int amount { get; set; }
+
     }
     [DataContract]
     public class House
@@ -34,7 +35,7 @@ namespace TrackerInterface
         [DataMember]
         public string[] Location { get; set; }
         [DataMember]
-        public VirtualItem[] Virtual { get; set; }
+        public Item[] Virtual { get; set; }
         [DataMember]
         public Crate[] Crates { get; set; }
         [DataMember]
@@ -45,7 +46,7 @@ namespace TrackerInterface
         [DataMember]
         public int ID { get; set; }
         [DataMember]
-        public List<string> Items { get; set; }
+        public List<Item> Items { get; set; }
         [DataMember]
         public DateTime LastAccessed { get; set; }
 
@@ -178,7 +179,7 @@ namespace TrackerInterface
         //String list with their physical equipment
         public List<string> Equipment { get; private set; }
         [DataMember]
-        public VirtualItem[] Virtuals { get; private set; } //Custom item class for the palyers virtual items
+        public Item[] Virtuals { get; private set; } //Custom item class for the palyers virtual items
         [DataMember]
         public int TargetLevel = -1; //Because these ***holes wanted colors
         [DataMember]
@@ -254,11 +255,11 @@ namespace TrackerInterface
                         virtualString = virtualString.Insert(0, "{\"Virtuals\": ");
                         virtualString += "}";
                         JArray tempV = JArray.Parse(JObject.Parse(virtualString)["Virtuals"].First.ToString());
-                        Virtuals = new VirtualItem[tempV.Count];
+                        Virtuals = new Item[tempV.Count];
                         int counter = 0;
                         foreach (JArray vi in tempV)
                         {
-                            Virtuals[counter] = new VirtualItem { name = vi[0].ToString(), amount = (int)vi[1] };
+                            Virtuals[counter] = new Item { name = vi[0].ToString(), amount = (int)vi[1] };
                             counter++;
                         }
                     }
@@ -340,55 +341,88 @@ namespace TrackerInterface
                     houses = new House[houseCount];
                     for (int j = 0; j < houseCount; j++)
                     {
-                        string[] location = hr[2][j].Split(',');
-                        int storage = hr[6][j].Length > 0 ? Convert.ToInt32(hr[6][j]) : 0;
-                        string v = Helper.ToJson(hr[4][j]);
-                        JArray virtuals = JArray.Parse(v);
+                        string[] location = hr[3][j].Split(',');
+                        JArray virtuals = JArray.Parse(Helper.ToJson(hr[5][j]));
                         int virtualCount = virtuals[0].Count();
-                        houses[j] = new House { ID = Convert.ToInt32(hr[0][j]), LastAccessed = Helper.FromUnixTime(Convert.ToInt64(hr[3][j])), Location = location, Storage = storage, VirtualCount = Convert.ToInt32(virtuals[1]) };
-                        houses[j].LBName = string.Format("{0} ({1}/{2})", houses[j].ID, houses[j].VirtualCount, houses[j].Storage); 
-                        string crate = Helper.ToJson(hr[5][j]);
-                        string ss1 = "\"\\\"";
-                        string ss2 = "\\\"\"";
-                        IEnumerable<int> remove1 = crate.AllIndexesOf(ss1);
-                        IEnumerable<int> remove2 = crate.AllIndexesOf(ss2);
+                        int storage = hr[7][j].Length > 0 ? Convert.ToInt32(hr[7][j]) : 0;
+                        houses[j] = new House { ID = Convert.ToInt32(hr[1][j]), LastAccessed = Helper.FromUnixTime(Convert.ToInt64(hr[4][j])), Location = location, Storage = storage, VirtualCount = Convert.ToInt32(virtuals[1]) };
+                        houses[j].LBName = string.Format("{0} ({1}/{2})", houses[j].ID, houses[j].VirtualCount, houses[j].Storage);
+
+                        string crate = Helper.ToJson(hr[6][j]);
+                        IEnumerable<int> remove1 = crate.AllIndexesOf("\"\\\"");
+                        IEnumerable<int> remove2 = crate.AllIndexesOf("\\\"\"");
                         for (int i = 0; i < remove1.Count(); i++)
-                            crate = crate.Remove(crate.IndexOf(ss1), 3);
+                            crate = crate.Remove(crate.IndexOf("\"\\\""), 3);
                         for (int i = 0; i < remove1.Count(); i++)
-                            crate = crate.Remove(crate.IndexOf(ss2), 3);
+                            crate = crate.Remove(crate.IndexOf("\\\"\""), 3);
 
                         JArray crates = JArray.Parse(crate);
                         int crateCount;
                         crateCount = crates.Count == 0 ? 0 : crates[0].Count();
                         if (virtualCount > 0)
                         {
-                            houses[j].Virtual = new VirtualItem[virtualCount];
+                            houses[j].Virtual = new Item[virtualCount];
                             int vCounter = 0;
                             foreach (JArray item in virtuals[0])
                             {
-                                houses[j].Virtual[vCounter] = new VirtualItem { name = (string)item[0], amount = (int)item[1] };
+                                houses[j].Virtual[vCounter] = new Item { name = (string)item[0], amount = (int)item[1] };
                                 vCounter++;
                             }
                         }
-                        if (crateCount > 0)
-                        {
-                            houses[j].Crates = new Crate[crateCount];
-                            int cCounter = 0;
-                            foreach (JObject c in crates)
-                            {
-                                houses[j].Crates[cCounter] = new Crate();
-                                houses[j].Crates[cCounter].ID = (int)c["id"];
-                                houses[j].Crates[cCounter].LastAccessed = DateTime.Parse((string)c["last_active"]);
-                                string json = c["inventory"].ToString();
-
-                            }
-                        }
+                        //if (crateCount > 0)
+                        //{
+                        //    houses[j].Crates = new Crate[crateCount];
+                        //    int cCounter = 0;
+                        //    foreach (JObject c in crates)
+                        //    {
+                        //        houses[j].Crates[cCounter] = new Crate();
+                        //        houses[j].Crates[cCounter].ID = (int)c["id"];
+                        //        houses[j].Crates[cCounter].LastAccessed = DateTime.Parse((string)c["last_active"]);
+                        //        houses[j].Crates[cCounter].Items = new List<Item>();
+                        //        string json = c["inventory"].ToString();
+                        //        JArray inventory = JArray.Parse(json);
+                        //        int count = inventory[1].Count();
+                        //        for (int i = 0; i < count; i++)
+                        //        {
+                        //            int iCount = inventory[1][i].Count();
+                        //            for (int k = 0; k < iCount; k++)
+                        //            {
+                        //                int kCount = inventory[1][i][k].Count();
+                        //                if (kCount > 0)
+                        //                {
+                        //                    string iName = "";
+                        //                    string amount = "";
+                        //                    if (i != 1 && k == 0)
+                        //                    {
+                        //                        iName = inventory[1][i][0][0].ToString();
+                        //                        amount = inventory[1][i][1][0].ToString();
+                        //                    }
+                        //                    else if (i == 1 && k == 0)
+                        //                    {
+                        //                        string debug = inventory[1][i].ToString();
+                        //                        iName = inventory[1][i][0][0].ToString();
+                        //                        amount = inventory[1][i][0][2].ToString();
+                        //                    }
+                        //                    if (iName.Length > 0)
+                        //                    {
+                        //                        Console.WriteLine(string.Format("Name: {0} Amount: {1}", iName, amount));
+                        //                        houses[j].Crates[cCounter].Items.Add(new Item { name = iName, amount = Convert.ToInt32(amount) });
+                        //                    }
+                        //                }
+                        //            }
+                        //        }
+                        //    }
+                        //}
                     }
                 }
             }
+            catch (ArgumentOutOfRangeException e)
+            {
+                Helper.ConsoleLog(e.Message);
+            }
             catch (Exception e)
             {
-                System.Console.WriteLine(e.Message);
+                Helper.ConsoleLog(e.Message);
             }
 
         }
