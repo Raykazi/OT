@@ -37,7 +37,23 @@ namespace TrackerClient
                 {
                     if (p.location.Length < 2) continue;
                     float[] newCords = Helper.performCordScale(p.location, pbMap);
-                    e.Graphics.FillRectangle(new SolidBrush(Color.Red), new RectangleF(new PointF(newCords[0], newCords[1]), new Size(4, 4)));
+                    Color mapColor = new Color();
+                    switch (p.TargetLevel)
+                    {
+                        case -1:
+                            mapColor = Color.White;
+                            break;
+                        case 0:
+                            mapColor = Color.Yellow;
+                            break;
+                        case 1:
+                            mapColor = Color.Green;
+                            break;
+                        case 2:
+                            mapColor = Color.Red;
+                            break;
+                    }
+                    e.Graphics.FillRectangle(new SolidBrush(mapColor), new RectangleF(new PointF(newCords[0], newCords[1]), new Size(4, 4)));
                     e.Graphics.DrawString(p.name, font, new SolidBrush(Color.White), new PointF(newCords[0] + 2, newCords[1]));
                 }
             }

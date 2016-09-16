@@ -22,6 +22,8 @@ namespace TrackerClient
         List<string> debugListVeh = new List<string>();
         List<string> debugListEqu = new List<string>();
         bool doingWork = false;
+        bool justRefreshed = false;
+        Player lastSelected = null;
         string serverID = "arma_1";
         internal Map playerMap;
         SlackClient sc = new SlackClient("https://hooks.slack.com/services/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");
@@ -125,7 +127,7 @@ namespace TrackerClient
                     {
                         foreach (string watchItem in watchListVehicles)
                         {
-                            if (watchItem == vehicle.name && vehicle.active == 1)
+                            if (watchItem == vehicle.name && vehicle.active >= 1)
                             {
                                 wVehicle += vehicle.name + "\r\n";
                                 if (!targetPlayers.Contains(p))
@@ -139,7 +141,7 @@ namespace TrackerClient
                     {
                         foreach (string watchItem in watchListVehicles)
                         {
-                            if (watchItem == vehicle.name && vehicle.active == 1)
+                            if (watchItem == vehicle.name && vehicle.active >= 1)
                             {
                                 wVehicle += vehicle.name + "\r\n";
                                 if (!targetPlayers.Contains(p))
@@ -153,7 +155,7 @@ namespace TrackerClient
                     {
                         foreach (string watchItem in watchListVehicles)
                         {
-                            if (watchItem == vehicle.name && vehicle.active == 1)
+                            if (watchItem == vehicle.name && vehicle.active >= 1)
                             {
                                 wVehicle += vehicle.name + "\r\n";
                                 if (!targetPlayers.Contains(p))
@@ -163,7 +165,7 @@ namespace TrackerClient
                         }
                     }
                 if (p.Virtuals != null)
-                    foreach (VirtualItem item in p.Virtuals)
+                    foreach (Item item in p.Virtuals)
                     {
                         foreach (string watchItem in watchListLegeals)
                         {
@@ -227,15 +229,23 @@ namespace TrackerClient
         }
         private void ListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ListBox lb = (ListBox)sender;
-            if (tcMain.SelectedTab != tpPlayerInfo)
+            try
             {
-                tcMain.SelectTab(1);
+                ListBox lb = (ListBox)sender;
+                if (tcMain.SelectedTab != tpPlayerInfo)
+                {
+                    tcMain.SelectTab(1);
+                }
+                if (lb.SelectedIndices.Count == 1)
+                {
+                    Player p = (Player)lb.SelectedValue;
+                    lastSelected = p;
+                    DisplayPlayer(p);
+                }
             }
-            if (lb.SelectedIndices.Count == 1)
+            catch (Exception ex)
             {
-                Player p = (Player)lb.SelectedValue;
-                DisplayPlayer(p);
+                //MessageBox.Show(ex.Message);
             }
         }
         private void ListBox_DrawItem(object sender, DrawItemEventArgs e)
@@ -251,7 +261,7 @@ namespace TrackerClient
                 switch (p.TargetLevel)
                 {
                     case 0:
-                        g.FillRectangle(new SolidBrush(Color.LightSlateGray), e.Bounds);
+                        g.FillRectangle(new SolidBrush(Color.Yellow), e.Bounds);
                         break;
                     case 1:
                         g.FillRectangle(new SolidBrush(Color.LawnGreen), e.Bounds);
@@ -284,8 +294,10 @@ namespace TrackerClient
         {
             pbMap.Invalidate();
             lvHVirtuals.Items.Clear();
+            lvHInventory.Items.Clear();
+            if (h == null) return;
             if (h.Virtual != null)
-                foreach (VirtualItem v in h.Virtual)
+                foreach (Item v in h.Virtual)
                 {
                     ListViewItem lviV = new ListViewItem(v.name);
                     lviV.SubItems.Add(v.amount.ToString());
@@ -309,9 +321,7 @@ namespace TrackerClient
         {
             if (lbHouses.SelectedValue == null) return;
             House h = (House)lbHouses.SelectedValue;
-            float x = float.Parse(h.Location[0]);
-            float y = float.Parse(h.Location[1]);
-            float[] newCords = Helper.performCordScale(x, y, pbMap.Height, pbMap.Width);
+            float[] newCords = Helper.performCordScale(h.Location, pbMap);
             e.Graphics.FillRectangle(new SolidBrush(Color.White), new RectangleF(new PointF(newCords[0], newCords[1]), new Size(4, 4)));
         }
         private void DisplayPlayer(Player p)
@@ -321,13 +331,18 @@ namespace TrackerClient
             tbAliases.Clear();
             lvVehicleInfo.Items.Clear();
             lvVirtualItems.Items.Clear();
+            lvHVirtuals.Items.Clear();
+            lvHInventory.Items.Clear();
+            //lbHouses.DataSource = null;
+            //lbHouses.DisplayMember = null;
+            //lbHouses.Items.Clear();
 
             this.Text = string.Format("{0} | {1}", p.name, p.steamID);
             lblName.Text = string.Format("Name: {0}", p.name);
             lblCash.Text = string.Format("Cash: {0:C}", p.cash);
             lblBounty.Text = string.Format("Bounty: {0:C}", p.bountyWanted);
             lblKDR.Text = string.Format("K/D/R: {0:0,0}/{1:0,0}/{2:0.##}", p.kills, p.deaths, Convert.ToDecimal(Convert.ToDecimal(p.kills) / Convert.ToDecimal(p.deaths)));
-            lblCopRank.Text = string.Format("APD Rank: {0}", p.copLevel);
+            lblCopRank.Text = string.Format("APD Rank: {0}", ParseRank(p.copLevel, 0));
             lblCopTime.Text = string.Format("APD Time: {0:0,0}", (p.timeApd.ToString() == "-1") ? "N/A" : p.timeApd.ToString());
             lblGang.Text = string.Format("Gang: {0}", p.gangName == "-1" ? "N/A" : p.gangName);
             lblBank.Text = string.Format("Bank: {0:C}", p.bank);
@@ -356,7 +371,7 @@ namespace TrackerClient
                 tbAliases.Text += string.Format("{0}{1}", alias, Environment.NewLine);
             }
             if (p.Virtuals != null)
-                foreach (VirtualItem v in p.Virtuals)
+                foreach (Item v in p.Virtuals)
                 {
                     ListViewItem lviV = new ListViewItem(v.name);
                     lviV.SubItems.Add(v.amount.ToString());
@@ -389,59 +404,114 @@ namespace TrackerClient
                 lvVehicleInfo.Items.Add(lviV);
             }
             if (p.houses != null)
+            {
                 foreach (House h in p.houses)
                 {
                     houses.Add(h);
                 }
+            }
             houses = houses.OrderBy(h => h.ID).ToList();
             lbHouses.DisplayMember = "lbname";
             lbHouses.DataSource = houses;
             if (playerMap != null)
             {
-                if (p.location.Length > 1)
-                    playerMap.pbMap_CenterPlayer(p.location);
+                if (sw.ElapsedMilliseconds > 1000)
+                    if (p.location.Length > 1)
+                        playerMap.pbMap_CenterPlayer(p.location);
 
             }
         }
 
-        private void lvVehicleInfo_ColumnClick(object sender, ColumnClickEventArgs e)
+        private object ParseRank(int jobLevel, int job)
         {
-            if (e.Column == _lvwItemComparer.SortColumn)
+            string position = "";
+            if (job == 0)
             {
-                if (_lvwItemComparer.Order == SortOrder.Ascending)
+                switch (jobLevel)
                 {
-                    _lvwItemComparer.Order = SortOrder.Descending;
-                }
-                else
-                {
-                    _lvwItemComparer.Order = SortOrder.Ascending;
+                    case 0:
+                        position = "N\\A";
+                        break;
+                    case 1:
+                        position = "Derputy";
+                        break;
+                    case 2:
+                        position = "Patrol Officer";
+                        break;
+                    case 3:
+                        position = "Corporal";
+                        break;
+                    case 4:
+                        position = "Sergeant";
+                        break;
+                    case 5:
+                        position = "Lieutenant";
+                        break;
+                    case 6:
+                        position = "Dep. Chief";
+                        break;
+                    case 7:
+                        position = "Chief of Police";
+                        break;
                 }
             }
             else
             {
-                _lvwItemComparer.SortColumn = e.Column;
-                _lvwItemComparer.Order = SortOrder.Ascending;
+                switch (jobLevel)
+                {
+                    case 0:
+                        position = "N\\A";
+                        break;
+                    case 1:
+                        position = "EMT";
+                        break;
+                    case 2:
+                        position = "Paramedic";
+                        break;
+                    case 3:
+                        position = "S & R";
+                        break;
+                    case 4:
+                        position = "Air Responder";
+                        break;
+                    case 5:
+                        position = "Coordinator";
+                        break;
+                }
+
             }
-            lvVehicleInfo.Sort();
+            return position;
         }
 
         private void bwPlayerListRefresh_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            openConnection();
-            onlinePlayers = server.GetPlayerList(serverID);
-            onlinePlayers = onlinePlayers.OrderBy(p => p.name).ToList();
-            closeConnection();
-            if (playerMap != null)
+            try
             {
-                playerMap.players = onlinePlayers;
-                playerMap.canReset = true;
-                playerMap.pbMap.Invalidate();
+                openConnection();
+                onlinePlayers = server.GetPlayerList(serverID);
+                onlinePlayers = onlinePlayers.OrderBy(p => p.name).ToList();
+                closeConnection();
+                if (playerMap != null)
+                {
+                    playerMap.players = onlinePlayers;
+                    playerMap.canReset = true;
+                    playerMap.pbMap.Invalidate();
+                }
+            }
+            catch (EndpointNotFoundException)
+            {
+                tsslStatus.Text = "Unable to connect to server";
+            }
+            catch (TimeoutException)
+            {
+
             }
         }
 
         private void bwPlayerListRefresh_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
             doingWork = false;
+            justRefreshed = true;
             if (!sw.IsRunning)
                 sw.Start();
             lbPlayersAll.DisplayMember = "name";
