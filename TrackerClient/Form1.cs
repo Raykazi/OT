@@ -563,6 +563,15 @@ namespace TrackerClient
         {
             Reset();
         }
+
+        private void tbZoom_Scroll(object sender, EventArgs e)
+        {
+            double percent = (double)tbZoom.Value / 100;
+            Bitmap Original = Properties.Resources.Altis3;
+            Size newSize = new Size((int)(Original.Width * percent), (int)(Original.Height * percent));
+            Bitmap picture = new Bitmap(Original, newSize);
+            pbMap.Image = picture;
+        }
     }
 
 }

@@ -103,6 +103,7 @@
             this.server3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tbZoom = new System.Windows.Forms.TrackBar();
             this.panelLeft.SuspendLayout();
             this.pPlayerList.SuspendLayout();
             this.tcPlayerLists.SuspendLayout();
@@ -122,6 +123,7 @@
             this.tpDebug.SuspendLayout();
             this.ssMain.SuspendLayout();
             this.menuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbZoom)).BeginInit();
             this.SuspendLayout();
             // 
             // panelLeft
@@ -622,6 +624,7 @@
             // panelHouses
             // 
             this.panelHouses.AutoScroll = true;
+            this.panelHouses.Controls.Add(this.tbZoom);
             this.panelHouses.Controls.Add(this.lbHouses);
             this.panelHouses.Controls.Add(this.lvHInventory);
             this.panelHouses.Controls.Add(this.lvHVirtuals);
@@ -795,6 +798,17 @@
             this.refreshToolStripMenuItem.Text = "&Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
+            // tbZoom
+            // 
+            this.tbZoom.Location = new System.Drawing.Point(164, 66);
+            this.tbZoom.Maximum = 200;
+            this.tbZoom.Minimum = 1;
+            this.tbZoom.Name = "tbZoom";
+            this.tbZoom.Size = new System.Drawing.Size(152, 45);
+            this.tbZoom.TabIndex = 86;
+            this.tbZoom.Value = 100;
+            this.tbZoom.Scroll += new System.EventHandler(this.tbZoom_Scroll);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -827,11 +841,13 @@
             this.panelPictureBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbMap)).EndInit();
             this.panelHouses.ResumeLayout(false);
+            this.panelHouses.PerformLayout();
             this.tpDebug.ResumeLayout(false);
             this.ssMain.ResumeLayout(false);
             this.ssMain.PerformLayout();
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbZoom)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -912,6 +928,7 @@
         private System.Windows.Forms.Panel panelHouses;
         private System.Windows.Forms.Panel panelPictureBox;
         internal System.Windows.Forms.PictureBox pbMap;
+        private System.Windows.Forms.TrackBar tbZoom;
     }
 }
 
