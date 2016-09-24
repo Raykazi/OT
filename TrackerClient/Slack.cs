@@ -23,7 +23,7 @@ namespace TrackerClient
         {
             Payload payload = new Payload()
             {
-                attachments = attachment
+                Attachments = attachment
             };
 
             PostMessage(payload);
@@ -52,24 +52,24 @@ namespace TrackerClient
     public class Payload
     {
         [JsonProperty("attachments")]
-        public Attachment attachments { get; set; }
+        public Attachment Attachments { get; set; }
     }
     public class Attachment
     {
-        public string fallback;
-        public string color;
-        public string pretext;
-        public string author_name;
-        public string author_link;
-        public string author_icon;
-        public string title;
-        public string title_link;
-        public string text;
-        public Fields[] fields;
+        public string Fallback;
+        public string Color;
+        public string Pretext;
+        public string AuthorName;
+        public string AuthorLink;
+        public string AuthorIcon;
+        public string Title;
+        public string TitleLink;
+        public string Text;
+        public Fields[] Fields;
 
-        public string image_url;
-        public string thumb_url;
-        public string[] mrkdwn_in;
+        public string ImageUrl;
+        public string ThumbUrl;
+        public string[] MrkdwnIn;
     }
 
     public class Fields
@@ -79,6 +79,6 @@ namespace TrackerClient
         [JsonProperty("value")]
         public string Value;
         [JsonProperty("short")]
-        public bool @short = true;
+        public bool Short = true;
     }
 }

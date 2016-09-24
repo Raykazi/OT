@@ -6,25 +6,25 @@ namespace TrackerClient
     public class ListViewItemComparer : IComparer
     {
         // Specifies the column to be sorted
-        private int ColumnToSort;
+        private int _columnToSort;
 
         // Specifies the order in which to sort (i.e. 'Ascending').
-        private SortOrder OrderOfSort;
+        private SortOrder _orderOfSort;
 
         // Case insensitive comparer object
-        private CaseInsensitiveComparer ObjectCompare;
+        private CaseInsensitiveComparer _objectCompare;
 
         // Class constructor, initializes various elements
         public ListViewItemComparer()
         {
             // Initialize the column to '0'
-            ColumnToSort = 0;
+            _columnToSort = 0;
 
             // Initialize the sort order to 'none'
-            OrderOfSort = SortOrder.None;
+            _orderOfSort = SortOrder.None;
 
             // Initialize the CaseInsensitiveComparer object
-            ObjectCompare = new CaseInsensitiveComparer();
+            _objectCompare = new CaseInsensitiveComparer();
         }
 
         // This method is inherited from the IComparer interface.
@@ -47,18 +47,18 @@ namespace TrackerClient
             listviewY = (ListViewItem)y;
 
             // Case insensitive Compare
-            compareResult = ObjectCompare.Compare(
-                listviewX.SubItems[ColumnToSort].Text,
-                listviewY.SubItems[ColumnToSort].Text
+            compareResult = _objectCompare.Compare(
+                listviewX.SubItems[_columnToSort].Text,
+                listviewY.SubItems[_columnToSort].Text
             );
 
             // Calculate correct return value based on object comparison
-            if (OrderOfSort == SortOrder.Ascending)
+            if (_orderOfSort == SortOrder.Ascending)
             {
                 // Ascending sort is selected, return normal result of compare operation
                 return compareResult;
             }
-            else if (OrderOfSort == SortOrder.Descending)
+            else if (_orderOfSort == SortOrder.Descending)
             {
                 // Descending sort is selected, return negative result of compare operation
                 return (-compareResult);
@@ -76,11 +76,11 @@ namespace TrackerClient
         {
             set
             {
-                ColumnToSort = value;
+                _columnToSort = value;
             }
             get
             {
-                return ColumnToSort;
+                return _columnToSort;
             }
         }
 
@@ -90,11 +90,11 @@ namespace TrackerClient
         {
             set
             {
-                OrderOfSort = value;
+                _orderOfSort = value;
             }
             get
             {
-                return OrderOfSort;
+                return _orderOfSort;
             }
         }
     }
