@@ -3,80 +3,86 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
+using Newtonsoft.Json;
 using TrackerInterface;
 
-namespace TrackerService
+namespace TrackerServer
 {
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "WCFTrackerService" in both code and config file together.
-    public class WCFTrackerService : IWCFTrackerService
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
+    public class WcfTrackerService : IWcfTrackerService
     {
-
-        object locker = new object();
-        DB db = new DB();
-        int updateCount = 0;
-        int insertCount = 0;
-        int playerCount = 0;
-        int skipCount = 0;
-        string server;
-        public string getMySteamID(string steamName)
+        private int _updateCount = 0;
+        private int _insertCount = 0;
+        private int _skipCount = 0;
+        private static readonly List<Player>[] OnlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
+        private static readonly List<Player>[] TempOnlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
+        public string GetMySteamId(string steamName)
         {
             var client = new RestClient("http://api.steampowered.com");
             var request = new RestRequest("ISteamUser/ResolveVanityURL/v0001/?key={key}&vanityurl={vanityurl}", Method.GET);
             request.AddUrlSegment("key", "095A87F4340E4F2F21C22397D0E1376C"); // replaces matching token in request.Resource
             request.AddUrlSegment("vanityurl", steamName); // replaces matching token in request.Resource
-            IRestResponse response = client.Execute(request);
+            var response = client.Execute(request);
             var content = response.Content; // raw content as string
-            JObject o = JObject.Parse(content);
+            var o = JObject.Parse(content);
             return (string)o["response"]["steamid"];
         }
         //Curl method to fetch data from the API
-        public string getPlayerInfo(long playerID)
+        public string GetPlayerInfo(long playerId)
         {
             var client = new RestClient("http://olympusapi.xyz/apiv2");
             var request = new RestRequest("player/{id}", Method.GET);
-            request.AddUrlSegment("id", playerID.ToString()); // replaces matching token in request.Resource
-            IRestResponse response = client.Execute(request);
-            var content = response.Content; // raw content as string
+            request.AddUrlSegment("id", playerId.ToString());
+            var response = client.Execute(request);
+            var content = response.Content;
             return content;
         }
-        public string getPlayerHouseInfo(long playerID)
+        public string GetPlayerHouseInfo(long playerId)
         {
             var client = new RestClient("http://olympusapi.xyz/apiv2");
             var request = new RestRequest("house/{id}", Method.GET);
-            request.AddUrlSegment("id", playerID.ToString()); // replaces matching token in request.Resource
-            IRestResponse response = client.Execute(request);
-            var content = response.Content; // raw content as string
+            request.AddUrlSegment("id", playerId.ToString());
+            var response = client.Execute(request);
+            var content = response.Content;
             return content;
         }
-        public List<string> GetPlayers(string serverID)
+        public List<string> GetPlayers(string serverId)
         {
-            List<string> playerNames = new List<string>();
-            var client = new RestClient("http://olympusapi.xyz/apiv2");
-            var request = new RestRequest("query/{serverNum}", Method.GET);
-            request.AddUrlSegment("serverNum", serverID); // replaces matching token in request.Resource
-            Program.ConsoleLog(string.Format("Fetching players on server {0}", serverID));
-            IRestResponse response = client.Execute(request);
-            var content = response.Content; // raw content as string
-            //content = content.Replace(@"\""", "s");
-            //content = content.Replace(@"\", "");
-            JObject jsonObject = JObject.Parse(content);
-            JArray jsonArray = jsonObject["players"] as JArray;
-            dynamic playerArray = jsonArray;
-            foreach (dynamic player in playerArray)
+            var content = "";
+            try
             {
-                string name = player["Name"];
-                playerNames.Add(name);
+                var playerNames = new List<string>();
+                var client = new RestClient("http://olympusapi.xyz/apiv2");
+                var request = new RestRequest("query/{serverNum}", Method.GET);
+                request.AddUrlSegment("serverNum", serverId);
+                //Program.ConsoleLog($"Fetching players {serverId}");
+                var response = client.Execute(request);
+                content = response.Content;
+                var jsonObject = JObject.Parse(content);
+                var jsonArray = jsonObject["players"] as JArray;
+                dynamic playerArray = jsonArray;
+                if (playerArray == null) return playerNames;
+                foreach (var player in playerArray)
+                {
+                    string name = player["Name"];
+                    playerNames.Add(name);
+                }
+                return playerNames;
+
             }
-            return playerNames;
+            catch (JsonReaderException e)
+            {
+                if (!content.Contains("Could not make contact with Server"))
+                    Program.ConsoleLog(e.Message);
+            }
+            return new List<string>();
         }
-        public long getSteamID(string name)
+        public long GetSteamId(string name)
         {
-            long steamID = 0;
+            long steamId = 0;
             IRestResponse response = null;
             try
             {
@@ -87,57 +93,70 @@ namespace TrackerService
                 request.AddUrlSegment("name", name); // replaces matching token in request.Resource
                 //Program.ConsoleLog(String.Format("Fetching alias for {0}", name));
                 response = client.Execute(request);
-                string content = response.Content;
-                int startIndex = content.IndexOf("Player ID:");
+                var content = response.Content;
+                var startIndex = content.IndexOf("Player ID:");
                 if (startIndex == -1)
                 {
                     name = name.Remove(name.LastIndexOf("[")).Trim();
                     goto Retry;
                 }
-                string ID = content.Substring(startIndex + 11, 17);
-                if (long.TryParse(ID, out steamID))
+                var id = content.Substring(startIndex + 11, 17);
+                if (long.TryParse(id, out steamId))
                     content = null;
                 else
                 {
-                    skipCount++;
-                    Program.ConsoleLog(String.Format("Failed to get ID {0}", ID));
-                    steamID = -1;
+                    _skipCount++;
+                    Program.ConsoleLog($"Failed to get ID {id}");
+                    steamId = -1;
                 }
             }
             catch (FormatException)
             {
-                Program.ConsoleLog("Skipping player: " + name + " Reason" + response.Content.ToString());
-                steamID = -1;
+                Program.ConsoleLog("Skipping player: " + name + " Reason" + response.Content);
+                steamId = -1;
             }
             catch (ArgumentOutOfRangeException)
             {
 
             }
-            return steamID;
+            return steamId;
 
         }
-        public List<Player> GetPlayerList(string serverID)
+        public List<Player> GetPlayerList(string serverId)
         {
             try
             {
-                string sql = "SELECT * FROM servers WHERE `serverName` = ? ";
-                List<string>[] sr = db.ExecuteReader(sql, serverID);
-                playerCount = Convert.ToInt32(sr[2][0]);
-                //Player[] players = new Player[playerCount];
-                Player player;
-                List<Player> playerList = new List<Player>();
-                sql = "SELECT * FROM player WHERE `server` = ? ORDER BY lastActive DESC LIMIT ?";
-                List<string>[] pr = db.ExecuteReader(sql, serverID, playerCount);
-                for (int i = 0; i < playerCount; i++)
+                int serverNum;
+                switch (serverId)
                 {
-                    player = new Player(Convert.ToInt32(pr[0][i]), Convert.ToInt64(pr[1][i]), pr[2][i], Convert.ToInt32(pr[3][i]), Convert.ToInt32(pr[4][i]), Convert.ToInt32(pr[5][i]), Convert.ToInt32(pr[6][i]), Convert.ToInt32(pr[7][i]), Convert.ToInt32(pr[8][i]), pr[9][i], Convert.ToInt32(pr[10][i]), Convert.ToInt32(pr[11][i]), Convert.ToInt32(pr[12][i]), Convert.ToInt32(pr[14][i]), Convert.ToInt32(pr[15][i]), Convert.ToInt32(pr[16][i]), Convert.ToInt32(pr[17][i]), Convert.ToInt32(pr[13][i]), Convert.ToInt32(pr[18][i]), pr[19][i], Convert.ToInt32(pr[20][i]), Convert.ToInt64(pr[21][i]), pr[28][i], pr[29][i], pr[30][i], pr[23][i], Convert.ToInt64(pr[34][i]), pr[35][i]);
-                    sql = "SELECT * FROM houses WHERE steamID = ?";
-                    List<string>[] hr = db.ExecuteReader(sql, Convert.ToInt64(pr[1][i]));
-                    player.AddHouses(hr, hr[0].Count);
-                    playerList.Add(player);
-                    player = null;
+                    default:
+                        serverNum = 0;
+                        break;
+                    case "arma_2_blame_poseidon":
+                        serverNum = 1;
+                        break;
+                    case "arma_3":
+                        serverNum = 2;
+                        break;
                 }
-                return playerList;
+                //var sql = "SELECT * FROM servers WHERE `serverName` = ? ";
+                //List<string>[] sr = db.ExecuteReader(sql, serverID);
+                //playerCount = Convert.ToInt32(sr[2][0]);
+                //Player[] players = new Player[playerCount];
+                //Player player;
+                //var playerList = new List<Player>();
+                //sql = "SELECT * FROM player WHERE `server` = ? ORDER BY lastActive DESC LIMIT ?";
+                //var pr = _db.ExecuteReader(sql, serverId, _playerCount);
+                //for (var i = 0; i < _playerCount; i++)
+                //{
+                //    player = new Player(Convert.ToInt32(pr[0][i]), Convert.ToInt64(pr[1][i]), pr[2][i], Convert.ToInt32(pr[3][i]), Convert.ToInt32(pr[4][i]), Convert.ToInt32(pr[5][i]), Convert.ToInt32(pr[6][i]), Convert.ToInt32(pr[7][i]), Convert.ToInt32(pr[8][i]), pr[9][i], Convert.ToInt32(pr[10][i]), Convert.ToInt32(pr[11][i]), Convert.ToInt32(pr[12][i]), Convert.ToInt32(pr[14][i]), Convert.ToInt32(pr[15][i]), Convert.ToInt32(pr[16][i]), Convert.ToInt32(pr[17][i]), Convert.ToInt32(pr[13][i]), Convert.ToInt32(pr[18][i]), pr[19][i], Convert.ToInt32(pr[20][i]), Convert.ToInt64(pr[21][i]), pr[28][i], pr[29][i], pr[30][i], pr[23][i], Convert.ToInt64(pr[34][i]), pr[35][i]);
+                //    sql = "SELECT * FROM houses WHERE steamID = ?";
+                //    var hr = _db.ExecuteReader(sql, Convert.ToInt64(pr[1][i]));
+                //    player.AddHouses(hr, hr[0].Count);
+                //    playerList.Add(player);
+                //    player = null;
+                //}
+                return OnlinePlayers[serverNum];
             }
             catch (Exception e)
             {
@@ -146,29 +165,36 @@ namespace TrackerService
             return null;
         }
         //Updates the players in the database
-        public void PullPlayers(string serverID)
+        public void PullPlayers(string serverId)
         {
             try
             {
-                server = serverID;
-                List<string> onlinePlayerNames = GetPlayers(server);
-                //Gets the number of players for a loop later down the line
-                playerCount = onlinePlayerNames.Count;
-                string sql = "UPDATE servers SET `playerCount` = ? WHERE `serverName` = ? ";
-                db.ExecuteNonQuery(sql, playerCount, server);
+                var onlinePlayerNames = GetPlayers(serverId);
+                int serverNum;
+                switch (serverId)
+                {
+                    case "arma_2_blame_poseidon":
+                        serverNum = 1;
+                        break;
+                    case "arma_3":
+                        serverNum = 2;
+                        break;
+                    default:
+                        serverNum = 0;
+                        break;
+                }
+                if (serverNum != 0) return;
+                Program.ConsoleLog($"Server {(serverNum + 1)}: {onlinePlayerNames.Count} Online");
+                TempOnlinePlayers[serverNum].Clear();
                 onlinePlayerNames.Select(name =>
                 {
-                    long steamID = getSteamID(name);
-                    //Program.ConsoleLog(string.Format("{0}:{1}", steamID, name));
-                    Thread tr = new Thread(() => SavePlayer(steamID));
+                    var steamId = GetSteamId(name);
+                    var tr = new Thread(() => TempOnlinePlayers[serverNum].Add(CreatePlayer(steamId, serverNum)));
                     tr.Start();
                     return tr;
-
                 }).ToList().ForEach(t => t.Join());
-                //Log it to the console.
-                Program.ConsoleLog(string.Format("{3}: {0} added. {1} updated. {2} skipped ", insertCount, updateCount, skipCount, server));
-                //return playerCount;
-
+                Program.ConsoleLog($"Server {(serverNum + 1)} Processed ");
+                OnlinePlayers[serverNum] = TempOnlinePlayers[serverNum];
             }
             catch (Exception e)
             {
@@ -176,88 +202,97 @@ namespace TrackerService
             }
         }
 
-        private void SavePlayer(long id)
+        private Player CreatePlayer(long steamId, int serverNum)
         {
-            string aliases = "";
-            int result_p = 0;
-            int result_h = 0;
-            long steamID = id;
+            var aliases = "";
+            var resultH = 0;
+            var resultP = 0;
             //Just incase someone has a 0 for a steam ID
-            if (steamID > 1)
+            if (steamId <= 1) return null;
+            //Pull the API info and parse it into an object
+            var pInfo = JObject.Parse(GetPlayerInfo(steamId));
+            var phInfo = JObject.Parse(GetPlayerHouseInfo(steamId));
+            var houses1 = JArray.Parse(phInfo["houses1data"].ToString());
+            var houses2 = JArray.Parse(phInfo["houses2data"].ToString());
+            if (pInfo["error"] != null)
             {
-                //Pull the API info and parse it into an object
-                JObject pInfo = JObject.Parse(getPlayerInfo(steamID));
-                JObject phInfo = JObject.Parse(getPlayerHouseInfo(steamID));
-                if (pInfo["error"] != null)
-                {
-                    //Making sure we got a valid json string
-                    Program.ConsoleLog("Error[PInfo]: " + pInfo["error"].ToString());
-                    return;
-                }
-                if (phInfo["error"] != null)
-                {
-                    //Making sure we got a valid json string
-                    Program.ConsoleLog("Error[PHInfo]: " + pInfo["error"].ToString());
-                    return;
-
-                }
-                //Lock the table
-                lock (locker)
-                {
-                    string sql = "";
-                    //Parse the aliases into one string
-                    if (pInfo.Count > 0)
-                        foreach (var pAlias in pInfo["aliases"])
-                        {
-                            aliases += pAlias + ";";
-                        }
-                    sql = "";
-                    //Determine if we are adding a player or updating
-                    List<string>[] data = db.ExecuteReader("SELECT steamID FROM Player WHERE steamID =?", steamID);
-                    if (data[0].Count == 0)
-                    {
-                        //Add the player to the DB
-                        sql = "INSERT INTO player (UID, steamID, playerName, cash, bank, copLevel, medicLevel, adminLevel, donatorLevel, kills, deaths, medicRevives, bountyCollected, copArrests, timeCiv, timeApd, timeMed, bountyWanted, aliases, gangName, lastActive, vehApdAir, vehApdCar, vehApdShip, vehCivAir, vehCivCar, vehCivShip, vehMedAir, vehMedCar, vehMedShip, gearApd, gearCiv, gearMed, gangRank, timestamp, location, server) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                        result_p += db.ExecuteNonQuery(sql, (int)pInfo["uid"], (long)pInfo["playerid"], pInfo["name"], (int)pInfo["cash"], (int)pInfo["bank"], (int)pInfo["coplevel"], (int)pInfo["mediclevel"], (int)pInfo["adminlevel"], (int)pInfo["donatorlevel"], (int)pInfo["stat_kills"], (int)pInfo["stat_deaths"], (int)pInfo["stat_revives"], (int)pInfo["stat_bounties"], (int)pInfo["stat_arrests"], (int)pInfo["stat_time_civ"], (int)pInfo["stat_time_apd"], (int)pInfo["stat_time_med"], (int)pInfo["wanted_total"], aliases, pInfo["gang_name"], Helper.ToUnixTime(Convert.ToDateTime(pInfo["last_active"])), pInfo["vehicle_apd_air"], pInfo["vehicle_apd_car"], pInfo["vehicle_apd_ship"], pInfo["vehicle_civ_air"], pInfo["vehicle_civ_car"], pInfo["vehicle_civ_ship"], pInfo["vehicle_med_air"], pInfo["vehicle_med_car"], pInfo["vehicle_med_ship"], pInfo["cop_gear"], pInfo["civ_gear"], pInfo["med_gear"], pInfo["gang_rank"], pInfo["time"], pInfo["raybeam"], server) == 1 ? 1 : 0;
-                        if (result_p == 1)
-                            insertCount++;
-                    }
-                    else
-                    {
-                        //Update the player
-                        sql = "UPDATE player SET `playerName` = ?, `cash` = ?, `bank` = ?, `copLevel` = ?, `medicLevel` = ?, `adminLevel` = ?, `donatorLevel` = ?, `aliases` = ?, `kills` = ?, `deaths` = ?, `medicRevives` = ?, `bountyCollected` = ?, `copArrests` = ?, `timeCiv` = ?, `timeApd` = ?, `timeMed` = ?, `bountyWanted` = ?, `gangName` = ?, `gangRank` = ?, `lastActive` = ?, `gearApd` = ?, `gearCiv` = ?, `gearMed` = ?, `vehApdAir` = ?, `vehApdCar` = ?, `vehApdShip` = ?, `vehCivAir` = ?, `vehCivCar` = ?, `vehCivShip` = ?, `vehMedAir` = ?, `vehMedCar` = ?, `vehMedShip` = ? , `timestamp` = ? , `location` = ?, `server` = ? WHERE `steamID` = ?";
-                        result_p = db.ExecuteNonQuery(sql, pInfo["name"], (int)pInfo["cash"], (int)pInfo["bank"], (int)pInfo["coplevel"], (int)pInfo["mediclevel"], (int)pInfo["adminlevel"], (int)pInfo["donatorlevel"], aliases, (int)pInfo["stat_kills"], (int)pInfo["stat_deaths"], (int)pInfo["stat_revives"], (int)pInfo["stat_bounties"], (int)pInfo["stat_arrests"], (int)pInfo["stat_time_civ"], (int)pInfo["stat_time_apd"], (int)pInfo["stat_time_med"], (int)pInfo["wanted_total"], pInfo["gang_name"], pInfo["gang_rank"], Helper.ToUnixTime(Convert.ToDateTime(pInfo["last_active"])), pInfo["cop_gear"], pInfo["civ_gear"], pInfo["med_gear"], pInfo["vehicle_apd_air"], pInfo["vehicle_apd_car"], pInfo["vehicle_apd_ship"], pInfo["vehicle_civ_air"], pInfo["vehicle_civ_car"], pInfo["vehicle_civ_ship"], pInfo["vehicle_med_air"], pInfo["vehicle_med_car"], pInfo["vehicle_med_ship"], pInfo["time"], pInfo["raybeam"], server, steamID);
-                        if (result_p == 1)
-                            updateCount++;
-                    }
-                    JArray houses = JArray.Parse(phInfo["houses1data"].ToString());
-                    foreach (JObject house in houses)
-                    {
-                        int hid = (int)house["houseid"];
-                        string pos = (string)house["pos"];
-                        pos = pos.Remove(0, 1);
-                        pos = pos.Remove(pos.IndexOf(']'));
-                        long last_used = Helper.ToUnixTime(DateTime.Parse(house["last_active"].ToString()));
-                        string crates = Helper.ToJson(house["crates"].ToString());
-                        string virtuals = house["inventory"].ToString();
-                        int maxStorage = (int)house["storage"];
-
-                        List<string>[] data2 = db.ExecuteReader("SELECT houseID FROM houses WHERE houseID =?", hid);
-                        if (data2[0].Count == 0)
-                        {
-                            //Add the player to the DB
-                            sql = "INSERT INTO houses (`houseID`, `steamID`, `location`, `lastAccessed`, `virtual`, `crates`, `storage`, `server`)  VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                            result_h += db.ExecuteNonQuery(sql, hid, steamID, pos, last_used, virtuals, crates, maxStorage, server) == 1 ? 1 : 0;
-                        }
-                        else
-                        {
-                            //Update the player's house
-                            sql = "UPDATE houses SET `steamID` = ?, `location` = ?, `lastAccessed` = ?, `crates` = ?, `virtual` = ?, `storage`= ?, `server`=? WHERE `houseID` = ?";
-                            result_h += db.ExecuteNonQuery(sql, steamID, pos, last_used, crates, virtuals, maxStorage, server, hid) == 1 ? 1 : 0;
-                        }
-                    }
-                }
+                //Making sure we got a valid json string
+                Program.ConsoleLog("Error[PInfo]: " + pInfo["error"]);
+                return null;
             }
+            if (phInfo["error"] != null)
+            {
+                //Making sure we got a valid json string
+                Program.ConsoleLog("Error[PHInfo]: " + pInfo["error"]);
+                return null;
+
+            }
+            aliases = pInfo["aliases"].Aggregate(aliases, (current, pAlias) => current + (pAlias + ";"));
+            var p = new Player((int)pInfo["uid"], (long)pInfo["playerid"], (string)pInfo["name"], aliases, (string)pInfo["gang_name"], (int)pInfo["gang_rank"], Convert.ToDateTime(pInfo["last_active"]).ToUnixTime(), (long)pInfo["time"], (string)pInfo["raybeam"]);
+            p.AddGear(pInfo["civ_gear"].ToString());
+            p.AddMoney((int)pInfo["cash"], (int)pInfo["bank"], (int)pInfo["stat_bounties"], (int)pInfo["wanted_total"]);
+            p.AddStats((int)pInfo["coplevel"], (int)pInfo["mediclevel"], (int)pInfo["adminlevel"], (int)pInfo["donatorlevel"], (int)pInfo["stat_kills"], (int)pInfo["stat_deaths"], (int)pInfo["stat_revives"], (int)pInfo["stat_arrests"]);
+            p.AddTime((int)pInfo["stat_time_civ"], (int)pInfo["stat_time_apd"], (int)pInfo["stat_time_med"]);
+            p.AddVehicles(pInfo["vehicle_civ_air"].ToString(), pInfo["vehicle_civ_car"].ToString(), pInfo["vehicle_civ_ship"].ToString());
+
+            Program.ConsoleLog($"Server #{serverNum + 1}: {p.Name} {TempOnlinePlayers[serverNum].Count}/{OnlinePlayers[serverNum].Count}");
+            //_insertCount++;
+            foreach (var jToken in houses1)
+            {
+                var house = (JObject)jToken;
+                var hid = (int)house["houseid"];
+                var pos = (string)house["pos"];
+                pos = pos.Remove(0, 1);
+                pos = pos.Remove(pos.IndexOf(']'));
+                var lastUsed = DateTime.Parse(house["last_active"].ToString()).ToUnixTime();
+                var crates = Helper.ToJson(house["crates"].ToString());
+                var virtuals = house["inventory"].ToString();
+                var maxStorage = (int)house["storage"];
+                p.AddHouse(hid, pos, lastUsed, crates, virtuals, maxStorage);
+
+                //var data2 = _db.ExecuteReader("SELECT houseID FROM houses WHERE houseID =?", hid);
+                //if (data2[0].Count == 0)
+                //{
+                //    //Add the player to the DB
+                //    sql = "INSERT INTO houses (`houseID`, `steamID`, `location`, `lastAccessed`, `virtual`, `crates`, `storage`, `server`)  VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                //    resultH += _db.ExecuteNonQuery(sql, hid, steamId, pos, lastUsed, virtuals, crates, maxStorage, _serverName) == 1 ? 1 : 0;
+                //}
+                //else
+                //{
+                //    //Update the player's house
+                //    sql = "UPDATE houses SET `steamID` = ?, `location` = ?, `lastAccessed` = ?, `crates` = ?, `virtual` = ?, `storage`= ?, `server`=? WHERE `houseID` = ?";
+                //    resultH += _db.ExecuteNonQuery(sql, steamId, pos, lastUsed, crates, virtuals, maxStorage, _serverName, hid) == 1 ? 1 : 0;
+                //}
+            }
+            return p;
+            //Lock the table
+            //lock (_locker)
+            //{
+            //    var sql = "";
+            //    //Parse the aliases into one string
+            //    //if (pInfo.Count > 0)
+            //    //Determine if we are adding a player or updating
+            //    var data = _db.ExecuteReader("SELECT steamID FROM Player WHERE steamID =?", steamId);
+            //    if (data[0].Count == 0)
+            //    {
+            //        //Add the player to the DB
+            //        sql = "INSERT INTO player (UID, steamID, playerName, cash, bank, copLevel, medicLevel, adminLevel, donatorLevel, kills, deaths, medicRevives, bountyCollected, copArrests, timeCiv, timeApd, timeMed, bountyWanted, aliases, gangName, lastActive, vehApdAir, vehApdCar, vehApdShip, vehCivAir, vehCivCar, vehCivShip, vehMedAir, vehMedCar, vehMedShip, gearApd, gearCiv, gearMed, gangRank, timestamp, location, server) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            //        resultP += _db.ExecuteNonQuery(sql, (int)pInfo["uid"], (long)pInfo["playerid"], pInfo["name"], (int)pInfo["cash"], (int)pInfo["bank"], (int)pInfo["coplevel"], (int)pInfo["mediclevel"], (int)pInfo["adminlevel"], (int)pInfo["donatorlevel"], (int)pInfo["stat_kills"], (int)pInfo["stat_deaths"], (int)pInfo["stat_revives"], (int)pInfo["stat_bounties"], (int)pInfo["stat_arrests"], (int)pInfo["stat_time_civ"], (int)pInfo["stat_time_apd"], (int)pInfo["stat_time_med"], (int)pInfo["wanted_total"], aliases, pInfo["gang_name"], Convert.ToDateTime(pInfo["last_active"]).ToUnixTime(), pInfo["vehicle_apd_air"], pInfo["vehicle_apd_car"], pInfo["vehicle_apd_ship"], pInfo["vehicle_civ_air"], pInfo["vehicle_civ_car"], pInfo["vehicle_civ_ship"], pInfo["vehicle_med_air"], pInfo["vehicle_med_car"], pInfo["vehicle_med_ship"], pInfo["cop_gear"], pInfo["civ_gear"], pInfo["med_gear"], pInfo["gang_rank"], pInfo["time"], pInfo["raybeam"], _serverName) == 1 ? 1 : 0;
+            //        if (resultP == 1)
+            //            _insertCount++;
+            //    }
+            //    else
+            //    {
+            //        //Update the player
+            //        sql = "UPDATE player SET `playerName` = ?, `cash` = ?, `bank` = ?, `copLevel` = ?, `medicLevel` = ?, `adminLevel` = ?, `donatorLevel` = ?, `aliases` = ?, `kills` = ?, `deaths` = ?, `medicRevives` = ?, `bountyCollected` = ?, `copArrests` = ?, `timeCiv` = ?, `timeApd` = ?, `timeMed` = ?, `bountyWanted` = ?, `gangName` = ?, `gangRank` = ?, `lastActive` = ?, `gearApd` = ?, `gearCiv` = ?, `gearMed` = ?, `vehApdAir` = ?, `vehApdCar` = ?, `vehApdShip` = ?, `vehCivAir` = ?, `vehCivCar` = ?, `vehCivShip` = ?, `vehMedAir` = ?, `vehMedCar` = ?, `vehMedShip` = ? , `timestamp` = ? , `location` = ?, `server` = ? WHERE `steamID` = ?";
+            //        resultP = _db.ExecuteNonQuery(sql, pInfo["name"], (int)pInfo["cash"], (int)pInfo["bank"], (int)pInfo["coplevel"], (int)pInfo["mediclevel"], (int)pInfo["adminlevel"], (int)pInfo["donatorlevel"], aliases, (int)pInfo["stat_kills"], (int)pInfo["stat_deaths"], (int)pInfo["stat_revives"], (int)pInfo["stat_bounties"], (int)pInfo["stat_arrests"], (int)pInfo["stat_time_civ"], (int)pInfo["stat_time_apd"], (int)pInfo["stat_time_med"], (int)pInfo["wanted_total"], pInfo["gang_name"], pInfo["gang_rank"], Helper.ToUnixTime(Convert.ToDateTime(pInfo["last_active"])), pInfo["cop_gear"], pInfo["civ_gear"], pInfo["med_gear"], pInfo["vehicle_apd_air"], pInfo["vehicle_apd_car"], pInfo["vehicle_apd_ship"], pInfo["vehicle_civ_air"], pInfo["vehicle_civ_car"], pInfo["vehicle_civ_ship"], pInfo["vehicle_med_air"], pInfo["vehicle_med_car"], pInfo["vehicle_med_ship"], pInfo["time"], pInfo["raybeam"], _serverName, steamId);
+            //        if (resultP == 1)
+            //            _updateCount++;
+            //    }
+            //    var houses = JArray.Parse(phInfo["houses1data"].ToString());
+            //    _db.ExecuteNonQuery("UPDATE houses SET `steamID` = 0 WHERE steamID =?", steamId);
+
+            //}
         }
     }
 }

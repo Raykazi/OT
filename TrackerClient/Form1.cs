@@ -118,6 +118,7 @@ namespace TrackerClient
             var targetPlayers = new List<Player>();
             foreach (var p in _onlinePlayers)
             {
+
                 var wItem = "";
                 var wVehicle = "";
                 p.TargetLevel = -1;
@@ -296,33 +297,33 @@ namespace TrackerClient
             //lbHouses.DisplayMember = null;
             //lbHouses.Items.Clear();
 
-            Text = string.Format("{0} | {1}", p.Name, p.SteamId);
-            lblName.Text = string.Format("Name: {0}", p.Name);
-            lblCash.Text = string.Format("Cash: {0:C}", p.Cash);
-            lblBounty.Text = string.Format("Bounty: {0:C}", p.BountyWanted);
-            lblKDR.Text = string.Format("K/D/R: {0:0,0}/{1:0,0}/{2:0.##}", p.Kills, p.Deaths, Convert.ToDecimal(Convert.ToDecimal(p.Kills) / Convert.ToDecimal(p.Deaths)));
-            lblCopRank.Text = string.Format("APD Rank: {0}", ParseRank(p.CopLevel, 0));
-            lblCopTime.Text = string.Format("APD Time: {0:0,0}", (p.TimeApd.ToString() == "-1") ? "N/A" : p.TimeApd.ToString());
-            lblGang.Text = string.Format("Gang: {0}", p.GangName == "-1" ? "N/A" : p.GangName);
-            lblBank.Text = string.Format("Bank: {0:C}", p.Bank);
-            lblVigiBounty.Text = string.Format("Bounty Collected: {0:C}", p.BountyCollected == -1 ? 0 : p.BountyCollected);
-            lblCivTime.Text = string.Format("Civ Time: {0:0,0}", p.TimeCiv);
-            lblMedicRank.Text = string.Format("R&R Rank: {0}", ParseRank(p.MedicLevel, 1));
-            lblMedicTime.Text = string.Format("R&R Time: {0:0,0}", p.TimeMed.ToString() == "-1" ? "N/A" : p.TimeMed.ToString());
-            lblVest.Text = string.Format("Vest: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[1]);
-            lblHelmet.Text = string.Format("Helmet: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[4]);
-            lblGun.Text = string.Format("Gun: {0}", p.Equipment.Count == 0 ? "None" : p.Equipment[5]);
-            lblUpdated.Text = string.Format("Last Updated (UTC): {0}", p.LastUpdated);
-            lblLocation.Text = p.Location.Length > 1 ? string.Format("Last Seen @ X:{0} Y:{1}", p.Location[0], p.Location[1]) : string.Format("Last Seen @ Unknown");
-            foreach (var equip in p.Equipment)
+            Text = $"{p.Name} | {p.SteamId}";
+            lblName.Text = $"Name: {p.Name}";
+            lblCash.Text = $"Cash: {p.Cash:C}";
+            lblBounty.Text = $"Bounty: {p.BountyWanted:C}";
+            lblKDR.Text =
+                $"K/D/R: {p.Kills:0,0}/{p.Deaths:0,0}/{Convert.ToDecimal(Convert.ToDecimal(p.Kills) / Convert.ToDecimal(p.Deaths)):0.##}";
+            lblCopRank.Text = $"APD Rank: {ParseRank(p.CopLevel, 0)}";
+            lblCopTime.Text = $"APD Time: {((p.TimeApd.ToString() == "-1") ? "N/A" : p.TimeApd.ToString()):0,0}";
+            lblGang.Text = $"Gang: {(p.GangName == "-1" ? "N/A" : p.GangName)}";
+            lblBank.Text = $"Bank: {p.Bank:C}";
+            lblVigiBounty.Text = $"Bounty Collected: {(p.BountyCollected == -1 ? 0 : p.BountyCollected):C}";
+            lblCivTime.Text = $"Civ Time: {p.TimeCiv:0,0}";
+            lblMedicRank.Text = $"R&R Rank: {ParseRank(p.MedicLevel, 1)}";
+            lblMedicTime.Text = $"R&R Time: {(p.TimeMed.ToString() == "-1" ? "N/A" : p.TimeMed.ToString()):0,0}";
+            lblVest.Text = $"Vest: {(p.Equipment.Count == 0 ? "None" : p.Equipment[1])}";
+            lblHelmet.Text = $"Helmet: {(p.Equipment.Count == 0 ? "None" : p.Equipment[4])}";
+            lblGun.Text = $"Gun: {(p.Equipment.Count == 0 ? "None" : p.Equipment[5])}";
+            lblUpdated.Text = $"Last Updated (UTC): {p.LastUpdated}";
+            lblLocation.Text = p.Location.Length > 1 ? $"Last Seen @ X:{p.Location[0]} Y:{p.Location[1]}" : "Last Seen @ Unknown";
+            foreach (var equip in p.Equipment.Where(equip => !_debugListEqu.Contains(equip) && equip.Length > 0))
             {
-                if (_debugListEqu.Contains(equip) || equip.Length <= 0) continue;
                 _debugListVeh.Add(equip);
-                rtbDebugEquipment.Text += string.Format("{0}{1}", equip, Environment.NewLine);
+                rtbDebugEquipment.Text += $"{equip}{Environment.NewLine}";
             }
             foreach (var alias in p.Aliases)
             {
-                tbAliases.Text += string.Format("{0}{1}", alias, Environment.NewLine);
+                tbAliases.Text += $"{alias}{Environment.NewLine}";
             }
             if (p.Virtuals != null)
                 foreach (var v in p.Virtuals)
@@ -351,13 +352,10 @@ namespace TrackerClient
             houses = houses.OrderBy(h => h.Id).ToList();
             lbHouses.DisplayMember = "lbname";
             lbHouses.DataSource = houses;
-            if (PlayerMap != null)
-            {
-                if (_sw.ElapsedMilliseconds > 1000)
-                    if (p.Location.Length > 1)
-                        PlayerMap.pbMap_CenterPlayer(p.Location);
-
-            }
+            if (PlayerMap == null) return;
+            if (_sw.ElapsedMilliseconds <= 1000) return;
+            if (p.Location.Length > 1)
+                PlayerMap.pbMap_CenterPlayer(p.Location);
         }
 
         private object ParseRank(int jobLevel, int job)
@@ -368,7 +366,7 @@ namespace TrackerClient
                 switch (jobLevel)
                 {
                     case 0:
-                        position = "N//A";
+                        position = "N/A";
                         break;
                     case 1:
                         position = "Derputy";
@@ -398,7 +396,7 @@ namespace TrackerClient
                 switch (jobLevel)
                 {
                     case 0:
-                        position = "N//A";
+                        position = "N/A";
                         break;
                     case 1:
                         position = "EMT";
@@ -407,7 +405,7 @@ namespace TrackerClient
                         position = "Paramedic";
                         break;
                     case 3:
-                        position = "S & R";
+                        position = "S && R";
                         break;
                     case 4:
                         position = "Air Responder";
@@ -429,12 +427,10 @@ namespace TrackerClient
                 _onlinePlayers = _server.GetPlayerList(_serverId);
                 _onlinePlayers = _onlinePlayers.OrderBy(p => p.Name).ToList();
                 CloseConnection();
-                if (PlayerMap != null)
-                {
-                    PlayerMap.Players = _onlinePlayers;
-                    PlayerMap.CanReset = true;
-                    PlayerMap.pbMap.Invalidate();
-                }
+                if (PlayerMap == null) return;
+                PlayerMap.Players = _onlinePlayers;
+                PlayerMap.CanReset = true;
+                PlayerMap.pbMap.Invalidate();
             }
             catch (EndpointNotFoundException)
             {
@@ -443,6 +439,10 @@ namespace TrackerClient
             catch (TimeoutException)
             {
 
+            }
+            catch (NullReferenceException ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -459,10 +459,7 @@ namespace TrackerClient
 
         private void cmsWatchlist_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (_activeListbox != lbWatchlist)
-                removeFromWatchlistToolStripMenuItem.Enabled = false;
-            else
-                removeFromWatchlistToolStripMenuItem.Enabled = true;
+            removeFromWatchlistToolStripMenuItem.Enabled = _activeListbox == lbWatchlist;
         }
 
         private void frmMain_Load(object sender, EventArgs e)
@@ -472,8 +469,7 @@ namespace TrackerClient
 
         private void mapToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PlayerMap = new Map();
-            PlayerMap.Players = _onlinePlayers;
+            PlayerMap = new Map {Players = _onlinePlayers};
             PlayerMap.Show();
         }
 

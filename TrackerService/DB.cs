@@ -1,22 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.OleDb;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 
-namespace TrackerService
+namespace TrackerServer
 {
-    class DB
+    class Db
     {
         private readonly MySqlConnection _connection;
         private MySqlCommand _mCmd;
 
-        public DB()
+        public Db()
         {
             //string conString = string.Format("SERVER=50.192.51.66;Port=3306;DATABASE=olympus;UID=otracker;PASSWORD=9Ohz7b^5LG0*O'c;Convert Zero Datetime=True;");
-            string conString = string.Format("SERVER=10.1.10.3;Port=3306;DATABASE=olympus;UID=otracker;PASSWORD=9Ohz7b^5LG0*O'c;Convert Zero Datetime=True;");
+            string conString = string.Format("SERVER=127.0.0.1;Port=3306;DATABASE=olympus;UID=otracker;PASSWORD=9Ohz7b^5LG0*O'c;Convert Zero Datetime=True;");
+            //string conString = string.Format("SERVER=10.1.10.3;Port=3306;DATABASE=olympus;UID=otracker;PASSWORD=9Ohz7b^5LG0*O'c;Convert Zero Datetime=True;");
             _connection = new MySqlConnection(conString);
         }
         private bool OpenConnection()
@@ -71,11 +68,11 @@ namespace TrackerService
             try
             {
                 if (!OpenConnection()) return -1;
-                MySqlCommand _mCmd = new MySqlCommand(sql, _connection);
+                MySqlCommand mCmd = new MySqlCommand(sql, _connection);
                 for (int i = 0; i < args.Length; i++)
-                    _mCmd.Parameters.AddWithValue("?p" + i, args[i]);
-                result = _mCmd.ExecuteNonQuery();
-                _mCmd = null;
+                    mCmd.Parameters.AddWithValue("?p" + i, args[i]);
+                result = mCmd.ExecuteNonQuery();
+                mCmd = null;
                 CloseConnection();
 
             }
@@ -107,11 +104,11 @@ namespace TrackerService
             try
             {
                 if (!OpenConnection()) return null;
-                MySqlCommand _mCmd = new MySqlCommand(sql, _connection);
+                MySqlCommand mCmd = new MySqlCommand(sql, _connection);
                 for (int i = 0; i < args.Length; i++)
-                    _mCmd.Parameters.AddWithValue("?" + i, args[i]);
-                MySqlDataReader mReader = _mCmd.ExecuteReader();
-                _mCmd = null;
+                    mCmd.Parameters.AddWithValue("?" + i, args[i]);
+                MySqlDataReader mReader = mCmd.ExecuteReader();
+                mCmd = null;
                 list=  new List<string>[mReader.FieldCount];
 
                 for (int i = 0; i < (list.Length); i++)
