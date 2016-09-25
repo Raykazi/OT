@@ -1,37 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ServiceModel;
 using TrackerInterface;
 using System.Diagnostics;
-using System.Windows.Forms;
 using System.Threading;
 
 namespace TrackerUpdater
 {
     class Program
     {
-        static ChannelFactory<IWCFTrackerService> channelFactory;
-        static IWCFTrackerService server;
-        static Stopwatch sw = new Stopwatch();
-        static System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
-        static string[] servers = new string[] { "arma_1",  "arma_3" };
-        private static readonly long refreshTime = 60000;
+        static ChannelFactory<IWcfTrackerService> _channelFactory;
+        static IWcfTrackerService _server;
+        static Stopwatch _sw = new Stopwatch();
+        static System.Windows.Forms.Timer _timer = new System.Windows.Forms.Timer();
+        static string[] _servers = new string[] { "arma_1", "arma_2_blame_poseidon", "arma_3" };
+        private static readonly long RefreshTime = 60000;
 
         static void Main(string[] args)
         {
             Update();
             while (true)
             {
-                if (!sw.IsRunning) sw.Start();
-                switch (sw.ElapsedMilliseconds)
+                if (!_sw.IsRunning) _sw.Start();
+                switch (_sw.ElapsedMilliseconds)
                 {
                     default:
-                        if (sw.IsRunning)
+                        if (_sw.IsRunning)
                         {
-                            if (sw.ElapsedMilliseconds >= refreshTime)
+                            if (_sw.ElapsedMilliseconds >= RefreshTime)
                                 Update();
                         }
                         break;
@@ -46,27 +42,27 @@ namespace TrackerUpdater
 
         private static void Update()
         {
-            servers.Select(id =>
+            _servers.Select(id =>
             {
                 Thread tr = new Thread(() => DoUpdate(id));
                 tr.Start();
                 return tr;
 
             }).ToList().ForEach(t => t.Join());
-            sw.Reset();
+            _sw.Reset();
         }
 
-        private static void DoUpdate(string serverID)
+        private static void DoUpdate(string serverId)
         {
             try
             {
-                channelFactory = new ChannelFactory<IWCFTrackerService>("TrackerClientEndpoint");
-                server = channelFactory.CreateChannel();
-                server.PullPlayers(serverID);
-                if (channelFactory.State < CommunicationState.Closing)
-                    channelFactory.Close();
+                _channelFactory = new ChannelFactory<IWcfTrackerService>("TrackerClientEndpoint");
+                _server = _channelFactory.CreateChannel();
+                _server.PullPlayers(serverId);
+                if (_channelFactory.State < CommunicationState.Closing)
+                    _channelFactory.Close();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 ConsoleLog(e.Message);
             }
