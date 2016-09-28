@@ -14,10 +14,7 @@ namespace TrackerServer
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class WcfTrackerService : IWcfTrackerService
     {
-        private int _updateCount = 0;
-        private int _insertCount = 0;
-        private int _skipCount = 0;
-        private List<Player>[] _onlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
+        private readonly List<Player>[] _onlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
         private List<Player>[] _tempOnlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
         public string GetMySteamId(string steamName)
         {
@@ -105,7 +102,6 @@ namespace TrackerServer
                     content = null;
                 else
                 {
-                    _skipCount++;
                     Program.ConsoleLog($"Failed to get ID {id}");
                     steamId = -1;
                 }

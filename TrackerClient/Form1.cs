@@ -24,7 +24,7 @@ namespace TrackerClient
         Player _lastSelected = null;
         string _serverId = "arma_1";
         internal Map PlayerMap;
-        SlackClient _sc = new SlackClient("https://hooks.slack.com/services/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");
+        //SlackClient _sc = new SlackClient("https://hooks.slack.com/services/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");
         object _locker = new object();
 
         Stopwatch _sw = new Stopwatch();
@@ -148,28 +148,28 @@ namespace TrackerClient
                             p.TargetLevel = 2;
                         }
                     }
-                if (wItem.Length > 0 || wVehicle.Length > 0)
-                {
-                    if (!_slackPostList.Contains(p))
-                    {
-                        _slackPostList.Add(p);
-                        new Thread(() =>
-                        {
-                            Fields[] temp = {
-                                new Fields() { Title = "Item", Value = wItem },
-                                new Fields() { Title = "Vehicle", Value = wVehicle }
-                            };
-                            var attachment = new Attachment()
-                            {
-                                Title = p.Name,
-                                Text = "Last Updated: " + p.LastUpdated,
-                                Fields = temp
-                            };
-                            //sc.PostMessage(attachment);
-                            Thread.Sleep(3000);
-                        }).Start();
-                    }
-                }
+                //if (wItem.Length > 0 || wVehicle.Length > 0)
+                //{
+                //    if (!_slackPostList.Contains(p))
+                //    {
+                //        _slackPostList.Add(p);
+                //        new Thread(() =>
+                //        {
+                //            Fields[] temp = {
+                //                new Fields() { Title = "Item", Value = wItem },
+                //                new Fields() { Title = "Vehicle", Value = wVehicle }
+                //            };
+                //            var attachment = new Attachment()
+                //            {
+                //                Title = p.Name,
+                //                Text = "Last Updated: " + p.LastUpdated,
+                //                Fields = temp
+                //            };
+                //            //sc.PostMessage(attachment);
+                //            Thread.Sleep(3000);
+                //        }).Start();
+                //    }
+                //}
             }
             targetPlayers = targetPlayers.OrderBy(p => p.Name).ToList();
             lbPlayersTargets.DisplayMember = "name";
@@ -196,14 +196,12 @@ namespace TrackerClient
                 {
                     tcMain.SelectTab(1);
                 }
-                if (lb.SelectedIndices.Count == 1)
-                {
-                    var p = (Player)lb.SelectedValue;
-                    _lastSelected = p;
-                    DisplayPlayer(p);
-                }
+                if (lb.SelectedIndices.Count != 1) return;
+                var p = (Player)lb.SelectedValue;
+                _lastSelected = p;
+                DisplayPlayer(p);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //MessageBox.Show(ex.Message);
             }
@@ -213,41 +211,52 @@ namespace TrackerClient
             e.DrawBackground();
             var g = e.Graphics;
             var lb = (ListBox)sender;
-            if (e.Index > -1 && e.Index < lb.Items.Count)
+            if (e.Index <= -1 || e.Index >= lb.Items.Count) return;
+            var p = (Player)lb.Items[e.Index];
+            var selected = ((e.State & DrawItemState.Selected) == DrawItemState.Selected);
+            var text = p.AdminLevel == 0 ? p.Name : p.Name.Insert(p.Name.Length, " [ADMIN]");
+            switch (p.TargetLevel)
             {
-                var p = (Player)lb.Items[e.Index];
-                var selected = ((e.State & DrawItemState.Selected) == DrawItemState.Selected);
-                var text = p.AdminLevel == 0 ? p.Name : p.Name.Insert(p.Name.Length, " [ADMIN]");
-                switch (p.TargetLevel)
-                {
-                    case 0:
-                        g.FillRectangle(new SolidBrush(Color.Yellow), e.Bounds);
-                        break;
-                    case 1:
-                        g.FillRectangle(new SolidBrush(Color.LawnGreen), e.Bounds);
-                        break;
-                    case 2:
-                        g.FillRectangle(new SolidBrush(Color.Red), e.Bounds);
-                        break;
-                    default:
-                        g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
-                        break;
-                }
-                if (selected)
-                {
-                    var highlight = SystemColors.MenuHighlight;
-                    g.FillRectangle(new SolidBrush(highlight), e.Bounds);
-                    //g.DrawRectangle(new Pen(Color.Black), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
-                    g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
-                }
-                else
-                {
-                    g.FillRectangle(new SolidBrush(Color.Transparent), e.Bounds);
-                    //g.DrawRectangle(new Pen(Color.Transparent), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
-                    g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
-                }
-                e.DrawFocusRectangle();
+                case 0:
+                    g.FillRectangle(new SolidBrush(Color.Yellow), e.Bounds);
+                    break;
+                case 1:
+                    g.FillRectangle(new SolidBrush(Color.Orange), e.Bounds);
+                    break;
+                case 2:
+                    g.FillRectangle(new SolidBrush(Color.Red), e.Bounds);
+                    break;
+                default:
+                    g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
+                    break;
             }
+            switch (p.Faction)
+            {
+                case "cop":
+                    g.FillRectangle(new SolidBrush(Color.CornflowerBlue), e.Bounds);
+                    break;
+                case "med":
+                    g.FillRectangle(new SolidBrush(Color.GreenYellow), e.Bounds);
+                    break;
+            }
+            if (p.AdminLevel > 0)
+                g.FillRectangle(new SolidBrush(Color.MediumPurple), e.Bounds);
+
+            if (selected)
+            {
+                var highlight = SystemColors.MenuHighlight;
+                g.FillRectangle(new SolidBrush(highlight), e.Bounds);
+                //g.DrawRectangle(new Pen(Color.Black), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
+                g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+            }
+            else
+            {
+                g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+                //g.FillRectangle(new SolidBrush(Color.Transparent), e.Bounds);
+                ////g.DrawRectangle(new Pen(Color.Transparent), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
+                //
+            }
+            e.DrawFocusRectangle();
         }
 
         private void DisplayHouse(House h)
@@ -469,7 +478,7 @@ namespace TrackerClient
 
         private void mapToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PlayerMap = new Map {Players = _onlinePlayers};
+            PlayerMap = new Map { Players = _onlinePlayers };
             PlayerMap.Show();
         }
 

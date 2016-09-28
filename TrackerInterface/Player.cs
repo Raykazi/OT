@@ -176,6 +176,7 @@ namespace TrackerInterface
         public int TargetLevel = -1; //Because these ***holes wanted colors
         [DataMember]
         public string[] Location; //Thank you FeDot
+        [DataMember]
         public string Faction { get; private set; }
         //Constructor
         public Player(int uid, long steamId, string name, string aliases, string gangN, int gangR, long lastActive, long lastUpdated, string location, string faction)
