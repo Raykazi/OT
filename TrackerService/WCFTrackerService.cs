@@ -14,11 +14,8 @@ namespace TrackerServer
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class WcfTrackerService : IWcfTrackerService
     {
-        private int _updateCount = 0;
-        private int _insertCount = 0;
-        private int _skipCount = 0;
-        private static readonly List<Player>[] OnlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
-        private static readonly List<Player>[] TempOnlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
+        private readonly List<Player>[] _onlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
+        private List<Player>[] _tempOnlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
         public string GetMySteamId(string steamName)
         {
             var client = new RestClient("http://api.steampowered.com");
@@ -105,7 +102,6 @@ namespace TrackerServer
                     content = null;
                 else
                 {
-                    _skipCount++;
                     Program.ConsoleLog($"Failed to get ID {id}");
                     steamId = -1;
                 }
@@ -156,7 +152,7 @@ namespace TrackerServer
                 //    playerList.Add(player);
                 //    player = null;
                 //}
-                return OnlinePlayers[serverNum];
+                return _onlinePlayers[serverNum];
             }
             catch (Exception e)
             {
@@ -185,21 +181,29 @@ namespace TrackerServer
                 }
                 if (serverNum != 0) return;
                 Program.ConsoleLog($"Server {(serverNum + 1)}: {onlinePlayerNames.Count} Online");
-                TempOnlinePlayers[serverNum].Clear();
+                _tempOnlinePlayers[serverNum].Clear();
                 onlinePlayerNames.Select(name =>
                 {
                     var steamId = GetSteamId(name);
-                    var tr = new Thread(() => TempOnlinePlayers[serverNum].Add(CreatePlayer(steamId, serverNum)));
+                    var tr = new Thread(() => DoWork(steamId, serverNum, ref _tempOnlinePlayers));
                     tr.Start();
                     return tr;
                 }).ToList().ForEach(t => t.Join());
                 Program.ConsoleLog($"Server {(serverNum + 1)} Processed ");
-                OnlinePlayers[serverNum] = TempOnlinePlayers[serverNum];
+                _onlinePlayers[serverNum].Clear();
+                _onlinePlayers[serverNum].AddRange(_tempOnlinePlayers[serverNum]);
             }
             catch (Exception e)
             {
                 Program.ConsoleLog(e.Message);
             }
+        }
+
+        private void DoWork(long steamId, int serverNum, ref List<Player>[] tempOnlinePlayers)
+        {
+            var p = CreatePlayer(steamId, serverNum);
+            if (p != null)
+                tempOnlinePlayers[serverNum].Add(p);
         }
 
         private Player CreatePlayer(long steamId, int serverNum)
@@ -228,14 +232,15 @@ namespace TrackerServer
 
             }
             aliases = pInfo["aliases"].Aggregate(aliases, (current, pAlias) => current + (pAlias + ";"));
-            var p = new Player((int)pInfo["uid"], (long)pInfo["playerid"], (string)pInfo["name"], aliases, (string)pInfo["gang_name"], (int)pInfo["gang_rank"], Convert.ToDateTime(pInfo["last_active"]).ToUnixTime(), (long)pInfo["time"], (string)pInfo["raybeam"]);
+            var gangName = (int)pInfo["gang_id"] == -1 ? "N/A" : (string)pInfo["gang_name"];
+            var p = new Player((int)pInfo["uid"], (long)pInfo["playerid"], (string)pInfo["name"], aliases, gangName, (int)pInfo["gang_rank"], Convert.ToDateTime(pInfo["last_active"]).ToUnixTime(), (long)pInfo["time"], (string)pInfo["loc"], (string)pInfo["last_side"]);
             p.AddGear(pInfo["civ_gear"].ToString());
             p.AddMoney((int)pInfo["cash"], (int)pInfo["bank"], (int)pInfo["stat_bounties"], (int)pInfo["wanted_total"]);
             p.AddStats((int)pInfo["coplevel"], (int)pInfo["mediclevel"], (int)pInfo["adminlevel"], (int)pInfo["donatorlevel"], (int)pInfo["stat_kills"], (int)pInfo["stat_deaths"], (int)pInfo["stat_revives"], (int)pInfo["stat_arrests"]);
             p.AddTime((int)pInfo["stat_time_civ"], (int)pInfo["stat_time_apd"], (int)pInfo["stat_time_med"]);
             p.AddVehicles(pInfo["vehicle_civ_air"].ToString(), pInfo["vehicle_civ_car"].ToString(), pInfo["vehicle_civ_ship"].ToString());
 
-            Program.ConsoleLog($"Server #{serverNum + 1}: {p.Name} {TempOnlinePlayers[serverNum].Count}/{OnlinePlayers[serverNum].Count}");
+            Program.ConsoleLog($"Server #{serverNum + 1}: {p.Name} {_tempOnlinePlayers[serverNum].Count}/{_onlinePlayers[serverNum].Count}");
             //_insertCount++;
             foreach (var jToken in houses1)
             {
@@ -291,7 +296,6 @@ namespace TrackerServer
             //    }
             //    var houses = JArray.Parse(phInfo["houses1data"].ToString());
             //    _db.ExecuteNonQuery("UPDATE houses SET `steamID` = 0 WHERE steamID =?", steamId);
-
             //}
         }
     }

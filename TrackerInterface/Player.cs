@@ -176,8 +176,10 @@ namespace TrackerInterface
         public int TargetLevel = -1; //Because these ***holes wanted colors
         [DataMember]
         public string[] Location; //Thank you FeDot
+        [DataMember]
+        public string Faction { get; private set; }
         //Constructor
-        public Player(int uid, long steamId, string name, string aliases, string gangN, int gangR, long lastActive, long lastUpdated, string location)
+        public Player(int uid, long steamId, string name, string aliases, string gangN, int gangR, long lastActive, long lastUpdated, string location, string faction)
         {
             Houses = new List<House>();
             Aliases = new List<string>();
@@ -197,6 +199,7 @@ namespace TrackerInterface
             location = location.Remove(0, 2);
             location = location.Remove(location.IndexOf("]"));
             Location = location.Split(',');
+            Faction = faction;
         }
 
         public void Save()

@@ -13,8 +13,8 @@ namespace TrackerClient
 
     public partial class FrmMain : Form
     {
-        ChannelFactory<IWcfTrackerService> _channelFactory;
-        IWcfTrackerService _server;
+        private ChannelFactory<IWcfTrackerService> _channelFactory;
+        private IWcfTrackerService _server;
         List<Player> _onlinePlayers = new List<Player>();
         List<Player> _slackPostList = new List<Player>();
         List<string> _debugListVeh = new List<string>();
@@ -24,7 +24,7 @@ namespace TrackerClient
         Player _lastSelected = null;
         string _serverId = "arma_1";
         internal Map PlayerMap;
-        SlackClient _sc = new SlackClient("https://hooks.slack.com/services/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");
+        //SlackClient _sc = new SlackClient("https://hooks.slack.com/services/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");
         object _locker = new object();
 
         Stopwatch _sw = new Stopwatch();
@@ -148,28 +148,28 @@ namespace TrackerClient
                             p.TargetLevel = 2;
                         }
                     }
-                if (wItem.Length > 0 || wVehicle.Length > 0)
-                {
-                    if (!_slackPostList.Contains(p))
-                    {
-                        _slackPostList.Add(p);
-                        new Thread(() =>
-                        {
-                            Fields[] temp = {
-                                new Fields() { Title = "Item", Value = wItem },
-                                new Fields() { Title = "Vehicle", Value = wVehicle }
-                            };
-                            var attachment = new Attachment()
-                            {
-                                Title = p.Name,
-                                Text = "Last Updated: " + p.LastUpdated,
-                                Fields = temp
-                            };
-                            //sc.PostMessage(attachment);
-                            Thread.Sleep(3000);
-                        }).Start();
-                    }
-                }
+                //if (wItem.Length > 0 || wVehicle.Length > 0)
+                //{
+                //    if (!_slackPostList.Contains(p))
+                //    {
+                //        _slackPostList.Add(p);
+                //        new Thread(() =>
+                //        {
+                //            Fields[] temp = {
+                //                new Fields() { Title = "Item", Value = wItem },
+                //                new Fields() { Title = "Vehicle", Value = wVehicle }
+                //            };
+                //            var attachment = new Attachment()
+                //            {
+                //                Title = p.Name,
+                //                Text = "Last Updated: " + p.LastUpdated,
+                //                Fields = temp
+                //            };
+                //            //sc.PostMessage(attachment);
+                //            Thread.Sleep(3000);
+                //        }).Start();
+                //    }
+                //}
             }
             targetPlayers = targetPlayers.OrderBy(p => p.Name).ToList();
             lbPlayersTargets.DisplayMember = "name";
@@ -196,14 +196,12 @@ namespace TrackerClient
                 {
                     tcMain.SelectTab(1);
                 }
-                if (lb.SelectedIndices.Count == 1)
-                {
-                    var p = (Player)lb.SelectedValue;
-                    _lastSelected = p;
-                    DisplayPlayer(p);
-                }
+                if (lb.SelectedIndices.Count != 1) return;
+                var p = (Player)lb.SelectedValue;
+                _lastSelected = p;
+                DisplayPlayer(p);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //MessageBox.Show(ex.Message);
             }
@@ -213,41 +211,52 @@ namespace TrackerClient
             e.DrawBackground();
             var g = e.Graphics;
             var lb = (ListBox)sender;
-            if (e.Index > -1 && e.Index < lb.Items.Count)
+            if (e.Index <= -1 || e.Index >= lb.Items.Count) return;
+            var p = (Player)lb.Items[e.Index];
+            var selected = ((e.State & DrawItemState.Selected) == DrawItemState.Selected);
+            var text = p.AdminLevel == 0 ? p.Name : p.Name.Insert(p.Name.Length, " [ADMIN]");
+            switch (p.TargetLevel)
             {
-                var p = (Player)lb.Items[e.Index];
-                var selected = ((e.State & DrawItemState.Selected) == DrawItemState.Selected);
-                var text = p.AdminLevel == 0 ? p.Name : p.Name.Insert(p.Name.Length, " [ADMIN]");
-                switch (p.TargetLevel)
-                {
-                    case 0:
-                        g.FillRectangle(new SolidBrush(Color.Yellow), e.Bounds);
-                        break;
-                    case 1:
-                        g.FillRectangle(new SolidBrush(Color.LawnGreen), e.Bounds);
-                        break;
-                    case 2:
-                        g.FillRectangle(new SolidBrush(Color.Red), e.Bounds);
-                        break;
-                    default:
-                        g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
-                        break;
-                }
-                if (selected)
-                {
-                    var highlight = SystemColors.MenuHighlight;
-                    g.FillRectangle(new SolidBrush(highlight), e.Bounds);
-                    //g.DrawRectangle(new Pen(Color.Black), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
-                    g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
-                }
-                else
-                {
-                    g.FillRectangle(new SolidBrush(Color.Transparent), e.Bounds);
-                    //g.DrawRectangle(new Pen(Color.Transparent), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
-                    g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
-                }
-                e.DrawFocusRectangle();
+                case 0:
+                    g.FillRectangle(new SolidBrush(Color.Yellow), e.Bounds);
+                    break;
+                case 1:
+                    g.FillRectangle(new SolidBrush(Color.Orange), e.Bounds);
+                    break;
+                case 2:
+                    g.FillRectangle(new SolidBrush(Color.Red), e.Bounds);
+                    break;
+                default:
+                    g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
+                    break;
             }
+            switch (p.Faction)
+            {
+                case "cop":
+                    g.FillRectangle(new SolidBrush(Color.CornflowerBlue), e.Bounds);
+                    break;
+                case "med":
+                    g.FillRectangle(new SolidBrush(Color.GreenYellow), e.Bounds);
+                    break;
+            }
+            if (p.AdminLevel > 0)
+                g.FillRectangle(new SolidBrush(Color.MediumPurple), e.Bounds);
+
+            if (selected)
+            {
+                var highlight = SystemColors.MenuHighlight;
+                g.FillRectangle(new SolidBrush(highlight), e.Bounds);
+                //g.DrawRectangle(new Pen(Color.Black), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
+                g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+            }
+            else
+            {
+                g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+                //g.FillRectangle(new SolidBrush(Color.Transparent), e.Bounds);
+                ////g.DrawRectangle(new Pen(Color.Transparent), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
+                //
+            }
+            e.DrawFocusRectangle();
         }
 
         private void DisplayHouse(House h)
@@ -313,14 +322,14 @@ namespace TrackerClient
             lblMedicTime.Text = $"R&R Time: {(p.TimeMed.ToString() == "-1" ? "N/A" : p.TimeMed.ToString()):0,0}";
             lblVest.Text = $"Vest: {(p.Equipment.Count == 0 ? "None" : p.Equipment[1])}";
             lblHelmet.Text = $"Helmet: {(p.Equipment.Count == 0 ? "None" : p.Equipment[4])}";
-            lblGun.Text = $"Gun: {(p.Equipment.Count == 0 ? "None" : p.Equipment[5])}";
+            lblGun.Text = $"Gun: {(p.Equipment.Count == 0 ? "None" : TranslateWeapons(p.Equipment[5]))}";
             lblUpdated.Text = $"Last Updated (UTC): {p.LastUpdated}";
             lblLocation.Text = p.Location.Length > 1 ? $"Last Seen @ X:{p.Location[0]} Y:{p.Location[1]}" : "Last Seen @ Unknown";
-            foreach (var equip in p.Equipment.Where(equip => !_debugListEqu.Contains(equip) && equip.Length > 0))
-            {
-                _debugListVeh.Add(equip);
-                rtbDebugEquipment.Text += $"{equip}{Environment.NewLine}";
-            }
+            //foreach (var equip in p.Equipment.Where(equip => !_debugListEqu.Contains(equip) && equip.Length > 0))
+            //{
+            //    _debugListVeh.Add(equip);
+            //    rtbDebugEquipment.Text += $"{equip}{Environment.NewLine}";
+            //}
             foreach (var alias in p.Aliases)
             {
                 tbAliases.Text += $"{alias}{Environment.NewLine}";
@@ -469,7 +478,7 @@ namespace TrackerClient
 
         private void mapToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PlayerMap = new Map {Players = _onlinePlayers};
+            PlayerMap = new Map { Players = _onlinePlayers };
             PlayerMap.Show();
         }
 
@@ -550,6 +559,110 @@ namespace TrackerClient
                 pbMap.Width = Convert.ToInt32(pbMap.Width / _zoomfactor);
                 pbMap.Height = Convert.ToInt32(pbMap.Height / _zoomfactor);
             }
+        }
+
+        public string TranslateWeapons(string a3Name)
+        {
+            var translatedName = "";
+            switch (a3Name)
+            {
+                default:
+                    translatedName = a3Name;
+                    if (!_debugListEqu.Contains(a3Name))
+                    {
+                        _debugListEqu.Add(a3Name);
+                        rtbDebugEquipment.Text += $"{a3Name}{Environment.NewLine}";
+
+                    }
+                    break;
+                case "launch_B_Titan_tna_F":
+                case "launch_O_Titan_ghex_F":
+                    translatedName = "Titan MPRL";
+                    break;
+                case "launch_B_Titan_short_tna_F":
+                case "launch_O_Titan_short_ghex_F":
+                    translatedName = "Titan MPRL Compact (Tropic)";
+                    break;
+
+                case "hgun_P07_khk_F":
+                case "hgun_P07_khk_Snds_F":
+                    translatedName = "P07 9 mm";
+                    break;
+                case "hgun_Pistol_01_F":
+                    translatedName = "PM 9 mm";
+                    break;
+                case "SMG_05_F":
+                    translatedName = "Protector 9 mm";
+                    break;
+
+                case "arifle_AKS_F":
+                    translatedName = "AKS-74U 5.45 mm";
+                    break;
+
+                case "LMG_03_F":
+                    translatedName = "LIM-85 5.56 mm";
+                    break;
+
+                case "arifle_SPAR_01_blk_F":
+                case "arifle_SPAR_01_khk_F":
+                case "arifle_SPAR_01_snd_F":
+                    translatedName = "SPAR-16 5.56 mm";
+                    break;
+
+                case "arifle_SPAR_02_blk_F":
+                case "arifle_SPAR_02_khk_F":
+                case "arifle_SPAR_02_snd_F":
+                    translatedName = "SPAR-16S 5.56 mm";
+                    break;
+
+                case "arifle_CTAR_blk_F":
+                case "arifle_CTAR_hex_F":
+                case "arifle_CTAR_ghex_F":
+                    translatedName = "CAR-95 5.8 mm";
+                    break;
+
+                case "arifle_CTARS_blk_F":
+                case "arifle_CTARS_hex_F":
+                case "arifle_CTARS_ghex_F":
+                    translatedName = "CAR-95-1 5.8 mm";
+                    break;
+
+                case "LMG_Mk200_BI_F":
+                case "LMG_Mk200_LP_BI_F":
+                    translatedName = "Mk200 6.5 mm";
+                    break;
+
+                case "arifle_ARX_blk_F":
+                case "arifle_ARX_ghex_F":
+                case "arifle_ARX_hex_F":
+                    //case "arifle_ARX_hex_ARCO_Pointer_Snds_F":
+                    //case "arifle_ARX_ghex_ARCO_Pointer_Snds_F":
+                    //case "arifle_ARX_hex_ACO_Pointer_Snds_F":
+                    //case "arifle_ARX_ghex_ACO_Pointer_Snds_F":
+                    //case "arifle_ARX_hex_DMS_Pointer_Snds_Bipod_F":
+                    //case "arifle_ARX_ghex_DMS_Pointer_Snds_Bipod_F":
+                    //case "arifle_ARX_Viper_F":
+                    //case "arifle_ARX_Viper_hex_F":
+                    translatedName = "Type 115 6.5 mm";
+                    break;
+
+
+
+                case "arifle_AK12_F":
+                    translatedName = "AK-12 7.62 mm";
+                    break;
+                case "arifle_AKM_F":
+                case "arifle_AKM_FL_F":
+                    translatedName = "AKM 7.62 mm";
+                    break;
+                case "arifle_SPAR_03_blk_F":
+                case "arifle_SPAR_03_khk_F":
+                case "arifle_SPAR_03_snd_F":
+                    translatedName = "SPAR-17 7.62 mm";
+                    break;
+            }
+            return translatedName;
+
         }
     }
 

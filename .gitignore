@@ -3,7 +3,9 @@
 
 [Oo]bj/
 [Ll]og/
-
+*.vshost.exe.manifest
+*.vshost.exe.config
+*.vshost.exe
 # User-specific files
 *.suo
 *.user
