@@ -16,6 +16,7 @@ namespace TrackerServer
     {
         private readonly List<Player>[] _onlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
         private List<Player>[] _tempOnlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
+        private readonly object _locker = new object();
         public string GetMySteamId(string steamName)
         {
             var client = new RestClient("http://api.steampowered.com");
@@ -202,8 +203,11 @@ namespace TrackerServer
         private void DoWork(long steamId, int serverNum, ref List<Player>[] tempOnlinePlayers)
         {
             var p = CreatePlayer(steamId, serverNum);
-            if (p != null)
-                tempOnlinePlayers[serverNum].Add(p);
+            lock (_locker)
+            {
+                if (p != null)
+                    tempOnlinePlayers[serverNum].Add(p);
+            }
         }
 
         private Player CreatePlayer(long steamId, int serverNum)
