@@ -214,7 +214,7 @@ namespace TrackerClient
             if (e.Index <= -1 || e.Index >= lb.Items.Count) return;
             var p = (Player)lb.Items[e.Index];
             var selected = ((e.State & DrawItemState.Selected) == DrawItemState.Selected);
-            var text = p.AdminLevel == 0 ? p.Name : p.Name.Insert(p.Name.Length, " [ADMIN]");
+            var text = p.AdminLevel == 0 ? p.Name : p.Name.Insert(p.Name.Length, " [" + p.Faction.ToUpper() + "]");
             if (p.AdminLevel > 0)
             {
                 g.FillRectangle(new SolidBrush(Color.LightSeaGreen), e.Bounds);
@@ -225,8 +225,48 @@ namespace TrackerClient
                 switch (p.Faction)
                 {
                     case "cop":
-                        g.FillRectangle(new SolidBrush(Color.DarkBlue), e.Bounds);
-                        g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                        switch (p.CopLevel) {
+                            case 1:
+                                text += " [Dep]";
+                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 97, 255)), e.Bounds);
+                                g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                                break;
+                            case 2:
+                                text += " [PO]";
+                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 97, 255)), e.Bounds);
+                                g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                                break;
+                            case 3:
+                                text += " [Corp]";
+                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 46, 122)), e.Bounds);
+                                g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                                break;
+                            case 4:
+                                text += " [SGT]";
+                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 46, 122)), e.Bounds);
+                                g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                                break;
+                            case 5:
+                                text += " [LT]";
+                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 46, 122)), e.Bounds);
+                                g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                                break;
+                            case 6:
+                                text += " [DChief]";
+                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 46, 122)), e.Bounds);
+                                g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                                break;
+                            case 7:
+                                text += " [Chief]";
+                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 46, 122)), e.Bounds);
+                                g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                                break;                            
+                            default:
+                                text += " [CopLev " + p.CopLevel + "]";
+                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 97, 255)), e.Bounds);
+                                g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                                break;
+                        }
                         break;
                     case "med":
                         g.FillRectangle(new SolidBrush(Color.DarkGreen), e.Bounds);
