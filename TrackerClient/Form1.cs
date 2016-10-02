@@ -225,45 +225,47 @@ namespace TrackerClient
                 switch (p.Faction)
                 {
                     case "cop":
+                        var lRank = Color.FromArgb(0, 97, 255);
+                        var hRank = Color.FromArgb(0, 46, 122);
                         switch (p.CopLevel) {
                             case 1:
                                 text += " [Dep]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 97, 255)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(lRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;
                             case 2:
                                 text += " [PO]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 97, 255)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(lRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;
                             case 3:
                                 text += " [Corp]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 46, 122)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(hRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;
                             case 4:
                                 text += " [SGT]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 46, 122)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(hRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;
                             case 5:
                                 text += " [LT]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 46, 122)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(hRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;
                             case 6:
                                 text += " [DChief]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 46, 122)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(hRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;
                             case 7:
                                 text += " [Chief]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 46, 122)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(hRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;                            
                             default:
                                 text += " [CopLev " + p.CopLevel + "]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 97, 255)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(hRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;
                         }
@@ -299,15 +301,7 @@ namespace TrackerClient
             {
                 var highlight = SystemColors.MenuHighlight;
                 g.FillRectangle(new SolidBrush(highlight), e.Bounds);
-                //g.DrawRectangle(new Pen(Color.Black), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
-            }
-            else
-            {
-                //g.DrawString(text, e.Font, new SolidBrush(textColor), new PointF(e.Bounds.X, e.Bounds.Y));
-                //g.FillRectangle(new SolidBrush(Color.Transparent), e.Bounds);
-                ////g.DrawRectangle(new Pen(Color.Transparent), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
-                //
             }
             e.DrawFocusRectangle();
         }
