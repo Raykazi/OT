@@ -47,6 +47,27 @@ namespace TrackerServer
             var content = response.Content;
             return content;
         }
+
+        public JObject GetActivePlayers()
+        {
+            var content = "";
+            try
+            {
+                var client = new RestClient("http://olympusapi.xyz/apiv2");
+                var request = new RestRequest("active", Method.GET);
+                var response = client.Execute(request);
+                content = response.Content;
+                var jsonObject = JObject.Parse(content);
+                return jsonObject;
+            }
+            catch (JsonReaderException e)
+            {
+                if (!content.Contains("Could not make contact with Server"))
+                    Program.ConsoleLog(e.Message);
+            }
+            return null;
+
+        }
         public List<string> GetPlayers(string serverId)
         {
             var content = "";
@@ -56,7 +77,6 @@ namespace TrackerServer
                 var client = new RestClient("http://olympusapi.xyz/apiv2");
                 var request = new RestRequest("query/{serverNum}", Method.GET);
                 request.AddUrlSegment("serverNum", serverId);
-                //Program.ConsoleLog($"Fetching players {serverId}");
                 var response = client.Execute(request);
                 content = response.Content;
                 var jsonObject = JObject.Parse(content);
@@ -166,38 +186,49 @@ namespace TrackerServer
         {
             try
             {
-                var onlinePlayerNames = GetPlayers(serverId);
-                int serverNum;
-                switch (serverId)
+                var players = GetActivePlayers();
+                var server1Array = players["1"] as JArray;
+                var server2Array = players["2"] as JArray;
+                if (server1Array != null)
                 {
-                    case "arma_2_blame_poseidon":
-                        serverNum = 1;
-                        break;
-                    case "arma_3":
-                        serverNum = 2;
-                        break;
-                    default:
-                        serverNum = 0;
-                        break;
+                    Program.ConsoleLog($"Server 1: {server1Array.Count} Online");
+                    _tempOnlinePlayers[0].Clear();
+                    server1Array?.Select(p =>
+                    {
+                        var tr = new Thread(() => DoWork(p, 0, ref _tempOnlinePlayers));
+                        tr.Start();
+                        return tr;
+                    }).ToList().ForEach(t => t.Join());
+                    _onlinePlayers[0].Clear();
+                    _onlinePlayers[0].AddRange(_tempOnlinePlayers[0]);
+                    Program.ConsoleLog("Server 1 Processed");
                 }
-                if (serverNum != 0) return;
-                Program.ConsoleLog($"Server {(serverNum + 1)}: {onlinePlayerNames.Count} Online");
-                _tempOnlinePlayers[serverNum].Clear();
-                onlinePlayerNames.Select(name =>
+                if (server2Array != null)
                 {
-                    var steamId = GetSteamId(name);
-                    var tr = new Thread(() => DoWork(steamId, serverNum, ref _tempOnlinePlayers));
-                    tr.Start();
-                    return tr;
-                }).ToList().ForEach(t => t.Join());
-                Program.ConsoleLog($"Server {(serverNum + 1)} Processed ");
-                _onlinePlayers[serverNum].Clear();
-                _onlinePlayers[serverNum].AddRange(_tempOnlinePlayers[serverNum]);
+                    Program.ConsoleLog($"Server 2: {server2Array.Count} Online");
+                    _tempOnlinePlayers[1].Clear();
+                    server2Array?.Select(p =>
+                    {
+                        var tr = new Thread(() => DoWork(p, 1, ref _tempOnlinePlayers));
+                        tr.Start();
+                        return tr;
+                    }).ToList().ForEach(t => t.Join());
+                    _onlinePlayers[1].Clear();
+                    _onlinePlayers[1].AddRange(_tempOnlinePlayers[1]);
+                    Program.ConsoleLog("Server 2 Processed");
+                }
             }
             catch (Exception e)
             {
                 Program.ConsoleLog(e.Message);
             }
+        }
+
+        private void DoWork(JToken pToken, int serverNum, ref List<Player>[] tempOnlinePlayers)
+        {
+            var p = CreatePlayer(pToken, serverNum);
+            if (p != null)
+                tempOnlinePlayers[serverNum].Add(p);
         }
 
         private void DoWork(long steamId, int serverNum, ref List<Player>[] tempOnlinePlayers)
@@ -210,69 +241,59 @@ namespace TrackerServer
             }
         }
 
-        private Player CreatePlayer(long steamId, int serverNum)
+        private Player CreatePlayer(JToken pInfo, int serverNum)
         {
             var aliases = "";
             var resultH = 0;
             var resultP = 0;
-            //Just incase someone has a 0 for a steam ID
-            if (steamId <= 1) return null;
-            //Pull the API info and parse it into an object
-            var pInfo = JObject.Parse(GetPlayerInfo(steamId));
-            var phInfo = JObject.Parse(GetPlayerHouseInfo(steamId));
-            var houses1 = JArray.Parse(phInfo["houses1data"].ToString());
-            var houses2 = JArray.Parse(phInfo["houses2data"].ToString());
-            if (pInfo["error"] != null)
-            {
-                //Making sure we got a valid json string
-                Program.ConsoleLog("Error[PInfo]: " + pInfo["error"]);
-                return null;
-            }
-            if (phInfo["error"] != null)
-            {
-                //Making sure we got a valid json string
-                Program.ConsoleLog("Error[PHInfo]: " + pInfo["error"]);
-                return null;
+            //var phInfo = JObject.Parse(GetPlayerHouseInfo((long)pInfo["playerid"]));
+            //var houses1 = JArray.Parse(phInfo["houses1data"].ToString());
+            //var houses2 = JArray.Parse(phInfo["houses2data"].ToString());
+            //if (phInfo["error"] != null)
+            //{
+            //    //Making sure we got a valid json string
+            //    Program.ConsoleLog("Error[PHInfo]: " + pInfo["error"]);
+            //    return null;
 
-            }
+            //}
             aliases = pInfo["aliases"].Aggregate(aliases, (current, pAlias) => current + (pAlias + ";"));
             var gangName = (int)pInfo["gang_id"] == -1 ? "N/A" : (string)pInfo["gang_name"];
-            var p = new Player((int)pInfo["uid"], (long)pInfo["playerid"], (string)pInfo["name"], aliases, gangName, (int)pInfo["gang_rank"], Convert.ToDateTime(pInfo["last_active"]).ToUnixTime(), (long)pInfo["time"], (string)pInfo["loc"], (string)pInfo["last_side"]);
+            var p = new Player((int)pInfo["uid"], (long)pInfo["playerid"], (string)pInfo["name"], aliases, gangName, (int)pInfo["gang_rank"], Convert.ToDateTime(pInfo["last_active"]).ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)pInfo["loc"], (string)pInfo["last_side"]);
             p.AddGear(pInfo["civ_gear"].ToString());
             p.AddMoney((int)pInfo["cash"], (int)pInfo["bank"], (int)pInfo["stat_bounties"], (int)pInfo["wanted_total"]);
             p.AddStats((int)pInfo["coplevel"], (int)pInfo["mediclevel"], (int)pInfo["adminlevel"], (int)pInfo["donatorlevel"], (int)pInfo["stat_kills"], (int)pInfo["stat_deaths"], (int)pInfo["stat_revives"], (int)pInfo["stat_arrests"]);
             p.AddTime((int)pInfo["stat_time_civ"], (int)pInfo["stat_time_apd"], (int)pInfo["stat_time_med"]);
             p.AddVehicles(pInfo["vehicle_civ_air"].ToString(), pInfo["vehicle_civ_car"].ToString(), pInfo["vehicle_civ_ship"].ToString());
 
-            Program.ConsoleLog($"Server #{serverNum + 1}: {p.Name} {_tempOnlinePlayers[serverNum].Count}/{_onlinePlayers[serverNum].Count}");
-            //_insertCount++;
-            foreach (var jToken in houses1)
-            {
-                var house = (JObject)jToken;
-                var hid = (int)house["houseid"];
-                var pos = (string)house["pos"];
-                pos = pos.Remove(0, 1);
-                pos = pos.Remove(pos.IndexOf(']'));
-                var lastUsed = DateTime.Parse(house["last_active"].ToString()).ToUnixTime();
-                var crates = Helper.ToJson(house["crates"].ToString());
-                var virtuals = house["inventory"].ToString();
-                var maxStorage = (int)house["storage"];
-                p.AddHouse(hid, pos, lastUsed, crates, virtuals, maxStorage);
+            Program.ConsoleLog($"Server #{serverNum}: {p.Name} {_tempOnlinePlayers[serverNum].Count}/{_onlinePlayers[serverNum].Count}");
+            ////_insertCount++;
+            //foreach (var jToken in houses1)
+            //{
+            //    var house = (JObject)jToken;
+            //    var hid = (int)house["houseid"];
+            //    var pos = (string)house["pos"];
+            //    pos = pos.Remove(0, 1);
+            //    pos = pos.Remove(pos.IndexOf(']'));
+            //    var lastUsed = DateTime.Parse(house["last_active"].ToString()).ToUnixTime();
+            //    var crates = Helper.ToJson(house["crates"].ToString());
+            //    var virtuals = house["inventory"].ToString();
+            //    var maxStorage = (int)house["storage"];
+            //    p.AddHouse(hid, pos, lastUsed, crates, virtuals, maxStorage);
 
-                //var data2 = _db.ExecuteReader("SELECT houseID FROM houses WHERE houseID =?", hid);
-                //if (data2[0].Count == 0)
-                //{
-                //    //Add the player to the DB
-                //    sql = "INSERT INTO houses (`houseID`, `steamID`, `location`, `lastAccessed`, `virtual`, `crates`, `storage`, `server`)  VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                //    resultH += _db.ExecuteNonQuery(sql, hid, steamId, pos, lastUsed, virtuals, crates, maxStorage, _serverName) == 1 ? 1 : 0;
-                //}
-                //else
-                //{
-                //    //Update the player's house
-                //    sql = "UPDATE houses SET `steamID` = ?, `location` = ?, `lastAccessed` = ?, `crates` = ?, `virtual` = ?, `storage`= ?, `server`=? WHERE `houseID` = ?";
-                //    resultH += _db.ExecuteNonQuery(sql, steamId, pos, lastUsed, crates, virtuals, maxStorage, _serverName, hid) == 1 ? 1 : 0;
-                //}
-            }
+            //    //var data2 = _db.ExecuteReader("SELECT houseID FROM houses WHERE houseID =?", hid);
+            //    //if (data2[0].Count == 0)
+            //    //{
+            //    //    //Add the player to the DB
+            //    //    sql = "INSERT INTO houses (`houseID`, `steamID`, `location`, `lastAccessed`, `virtual`, `crates`, `storage`, `server`)  VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            //    //    resultH += _db.ExecuteNonQuery(sql, hid, steamId, pos, lastUsed, virtuals, crates, maxStorage, _serverName) == 1 ? 1 : 0;
+            //    //}
+            //    //else
+            //    //{
+            //    //    //Update the player's house
+            //    //    sql = "UPDATE houses SET `steamID` = ?, `location` = ?, `lastAccessed` = ?, `crates` = ?, `virtual` = ?, `storage`= ?, `server`=? WHERE `houseID` = ?";
+            //    //    resultH += _db.ExecuteNonQuery(sql, steamId, pos, lastUsed, crates, virtuals, maxStorage, _serverName, hid) == 1 ? 1 : 0;
+            //    //}
+            //}
             return p;
             //Lock the table
             //lock (_locker)
