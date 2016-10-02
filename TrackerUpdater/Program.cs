@@ -9,25 +9,24 @@ namespace TrackerUpdater
 {
     class Program
     {
-        static ChannelFactory<IWcfTrackerService> _channelFactory;
-        static IWcfTrackerService _server;
-        static Stopwatch _sw = new Stopwatch();
-        static System.Windows.Forms.Timer _timer = new System.Windows.Forms.Timer();
-        static string[] _servers = new string[] { "arma_1", "arma_2_blame_poseidon", "arma_3" };
-        private static readonly long RefreshTime = 60000;
+        private static ChannelFactory<IWcfTrackerService> _channelFactory;
+        private static IWcfTrackerService _server;
+        private static readonly Stopwatch Sw = new Stopwatch();
+        private static readonly string[] Servers = new string[] { "arma_1" };
+        private const long RefreshTime = 60000;
 
         static void Main(string[] args)
         {
             Update();
             while (true)
             {
-                if (!_sw.IsRunning) _sw.Start();
-                switch (_sw.ElapsedMilliseconds)
+                if (!Sw.IsRunning) Sw.Start();
+                switch (Sw.ElapsedMilliseconds)
                 {
                     default:
-                        if (_sw.IsRunning)
+                        if (Sw.IsRunning)
                         {
-                            if (_sw.ElapsedMilliseconds >= RefreshTime)
+                            if (Sw.ElapsedMilliseconds >= RefreshTime)
                                 Update();
                         }
                         break;
@@ -36,20 +35,16 @@ namespace TrackerUpdater
             }
         }
 
-        private static void timer_Tick(object sender, EventArgs e)
-        {
-        }
-
         private static void Update()
         {
-            _servers.Select(id =>
+            Servers.Select(id =>
             {
                 Thread tr = new Thread(() => DoUpdate(id));
                 tr.Start();
                 return tr;
 
             }).ToList().ForEach(t => t.Join());
-            _sw.Reset();
+            Sw.Reset();
         }
 
         private static void DoUpdate(string serverId)
@@ -71,7 +66,7 @@ namespace TrackerUpdater
         //Log events to the console window, with a timestamp for when they occured
         public static void ConsoleLog(string msg)
         {
-            Console.WriteLine(string.Format("[{0}] {1}", DateTime.Now, msg));
+            Console.WriteLine($"[{DateTime.Now}] {msg}");
         }
     }
 }
