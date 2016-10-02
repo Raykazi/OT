@@ -215,33 +215,46 @@ namespace TrackerClient
             var p = (Player)lb.Items[e.Index];
             var selected = ((e.State & DrawItemState.Selected) == DrawItemState.Selected);
             var text = p.AdminLevel == 0 ? p.Name : p.Name.Insert(p.Name.Length, " [ADMIN]");
-            switch (p.TargetLevel)
-            {
-                case 0:
-                    g.FillRectangle(new SolidBrush(Color.Yellow), e.Bounds);
-                    break;
-                case 1:
-                    g.FillRectangle(new SolidBrush(Color.Orange), e.Bounds);
-                    break;
-                case 2:
-                    g.FillRectangle(new SolidBrush(Color.Red), e.Bounds);
-                    break;
-                default:
-                    g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
-                    break;
-            }
-            switch (p.Faction)
-            {
-                case "cop":
-                    g.FillRectangle(new SolidBrush(Color.CornflowerBlue), e.Bounds);
-                    break;
-                case "med":
-                    g.FillRectangle(new SolidBrush(Color.GreenYellow), e.Bounds);
-                    break;
-            }
             if (p.AdminLevel > 0)
-                g.FillRectangle(new SolidBrush(Color.MediumPurple), e.Bounds);
-
+            {
+                g.FillRectangle(new SolidBrush(Color.LightSeaGreen), e.Bounds);
+                g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+            }
+            else
+            {
+                switch (p.Faction)
+                {
+                    case "cop":
+                        g.FillRectangle(new SolidBrush(Color.DarkBlue), e.Bounds);
+                        g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                        break;
+                    case "med":
+                        g.FillRectangle(new SolidBrush(Color.DarkGreen), e.Bounds);
+                        g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                        break;
+                    default:
+                        switch (p.TargetLevel)
+                        {
+                            case 0:
+                                g.FillRectangle(new SolidBrush(Color.Yellow), e.Bounds);
+                                g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+                                break;
+                            case 1:
+                                g.FillRectangle(new SolidBrush(Color.DeepPink), e.Bounds);
+                                g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                                break;
+                            case 2:
+                                g.FillRectangle(new SolidBrush(Color.Red), e.Bounds);
+                                g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                                break;
+                            default:
+                                g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
+                                g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+                                break;
+                        }
+                        break;
+                }
+            }
             if (selected)
             {
                 var highlight = SystemColors.MenuHighlight;
@@ -251,7 +264,7 @@ namespace TrackerClient
             }
             else
             {
-                g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+                //g.DrawString(text, e.Font, new SolidBrush(textColor), new PointF(e.Bounds.X, e.Bounds.Y));
                 //g.FillRectangle(new SolidBrush(Color.Transparent), e.Bounds);
                 ////g.DrawRectangle(new Pen(Color.Transparent), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
                 //
