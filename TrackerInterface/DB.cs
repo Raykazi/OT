@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace TrackerServer
 {
-    internal class Db
+    public class Db
     {
         private readonly MySqlConnection _connection;
         private MySqlCommand _mCmd;
@@ -29,13 +29,13 @@ namespace TrackerServer
                 switch (ex.Number)
                 {
                     case 1042:
-                        Program.ConsoleLog("Cannot connect to server.  Contact administrator");
+                        Console.WriteLine("Cannot connect to server.  Contact administrator");
                         break;
                     case 1045:
-                        Program.ConsoleLog("Invalid username/password, please try again.");
+                        Console.WriteLine("Invalid username/password, please try again.");
                         break;
                     default:
-                        Program.ConsoleLog("Error " + ex.ErrorCode + ": " + ex.Message);
+                        Console.WriteLine("Error " + ex.ErrorCode + ": " + ex.Message);
                         break;
                 }
                 return false;

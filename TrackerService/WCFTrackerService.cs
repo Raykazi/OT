@@ -17,6 +17,7 @@ namespace TrackerServer
         private readonly List<Player>[] _onlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
         private List<Player>[] _tempOnlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
         private readonly object _locker = new object();
+        private readonly Db _db = new Db();
         public string GetMySteamId(string steamName)
         {
             var client = new RestClient("http://api.steampowered.com");
@@ -139,7 +140,7 @@ namespace TrackerServer
             return steamId;
 
         }
-        public List<Player> GetPlayerList(string serverId)
+        public List<Player> GetPlayerList(int serverId)
         {
             try
             {
@@ -149,30 +150,10 @@ namespace TrackerServer
                     default:
                         serverNum = 0;
                         break;
-                    case "arma_2_blame_poseidon":
+                    case 2:
                         serverNum = 1;
                         break;
-                    case "arma_3":
-                        serverNum = 2;
-                        break;
                 }
-                //var sql = "SELECT * FROM servers WHERE `serverName` = ? ";
-                //List<string>[] sr = db.ExecuteReader(sql, serverID);
-                //playerCount = Convert.ToInt32(sr[2][0]);
-                //Player[] players = new Player[playerCount];
-                //Player player;
-                //var playerList = new List<Player>();
-                //sql = "SELECT * FROM player WHERE `server` = ? ORDER BY lastActive DESC LIMIT ?";
-                //var pr = _db.ExecuteReader(sql, serverId, _playerCount);
-                //for (var i = 0; i < _playerCount; i++)
-                //{
-                //    player = new Player(Convert.ToInt32(pr[0][i]), Convert.ToInt64(pr[1][i]), pr[2][i], Convert.ToInt32(pr[3][i]), Convert.ToInt32(pr[4][i]), Convert.ToInt32(pr[5][i]), Convert.ToInt32(pr[6][i]), Convert.ToInt32(pr[7][i]), Convert.ToInt32(pr[8][i]), pr[9][i], Convert.ToInt32(pr[10][i]), Convert.ToInt32(pr[11][i]), Convert.ToInt32(pr[12][i]), Convert.ToInt32(pr[14][i]), Convert.ToInt32(pr[15][i]), Convert.ToInt32(pr[16][i]), Convert.ToInt32(pr[17][i]), Convert.ToInt32(pr[13][i]), Convert.ToInt32(pr[18][i]), pr[19][i], Convert.ToInt32(pr[20][i]), Convert.ToInt64(pr[21][i]), pr[28][i], pr[29][i], pr[30][i], pr[23][i], Convert.ToInt64(pr[34][i]), pr[35][i]);
-                //    sql = "SELECT * FROM houses WHERE steamID = ?";
-                //    var hr = _db.ExecuteReader(sql, Convert.ToInt64(pr[1][i]));
-                //    player.AddHouses(hr, hr[0].Count);
-                //    playerList.Add(player);
-                //    player = null;
-                //}
                 return _onlinePlayers[serverNum];
             }
             catch (Exception e)
@@ -193,7 +174,7 @@ namespace TrackerServer
                 {
                     Program.ConsoleLog($"Server 1: {server1Array.Count} Online");
                     _tempOnlinePlayers[0].Clear();
-                    server1Array?.Select(p =>
+                    server1Array.Select(p =>
                     {
                         var tr = new Thread(() => DoWork(p, 0, ref _tempOnlinePlayers));
                         tr.Start();
@@ -207,7 +188,7 @@ namespace TrackerServer
                 {
                     Program.ConsoleLog($"Server 2: {server2Array.Count} Online");
                     _tempOnlinePlayers[1].Clear();
-                    server2Array?.Select(p =>
+                    server2Array.Select(p =>
                     {
                         var tr = new Thread(() => DoWork(p, 1, ref _tempOnlinePlayers));
                         tr.Start();
@@ -231,70 +212,55 @@ namespace TrackerServer
                 tempOnlinePlayers[serverNum].Add(p);
         }
 
-        private void DoWork(long steamId, int serverNum, ref List<Player>[] tempOnlinePlayers)
-        {
-            var p = CreatePlayer(steamId, serverNum);
-            lock (_locker)
-            {
-                if (p != null)
-                    tempOnlinePlayers[serverNum].Add(p);
-            }
-        }
-
         private Player CreatePlayer(JToken pInfo, int serverNum)
         {
-            var aliases = "";
-            var resultH = 0;
-            var resultP = 0;
-            //var phInfo = JObject.Parse(GetPlayerHouseInfo((long)pInfo["playerid"]));
-            //var houses1 = JArray.Parse(phInfo["houses1data"].ToString());
-            //var houses2 = JArray.Parse(phInfo["houses2data"].ToString());
-            //if (phInfo["error"] != null)
-            //{
-            //    //Making sure we got a valid json string
-            //    Program.ConsoleLog("Error[PHInfo]: " + pInfo["error"]);
-            //    return null;
-
-            //}
-            aliases = pInfo["aliases"].Aggregate(aliases, (current, pAlias) => current + (pAlias + ";"));
-            var gangName = (int)pInfo["gang_id"] == -1 ? "N/A" : (string)pInfo["gang_name"];
-            var p = new Player((int)pInfo["uid"], (long)pInfo["playerid"], (string)pInfo["name"], aliases, gangName, (int)pInfo["gang_rank"], Convert.ToDateTime(pInfo["last_active"]).ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)pInfo["loc"], (string)pInfo["last_side"]);
-            p.AddGear(pInfo["civ_gear"].ToString());
-            p.AddMoney((int)pInfo["cash"], (int)pInfo["bank"], (int)pInfo["stat_bounties"], (int)pInfo["wanted_total"]);
-            p.AddStats((int)pInfo["coplevel"], (int)pInfo["mediclevel"], (int)pInfo["adminlevel"], (int)pInfo["donatorlevel"], (int)pInfo["stat_kills"], (int)pInfo["stat_deaths"], (int)pInfo["stat_revives"], (int)pInfo["stat_arrests"]);
-            p.AddTime((int)pInfo["stat_time_civ"], (int)pInfo["stat_time_apd"], (int)pInfo["stat_time_med"]);
-            p.AddVehicles(pInfo["vehicle_civ_air"].ToString(), pInfo["vehicle_civ_car"].ToString(), pInfo["vehicle_civ_ship"].ToString());
-
-            Program.ConsoleLog($"Server #{serverNum}: {p.Name} {_tempOnlinePlayers[serverNum].Count}/{_onlinePlayers[serverNum].Count}");
+            try
+            {
+                var aliases = "";
+                aliases = pInfo["aliases"].Aggregate(aliases, (current, pAlias) => current + (pAlias + ";"));
+                var cAir = pInfo["vehicle_civ_air"].ToString();
+                var cCar = pInfo["vehicle_civ_car"].ToString();
+                var cShip = pInfo["vehicle_civ_ship"].ToString();
+                var aAir = pInfo["vehicle_apd_air"].ToString();
+                var aCar = pInfo["vehicle_apd_car"].ToString();
+                var aShip = pInfo["vehicle_apd_ship"].ToString();
+                var mAir = pInfo["vehicle_med_air"].ToString();
+                var mCar = pInfo["vehicle_med_car"].ToString();
+                var mShip = pInfo["vehicle_med_ship"].ToString();
+                var civGear = pInfo["civ_gear"].ToString();
+                var apdGear = pInfo["cop_gear"].ToString();
+                var medGear = pInfo["med_gear"].ToString();
+                var gangName = (int)pInfo["gang_id"] == -1 ? "N/A" : (string)pInfo["gang_name"];
+                var p = new Player((int)pInfo["uid"], (long)pInfo["playerid"], (string)pInfo["name"], aliases, gangName, (int)pInfo["gang_rank"], Convert.ToDateTime(pInfo["last_active"]).ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)pInfo["loc"], (string)pInfo["last_side"]);
+                p.AddGear(civGear);
+                p.AddMoney((int)pInfo["cash"], (int)pInfo["bank"], (int)pInfo["stat_bounties"], (int)pInfo["wanted_total"]);
+                p.AddStats((int)pInfo["coplevel"], (int)pInfo["mediclevel"], (int)pInfo["adminlevel"], (int)pInfo["donatorlevel"], (int)pInfo["stat_kills"], (int)pInfo["stat_deaths"], (int)pInfo["stat_revives"], (int)pInfo["stat_arrests"]);
+                p.AddTime((int)pInfo["stat_time_civ"], (int)pInfo["stat_time_apd"], (int)pInfo["stat_time_med"]);
+                p.AddVehicles(cAir, cCar, cShip,"civ");
+                p.AddVehicles(aAir, aCar, aShip, "apd");
+                p.AddVehicles(mAir, mCar, mShip, "med");
+                var phInfo = JObject.Parse(GetPlayerHouseInfo((long)pInfo["playerid"]));
+                if (phInfo["error"] != null)
+                {
+                    //Making sure we got a valid json string
+                    Program.ConsoleLog("Error[PHInfo]: " + pInfo["error"]);
+                    return p;
+                }
+                var houses1 = JArray.Parse(phInfo["houses1data"].ToString());
+                var houses2 = JArray.Parse(phInfo["houses2data"].ToString());
+                p.AddHouses(houses1, 1);
+                p.AddHouses(houses2, 2);
+                p.Save(aliases, cAir, cCar, cShip, aAir,aCar,aShip,mAir,mCar,mShip, apdGear,civGear,medGear, serverNum);
+                Program.ConsoleLog($"Server #{serverNum + 1}: {p.Name} {_tempOnlinePlayers[serverNum].Count}/{_onlinePlayers[serverNum].Count}");
+                return p;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return null;
             ////_insertCount++;
-            //foreach (var jToken in houses1)
-            //{
-            //    var house = (JObject)jToken;
-            //    var hid = (int)house["houseid"];
-            //    var pos = (string)house["pos"];
-            //    pos = pos.Remove(0, 1);
-            //    pos = pos.Remove(pos.IndexOf(']'));
-            //    var lastUsed = DateTime.Parse(house["last_active"].ToString()).ToUnixTime();
-            //    var crates = Helper.ToJson(house["crates"].ToString());
-            //    var virtuals = house["inventory"].ToString();
-            //    var maxStorage = (int)house["storage"];
-            //    p.AddHouse(hid, pos, lastUsed, crates, virtuals, maxStorage);
 
-            //    //var data2 = _db.ExecuteReader("SELECT houseID FROM houses WHERE houseID =?", hid);
-            //    //if (data2[0].Count == 0)
-            //    //{
-            //    //    //Add the player to the DB
-            //    //    sql = "INSERT INTO houses (`houseID`, `steamID`, `location`, `lastAccessed`, `virtual`, `crates`, `storage`, `server`)  VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            //    //    resultH += _db.ExecuteNonQuery(sql, hid, steamId, pos, lastUsed, virtuals, crates, maxStorage, _serverName) == 1 ? 1 : 0;
-            //    //}
-            //    //else
-            //    //{
-            //    //    //Update the player's house
-            //    //    sql = "UPDATE houses SET `steamID` = ?, `location` = ?, `lastAccessed` = ?, `crates` = ?, `virtual` = ?, `storage`= ?, `server`=? WHERE `houseID` = ?";
-            //    //    resultH += _db.ExecuteNonQuery(sql, steamId, pos, lastUsed, crates, virtuals, maxStorage, _serverName, hid) == 1 ? 1 : 0;
-            //    //}
-            //}
-            return p;
             //Lock the table
             //lock (_locker)
             //{
@@ -306,16 +272,14 @@ namespace TrackerServer
             //    if (data[0].Count == 0)
             //    {
             //        //Add the player to the DB
-            //        sql = "INSERT INTO player (UID, steamID, playerName, cash, bank, copLevel, medicLevel, adminLevel, donatorLevel, kills, deaths, medicRevives, bountyCollected, copArrests, timeCiv, timeApd, timeMed, bountyWanted, aliases, gangName, lastActive, vehApdAir, vehApdCar, vehApdShip, vehCivAir, vehCivCar, vehCivShip, vehMedAir, vehMedCar, vehMedShip, gearApd, gearCiv, gearMed, gangRank, timestamp, location, server) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            //        resultP += _db.ExecuteNonQuery(sql, (int)pInfo["uid"], (long)pInfo["playerid"], pInfo["name"], (int)pInfo["cash"], (int)pInfo["bank"], (int)pInfo["coplevel"], (int)pInfo["mediclevel"], (int)pInfo["adminlevel"], (int)pInfo["donatorlevel"], (int)pInfo["stat_kills"], (int)pInfo["stat_deaths"], (int)pInfo["stat_revives"], (int)pInfo["stat_bounties"], (int)pInfo["stat_arrests"], (int)pInfo["stat_time_civ"], (int)pInfo["stat_time_apd"], (int)pInfo["stat_time_med"], (int)pInfo["wanted_total"], aliases, pInfo["gang_name"], Convert.ToDateTime(pInfo["last_active"]).ToUnixTime(), pInfo["vehicle_apd_air"], pInfo["vehicle_apd_car"], pInfo["vehicle_apd_ship"], pInfo["vehicle_civ_air"], pInfo["vehicle_civ_car"], pInfo["vehicle_civ_ship"], pInfo["vehicle_med_air"], pInfo["vehicle_med_car"], pInfo["vehicle_med_ship"], pInfo["cop_gear"], pInfo["civ_gear"], pInfo["med_gear"], pInfo["gang_rank"], pInfo["time"], pInfo["raybeam"], _serverName) == 1 ? 1 : 0;
+
             //        if (resultP == 1)
             //            _insertCount++;
             //    }
             //    else
             //    {
             //        //Update the player
-            //        sql = "UPDATE player SET `playerName` = ?, `cash` = ?, `bank` = ?, `copLevel` = ?, `medicLevel` = ?, `adminLevel` = ?, `donatorLevel` = ?, `aliases` = ?, `kills` = ?, `deaths` = ?, `medicRevives` = ?, `bountyCollected` = ?, `copArrests` = ?, `timeCiv` = ?, `timeApd` = ?, `timeMed` = ?, `bountyWanted` = ?, `gangName` = ?, `gangRank` = ?, `lastActive` = ?, `gearApd` = ?, `gearCiv` = ?, `gearMed` = ?, `vehApdAir` = ?, `vehApdCar` = ?, `vehApdShip` = ?, `vehCivAir` = ?, `vehCivCar` = ?, `vehCivShip` = ?, `vehMedAir` = ?, `vehMedCar` = ?, `vehMedShip` = ? , `timestamp` = ? , `location` = ?, `server` = ? WHERE `steamID` = ?";
-            //        resultP = _db.ExecuteNonQuery(sql, pInfo["name"], (int)pInfo["cash"], (int)pInfo["bank"], (int)pInfo["coplevel"], (int)pInfo["mediclevel"], (int)pInfo["adminlevel"], (int)pInfo["donatorlevel"], aliases, (int)pInfo["stat_kills"], (int)pInfo["stat_deaths"], (int)pInfo["stat_revives"], (int)pInfo["stat_bounties"], (int)pInfo["stat_arrests"], (int)pInfo["stat_time_civ"], (int)pInfo["stat_time_apd"], (int)pInfo["stat_time_med"], (int)pInfo["wanted_total"], pInfo["gang_name"], pInfo["gang_rank"], Helper.ToUnixTime(Convert.ToDateTime(pInfo["last_active"])), pInfo["cop_gear"], pInfo["civ_gear"], pInfo["med_gear"], pInfo["vehicle_apd_air"], pInfo["vehicle_apd_car"], pInfo["vehicle_apd_ship"], pInfo["vehicle_civ_air"], pInfo["vehicle_civ_car"], pInfo["vehicle_civ_ship"], pInfo["vehicle_med_air"], pInfo["vehicle_med_car"], pInfo["vehicle_med_ship"], pInfo["time"], pInfo["raybeam"], _serverName, steamId);
+
             //        if (resultP == 1)
             //            _updateCount++;
             //    }

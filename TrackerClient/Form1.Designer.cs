@@ -134,7 +134,7 @@ namespace TrackerClient
             this.panelLeft.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelLeft.Location = new System.Drawing.Point(0, 0);
             this.panelLeft.Name = "panelLeft";
-            this.panelLeft.Size = new System.Drawing.Size(158, 511);
+            this.panelLeft.Size = new System.Drawing.Size(174, 502);
             this.panelLeft.TabIndex = 26;
             // 
             // pPlayerList
@@ -143,7 +143,7 @@ namespace TrackerClient
             this.pPlayerList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pPlayerList.Location = new System.Drawing.Point(0, 0);
             this.pPlayerList.Name = "pPlayerList";
-            this.pPlayerList.Size = new System.Drawing.Size(158, 511);
+            this.pPlayerList.Size = new System.Drawing.Size(174, 502);
             this.pPlayerList.TabIndex = 67;
             // 
             // tcPlayerLists
@@ -156,7 +156,7 @@ namespace TrackerClient
             this.tcPlayerLists.Location = new System.Drawing.Point(0, 0);
             this.tcPlayerLists.Name = "tcPlayerLists";
             this.tcPlayerLists.SelectedIndex = 0;
-            this.tcPlayerLists.Size = new System.Drawing.Size(158, 511);
+            this.tcPlayerLists.Size = new System.Drawing.Size(174, 502);
             this.tcPlayerLists.TabIndex = 36;
             // 
             // tpPlayersAll
@@ -165,7 +165,7 @@ namespace TrackerClient
             this.tpPlayersAll.Location = new System.Drawing.Point(4, 4);
             this.tpPlayersAll.Name = "tpPlayersAll";
             this.tpPlayersAll.Padding = new System.Windows.Forms.Padding(3);
-            this.tpPlayersAll.Size = new System.Drawing.Size(150, 485);
+            this.tpPlayersAll.Size = new System.Drawing.Size(166, 476);
             this.tpPlayersAll.TabIndex = 0;
             this.tpPlayersAll.Text = "All";
             this.tpPlayersAll.UseVisualStyleBackColor = true;
@@ -179,7 +179,7 @@ namespace TrackerClient
             this.lbPlayersAll.Location = new System.Drawing.Point(3, 3);
             this.lbPlayersAll.Name = "lbPlayersAll";
             this.lbPlayersAll.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbPlayersAll.Size = new System.Drawing.Size(144, 479);
+            this.lbPlayersAll.Size = new System.Drawing.Size(160, 470);
             this.lbPlayersAll.TabIndex = 35;
             this.lbPlayersAll.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
             this.lbPlayersAll.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
@@ -264,7 +264,7 @@ namespace TrackerClient
             this.pMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pMain.Location = new System.Drawing.Point(0, 24);
             this.pMain.Name = "pMain";
-            this.pMain.Size = new System.Drawing.Size(991, 511);
+            this.pMain.Size = new System.Drawing.Size(1024, 502);
             this.pMain.TabIndex = 29;
             // 
             // tcMain
@@ -273,11 +273,11 @@ namespace TrackerClient
             this.tcMain.Controls.Add(this.tpPlayerInfo);
             this.tcMain.Controls.Add(this.tpDebug);
             this.tcMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tcMain.Location = new System.Drawing.Point(158, 0);
+            this.tcMain.Location = new System.Drawing.Point(174, 0);
             this.tcMain.Multiline = true;
             this.tcMain.Name = "tcMain";
             this.tcMain.SelectedIndex = 0;
-            this.tcMain.Size = new System.Drawing.Size(833, 511);
+            this.tcMain.Size = new System.Drawing.Size(850, 502);
             this.tcMain.TabIndex = 30;
             // 
             // tpPlayerInfo
@@ -286,7 +286,7 @@ namespace TrackerClient
             this.tpPlayerInfo.Location = new System.Drawing.Point(4, 4);
             this.tpPlayerInfo.Name = "tpPlayerInfo";
             this.tpPlayerInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.tpPlayerInfo.Size = new System.Drawing.Size(806, 503);
+            this.tpPlayerInfo.Size = new System.Drawing.Size(823, 494);
             this.tpPlayerInfo.TabIndex = 1;
             this.tpPlayerInfo.Text = "Player Info";
             this.tpPlayerInfo.UseVisualStyleBackColor = true;
@@ -300,7 +300,7 @@ namespace TrackerClient
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(800, 497);
+            this.tabControl1.Size = new System.Drawing.Size(817, 488);
             this.tabControl1.TabIndex = 66;
             // 
             // tpInfo
@@ -331,7 +331,7 @@ namespace TrackerClient
             this.tpInfo.Location = new System.Drawing.Point(4, 4);
             this.tpInfo.Name = "tpInfo";
             this.tpInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.tpInfo.Size = new System.Drawing.Size(792, 471);
+            this.tpInfo.Size = new System.Drawing.Size(809, 462);
             this.tpInfo.TabIndex = 0;
             this.tpInfo.Text = "Info";
             this.tpInfo.UseVisualStyleBackColor = true;
@@ -734,9 +734,9 @@ namespace TrackerClient
             // 
             this.ssMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsslStatus});
-            this.ssMain.Location = new System.Drawing.Point(0, 535);
+            this.ssMain.Location = new System.Drawing.Point(0, 526);
             this.ssMain.Name = "ssMain";
-            this.ssMain.Size = new System.Drawing.Size(991, 22);
+            this.ssMain.Size = new System.Drawing.Size(1024, 22);
             this.ssMain.TabIndex = 2;
             // 
             // tsslStatus
@@ -764,7 +764,7 @@ namespace TrackerClient
             this.refreshToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(991, 24);
+            this.menuStrip.Size = new System.Drawing.Size(1024, 24);
             this.menuStrip.TabIndex = 66;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -815,11 +815,11 @@ namespace TrackerClient
             this.refreshToolStripMenuItem.Text = "&Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
-            // frmMain
+            // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(991, 557);
+            this.ClientSize = new System.Drawing.Size(1024, 548);
             this.Controls.Add(this.pMain);
             this.Controls.Add(this.ssMain);
             this.Controls.Add(this.menuStrip);

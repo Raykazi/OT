@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
+using TrackerServer;
 
 namespace TrackerInterface
 {
@@ -32,9 +33,11 @@ namespace TrackerInterface
         [DataMember]
         public List<Item> Virtual { get; set; }
         [DataMember]
-        public Crate[] Crates { get; set; }
+        public List<Crate> Crates { get; set; }
         [DataMember]
         public DateTime LastAccessed { get; set; }
+        [DataMember]
+        public int Server { get; set; }
         public override string ToString()
         {
             return $"{Id} {VirtualCount}/{Storage}";
@@ -157,19 +160,21 @@ namespace TrackerInterface
         //Rank of the player in the gang 1-5, -1 if not in one
         public int GangRank { get; private set; }
         [DataMember]
-        //Last time of login
-        public DateTime LastActive { get; private set; }
+
+        public DateTime LastActive { get; private set; }//Last time of login
         [DataMember]
-        //Last time they were saved
-        public DateTime LastUpdated { get; private set; }
+
+        public DateTime LastUpdated { get; private set; }//Last time they were saved
         [DataMember]
-        //Custom vehicle class array  with the players vehicle info
-        public List<Vehicle> CivVehicles { get; private set; }
+        public List<Vehicle> CivVehicles { get; private set; } //Custom vehicle class array  with the players vehicle info
+        [DataMember]
+        public List<Vehicle> ApdVehicles { get; private set; } //Custom vehicle class array  with the players vehicle info
+        [DataMember]
+        public List<Vehicle> MedVehicles { get; private set; } //Custom vehicle class array  with the players vehicle info
         [DataMember]
         public List<House> Houses { get; set; } //Thank you FeDot
         [DataMember]
-        //String list with their physical equipment
-        public List<string> Equipment { get; private set; }
+        public List<string> Equipment { get; private set; }//String list with their physical equipment
         [DataMember]
         public List<Item> Virtuals { get; private set; } //Custom item class for the palyers virtual items
         [DataMember]
@@ -178,6 +183,10 @@ namespace TrackerInterface
         public string[] Location; //Thank you FeDot
         [DataMember]
         public string Faction { get; private set; }
+        [DataMember]
+        public int Server { get; set; }
+
+        private readonly Db _db = new Db();
         //Constructor
         public Player(int uid, long steamId, string name, string aliases, string gangN, int gangR, long lastActive, long lastUpdated, string location, string faction)
         {
@@ -201,10 +210,21 @@ namespace TrackerInterface
             Location = location.Split(',');
             Faction = faction;
         }
-
-        public void Save()
+        public void Save(string aliases, string cAir, string cCar, string cShip, string aAir, string aCar, string aShip, string mAir, string mCar, string mShip, string aGear, string cGear, string mGear, int server)
         {
-
+            var location = Helper.Base64Encode(Helper.ToSQL(Location));
+            var data = _db.ExecuteReader("SELECT steamID FROM Player WHERE steamID =?", SteamId);
+            var sql = "";
+            if (data[0].Count == 0)
+            {
+                sql = "INSERT INTO player (UID, steamID, playerName, cash, bank, copLevel, medicLevel, adminLevel, donatorLevel, kills, deaths, medicRevives, bountyCollected, copArrests, timeCiv, timeApd, timeMed, bountyWanted, aliases, gangName, lastActive, vehApdAir, vehApdCar, vehApdShip, vehCivAir, vehCivCar, vehCivShip, vehMedAir, vehMedCar, vehMedShip, gearApd, gearCiv, gearMed, gangRank, timestamp, location, server) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                _db.ExecuteNonQuery(sql, Uid, SteamId, Name, Cash, Bank, CopLevel, MedicLevel, AdminLevel, DonatorLevel, Kills, Deaths, MedicRevives, BountyCollected, CopArrest, TimeCiv, TimeApd, TimeMed, BountyWanted, Helper.ToSQL(Aliases), GangName, LastActive.ToUnixTime(), aAir, aCar, aShip, cAir, cCar, cShip, mAir, mCar, mShip, aGear, cGear, mGear, GangRank, LastUpdated.ToUnixTime(), location, Server);
+            }
+            else
+            {
+                sql = "UPDATE player SET `playerName` = ?, `cash` = ?, `bank` = ?, `copLevel` = ?, `medicLevel` = ?, `adminLevel` = ?, `donatorLevel` = ?, `aliases` = ?, `kills` = ?, `deaths` = ?, `medicRevives` = ?, `bountyCollected` = ?, `copArrests` = ?, `timeCiv` = ?, `timeApd` = ?, `timeMed` = ?, `bountyWanted` = ?, `gangName` = ?, `gangRank` = ?, `lastActive` = ?, `gearApd` = ?, `gearCiv` = ?, `gearMed` = ?, `vehApdAir` = ?, `vehApdCar` = ?, `vehApdShip` = ?, `vehCivAir` = ?, `vehCivCar` = ?, `vehCivShip` = ?, `vehMedAir` = ?, `vehMedCar` = ?, `vehMedShip` = ? , `timestamp` = ? , `location` = ?, `server` = ? WHERE `steamID` = ?";
+                _db.ExecuteNonQuery(sql, Name, Cash, Bank, CopLevel, MedicLevel, AdminLevel, DonatorLevel, Helper.ToSQL(Aliases), Kills, Deaths, MedicRevives, BountyCollected, CopArrest, TimeCiv, TimeApd, TimeMed, BountyWanted, GangName, GangRank, LastActive.ToUnixTime(), aGear, cGear, mGear, aAir, aCar, aShip, cAir, cCar, cShip, mAir, mCar, mShip, LastUpdated.ToUnixTime(), location, Server, SteamId);
+            }
         }
         public void AddStats(int cop, int medic, int admin, int donator, int kills, int deaths, int revives, int arrests)
         {
@@ -263,76 +283,140 @@ namespace TrackerInterface
                     }
             }
         }
-        public void AddVehicles(string vCivAir, string vCivCar, string vCivShip)
-        {
-            if (vCivAir.Length > 2)
-            {
-                vCivAir = vCivAir.Insert(0, "{\"vehicle_civ_air\": ");
-                vCivAir += "}";
-                var vehiclesAir = JArray.Parse(JObject.Parse(vCivAir)["vehicle_civ_air"].ToString());
-                CivVehicles = new List<Vehicle>();
-                foreach (var jToken in vehiclesAir)
-                {
-                    var vehicle = (JObject)jToken;
-                    var id = (int)vehicle["id"];
-                    var vName = (string)vehicle["vehicle"];
-                    var alive = (int)vehicle["alive"];
-                    var active = (int)vehicle["active"];
-                    var insured = (int)vehicle["modifications"]["insured"];
-                    var turbo = (int)vehicle["modifications"]["turbo"];
-                    var security = (int)vehicle["modifications"]["security"];
-                    var storage = (int)vehicle["modifications"]["storage"];
-                    CivVehicles.Add(new Vehicle(id, vName, alive, active, insured, turbo, security, storage));
-                }
-            }
-            if (vCivCar.Length > 2)
-            {
-                vCivCar = vCivCar.Insert(0, "{\"vehicle_civ_car\": ");
-                vCivCar += "}";
-                var vehiclesCar = JArray.Parse(JObject.Parse(vCivCar)["vehicle_civ_car"].ToString());
-                foreach (var jToken in vehiclesCar)
-                {
-                    var vehicle = (JObject)jToken;
-                    var id = (int)vehicle["id"];
-                    var vName = (string)vehicle["vehicle"];
-                    var alive = (int)vehicle["alive"];
-                    var active = (int)vehicle["active"];
-                    var insured = (int)vehicle["modifications"]["insured"];
-                    var turbo = (int)vehicle["modifications"]["turbo"];
-                    var security = (int)vehicle["modifications"]["security"];
-                    var storage = (int)vehicle["modifications"]["storage"];
-                    CivVehicles.Add(new Vehicle(id, vName, alive, active, insured, turbo, security, storage));
-                }
-            }
-            if (vCivShip.Length > 2)
-            {
-                vCivShip = vCivShip.Insert(0, "{\"vehicle_civ_ship\": ");
-                vCivShip += "}";
-                var vehiclesShip = JArray.Parse(JObject.Parse(vCivShip)["vehicle_civ_ship"].ToString());
-                foreach (var jToken in vehiclesShip)
-                {
-                    var vehicle = (JObject)jToken;
-                    var id = (int)vehicle["id"];
-                    var vName = (string)vehicle["vehicle"];
-                    var alive = (int)vehicle["alive"];
-                    var active = (int)vehicle["active"];
-                    var insured = (int)vehicle["modifications"]["insured"];
-                    var turbo = (int)vehicle["modifications"]["turbo"];
-                    var security = (int)vehicle["modifications"]["security"];
-                    var storage = (int)vehicle["modifications"]["storage"];
-                    CivVehicles.Add(new Vehicle(id, vName, alive, active, insured, turbo, security, storage));
-                }
-            }
 
+        public void AddVehicles(string vehicles, string faction)
+        {
+            switch (faction)
+            {
+                case "civ":
+                    vehicles = vehicles.Insert(0, "{\"vehicle\": ");
+                    vehicles += "}";
+                    var v = JArray.Parse(JObject.Parse(vehicles)["vehicle"].ToString());
+                    foreach (var jToken in v)
+                    {
+                        var vehicle = (JObject)jToken;
+                        var id = (int)vehicle["id"];
+                        var vName = (string)vehicle["vehicle"];
+                        var alive = (int)vehicle["alive"];
+                        var active = (int)vehicle["active"];
+                        var insured = (int)vehicle["modifications"]["insured"];
+                        var turbo = (int)vehicle["modifications"]["turbo"];
+                        var security = (int)vehicle["modifications"]["security"];
+                        var storage = (int)vehicle["modifications"]["storage"];
+                        CivVehicles.Add(new Vehicle(id, vName, alive, active, insured, turbo, security, storage));
+                    }
+                    break;
+                case "apd":
+                    break;
+                case "med":
+                    break;
+            }
+        }
+        public void AddVehicles(string air, string car, string ship, string faction)
+        {
+            switch (faction)
+            {
+                case "civ":
+                    CivVehicles = new List<Vehicle>();
+                    break;
+                case "apd":
+                    ApdVehicles = new List<Vehicle>();
+                    break;
+                case "med":
+                    MedVehicles = new List<Vehicle>();
+                    break;
+            }
+            if (air.Length > 2)
+                AddVehicles(air, faction);
+            if (car.Length > 2)
+                AddVehicles(car, faction);
+            if (ship.Length > 2)
+                AddVehicles(ship, faction);
+        }
+        public void AddHouses(JArray houses, int server)
+        {
+            foreach (var jToken in houses)
+            {
+                try
+                {
+                    var house = (JObject)jToken;
+                    var pos = (string)house["pos"];
+                    pos = pos.Remove(0, 1);
+                    pos = pos.Remove(pos.IndexOf(']'));
+                    var lastUsed = DateTime.Parse(house["last_active"].ToString());
+                    var virtuals = JArray.Parse(Helper.ToJson(house["inventory"].ToString()));
+                    var crate = Helper.ToJson(house["crates"].ToString());
+                    var virtualItems = virtuals[0].Select(item => new Item { Name = (string)item[0], Amount = (int)item[1] }).ToList();
+                    var remove1 = crate.AllIndexesOf("\"\\\"");
+                    var remove2 = crate.AllIndexesOf("\\\"\"");
+                    for (var i = 0; i < remove1.Count(); i++)
+                        crate = crate.Remove(crate.IndexOf("\"\\\""), 3);
+                    for (var i = 0; i < remove2.Count(); i++)
+                        crate = crate.Remove(crate.IndexOf("\\\"\""), 3);
+
+                    var crates = JArray.Parse(crate);
+                    var crateList = new List<Crate>();
+                    foreach (var c in crates)
+                    {
+                        var crateInventory = JArray.Parse(c["inventory"].ToString());
+                        var items = new List<Item>();
+                        var count = crateInventory[1].Count();
+                        for (var i = 0; i < count; i++)
+                        {
+                            var iCount = crateInventory[1][i].Count();
+                            for (var k = 0; k < iCount; k++)
+                            {
+                                var kCount = crateInventory[1][i][k].Count();
+                                if (kCount <= 0) continue;
+                                var iName = "";
+                                var amount = "";
+                                if (i != 1 && k == 0)
+                                {
+                                    iName = crateInventory[1][i][0][0].ToString();
+                                    amount = crateInventory[1][i][1][0].ToString();
+                                }
+                                else if (i == 1 && k == 0)
+                                {
+                                    var debug = crateInventory[1][i].ToString();
+                                    iName = crateInventory[1][i][0][0].ToString();
+                                    amount = crateInventory[1][i][0][2].ToString();
+                                }
+                                if (iName.Length > 0)
+                                {
+                                    //Console.WriteLine(string.Format("Name: {0} Amount: {1}", iName, amount));
+                                    items.Add(new Item { Name = iName, Amount = Convert.ToInt32(amount) });
+                                }
+                            }
+                        }
+                        crateList.Add(new Crate { Id = (int)c["id"], LastAccessed = Convert.ToDateTime(c["last_active"]), Items = items });
+                    }
+                    Houses.Add(new House { Id = (int)house["houseid"], Location = pos.Split(','), VirtualCount = (int)virtuals[1], LastAccessed = lastUsed, Storage = (int)house["storage"], Virtual = virtualItems, Server = server });
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+                //var data2 = _db.ExecuteReader("SELECT houseID FROM houses WHERE houseID =?", hid);
+                //if (data2[0].Count == 0)
+                //{
+                //    //Add the player to the DB
+                //    sql = "INSERT INTO houses (`houseID`, `steamID`, `location`, `lastAccessed`, `virtual`, `crates`, `storage`, `server`)  VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                //    resultH += _db.ExecuteNonQuery(sql, hid, steamId, pos, lastUsed, virtuals, crates, maxStorage, _serverName) == 1 ? 1 : 0;
+                //}
+                //else
+                //{
+                //    //Update the player's house
+                //    sql = "UPDATE houses SET `steamID` = ?, `location` = ?, `lastAccessed` = ?, `crates` = ?, `virtual` = ?, `storage`= ?, `server`=? WHERE `houseID` = ?";
+                //    resultH += _db.ExecuteNonQuery(sql, steamId, pos, lastUsed, crates, virtuals, maxStorage, _serverName, hid) == 1 ? 1 : 0;
+                //}
+            }
         }
 
         public void AddHouse(int hid, string location, long lastUsed, string crates, string virtualStr, int maxStorage)
         {
             try
             {
-                JArray virtuals = JArray.Parse(Helper.ToJson(virtualStr));
-                int vCount = (int)virtuals[1];
-                //Houses.Add(new House { VirtualCount = vCount });
             }
             catch (Exception)
             {
@@ -355,17 +439,7 @@ namespace TrackerInterface
         //            Houses[j] = new House { Id = Convert.ToInt32(hr[1][j]), LastAccessed = Helper.FromUnixTime(Convert.ToInt64(hr[4][j])), Location = location, Storage = storage, VirtualCount = Convert.ToInt32(virtuals[1]) };
         //            Houses[j].LbName = $"{Houses[j].Id} ({Houses[j].VirtualCount}/{Houses[j].Storage})";
 
-        //            string crate = Helper.ToJson(hr[6][j]);
-        //            IEnumerable<int> remove1 = crate.AllIndexesOf("\"\\\"");
-        //            IEnumerable<int> remove2 = crate.AllIndexesOf("\\\"\"");
-        //            for (int i = 0; i < remove1.Count(); i++)
-        //                crate = crate.Remove(crate.IndexOf("\"\\\""), 3);
-        //            for (int i = 0; i < remove1.Count(); i++)
-        //                crate = crate.Remove(crate.IndexOf("\\\"\""), 3);
 
-        //            JArray crates = JArray.Parse(crate);
-        //            int crateCount;
-        //            crateCount = crates.Count == 0 ? 0 : crates[0].Count();
         //            if (virtualCount > 0)
         //            {
         //                Houses[j].Virtual = new Item[virtualCount];
@@ -385,39 +459,7 @@ namespace TrackerInterface
         //            //        houses[j].Crates[cCounter] = new Crate();
         //            //        houses[j].Crates[cCounter].ID = (int)c["id"];
         //            //        houses[j].Crates[cCounter].LastAccessed = DateTime.Parse((string)c["last_active"]);
-        //            //        houses[j].Crates[cCounter].Items = new List<Item>();
-        //            //        string json = c["inventory"].ToString();
-        //            //        JArray inventory = JArray.Parse(json);
-        //            //        int count = inventory[1].Count();
-        //            //        for (int i = 0; i < count; i++)
-        //            //        {
-        //            //            int iCount = inventory[1][i].Count();
-        //            //            for (int k = 0; k < iCount; k++)
-        //            //            {
-        //            //                int kCount = inventory[1][i][k].Count();
-        //            //                if (kCount > 0)
-        //            //                {
-        //            //                    string iName = "";
-        //            //                    string amount = "";
-        //            //                    if (i != 1 && k == 0)
-        //            //                    {
-        //            //                        iName = inventory[1][i][0][0].ToString();
-        //            //                        amount = inventory[1][i][1][0].ToString();
-        //            //                    }
-        //            //                    else if (i == 1 && k == 0)
-        //            //                    {
-        //            //                        string debug = inventory[1][i].ToString();
-        //            //                        iName = inventory[1][i][0][0].ToString();
-        //            //                        amount = inventory[1][i][0][2].ToString();
-        //            //                    }
-        //            //                    if (iName.Length > 0)
-        //            //                    {
-        //            //                        Console.WriteLine(string.Format("Name: {0} Amount: {1}", iName, amount));
-        //            //                        houses[j].Crates[cCounter].Items.Add(new Item { name = iName, amount = Convert.ToInt32(amount) });
-        //            //                    }
-        //            //                }
-        //            //            }
-        //            //        }
+
         //            //    }
         //            //}
         //        }
