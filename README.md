@@ -14,3 +14,6 @@
     New Shit:
     Player's houses are now shown on a map along with the virtual inventory.
     Clicking on a player in the player list will center the map on their location.
+
+### 10/4 **RIP**
+- **[REDACTED]** Gave away his valued code for a shiny ingame vehicle. The project is currently on hold until new developments on a possible workaround surface.
