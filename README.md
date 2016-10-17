@@ -17,3 +17,6 @@
 
 ### 10/4 **RIP**
 - **[REDACTED]** Gave away his valued code for a shiny ingame vehicle. The project is currently on hold until new developments on a possible workaround surface.
+
+### 10/17 ***RIP 4 REAL***
+Its been two weeks without any word of the project coming back online. At this point it is safe to declassify the name of the idiot who cause the termination of the project. Fed0t
