@@ -1,6 +1,6 @@
 # Olympus **Client**
 #### By
-- **[REDACTED]**
+- Fedot
 - **[REDACTED]**
 - **[REDACTED]**
 - **[REDACTED]**
