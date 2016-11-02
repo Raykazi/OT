@@ -6,8 +6,9 @@
 - **[REDACTED]**
 
 ### Background
-One day in August **[REDACTED]** & **[REDACTED]** were banned. During their ban period the schemed the idea of using the Olympus API provided by Fedot to find out where players were doing in the game. **[REDACTED]** implemented the first version of the client using PHP.
-The 3 co-developers and former Olympus Moderator Dustin, used the program making slight improvements to its readability. Later on in that same month, **[REDACTED]** decided to write the program in C# to make use of all the information the API had to offer. It was at this point where we decided to exclude **Dustin** for fear of him being a snitch for donator perks. The development of the C# took of despite the hurdles and setbacks given by Fedot and Posiedon. We soon involved **Fedot** in the project after discovering he to wanted to know what people. With the contributions to the API by **Fedot** the team was able make even more progress on the program by adding a map that tracked locations of active players and their houses.
+The Original Olympus Client was started on the 1st of August by **[REDACTED]**, **[REDACTED]**, and **[REDACTED]** after **[REDACTED]** and **[REDACTED]** got banned for fail RP and RDM. The original script was written in PHP.
+
+The 3 co-developers and former Olympus Moderator Dustin, used the program making slight improvements to its readability. Later on in that same month, **[REDACTED]** decided to write the program in C# to make use of all the information the API had to offer. It was at this point where we decided to exclude **Dustin** for fear of him being a snitch for donator perks. The development of the C# took of despite the hurdles and setbacks given by Fedot and Posiedon. We soon involved **Fedot** in the project after discovering he had the same interests in tracking people. With the contributions to the API by **Fedot** the team was able make even more progress on the program by adding a map that tracked locations of active players and their houses.
  
  ## Change Log
  
