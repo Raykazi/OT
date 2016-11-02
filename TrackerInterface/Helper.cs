@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace TrackerInterface
@@ -27,11 +28,28 @@ namespace TrackerInterface
             data = data.Replace('`', '"');
             return data;
         }
+
+        public static string ToSQL<T>(List<T> list)
+        {
+            return list.Aggregate("", (current, item) => current + (item + ","));
+        }
+        public static string ToSQL(string[] list)
+        {
+            var result = list.Aggregate("", (current, s) => current + (s + ","));
+            result.Insert(0, "[");
+            result.Insert(result.Length, "]");
+            return result;
+        }
+        public static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
+        }
         public static IEnumerable<int> AllIndexesOf(this string str, string value)
         {
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
                 throw new ArgumentException("the string to find may not be empty", "value");
-            for (int index = 0; ; index += value.Length)
+            for (var index = 0; ; index += value.Length)
             {
                 index = str.IndexOf(value, index);
                 if (index == -1)

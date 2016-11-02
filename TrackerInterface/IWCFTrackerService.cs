@@ -21,7 +21,7 @@ namespace TrackerInterface
         void PullPlayers(string serverId);
         [OperationContract]
         //Returns a list of player object to the client
-        List<Player> GetPlayerList(string serverId);
+        List<Player> GetPlayerList(int serverId);
         [OperationContract]
         string GetMySteamId(string steamName);
     }

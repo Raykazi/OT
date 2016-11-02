@@ -4,15 +4,15 @@ using MySql.Data.MySqlClient;
 
 namespace TrackerServer
 {
-    internal class Db
+    public class Db
     {
         private readonly MySqlConnection _connection;
         private MySqlCommand _mCmd;
 
         public Db()
         {
-            //string conString = string.Format("SERVER=50.192.51.66;Port=3306;DATABASE=olympus;UID=otracker;PASSWORD=9Ohz7b^5LG0*O'c;Convert Zero Datetime=True;");
-            var conString = string.Format("SERVER=127.0.0.1;Port=3306;DATABASE=olympus;UID=otracker;PASSWORD=9Ohz7b^5LG0*O'c;Convert Zero Datetime=True;");
+            string conString = string.Format("SERVER=50.192.51.66;Port=3306;DATABASE=olympus;UID=otracker;PASSWORD=9Ohz7b^5LG0*O'c;Convert Zero Datetime=True;");
+            //var conString = string.Format("SERVER=127.0.0.1;Port=3306;DATABASE=olympus;UID=otracker;PASSWORD=9Ohz7b^5LG0*O'c;Convert Zero Datetime=True;");
             //string conString = string.Format("SERVER=10.1.10.3;Port=3306;DATABASE=olympus;UID=otracker;PASSWORD=9Ohz7b^5LG0*O'c;Convert Zero Datetime=True;");
             _connection = new MySqlConnection(conString);
         }
@@ -29,13 +29,13 @@ namespace TrackerServer
                 switch (ex.Number)
                 {
                     case 1042:
-                        Program.ConsoleLog("Cannot connect to server.  Contact administrator");
+                        Console.WriteLine("Cannot connect to server.  Contact administrator");
                         break;
                     case 1045:
-                        Program.ConsoleLog("Invalid username/password, please try again.");
+                        Console.WriteLine("Invalid username/password, please try again.");
                         break;
                     default:
-                        Program.ConsoleLog("Error " + ex.ErrorCode + ": " + ex.Message);
+                        Console.WriteLine("Error " + ex.ErrorCode + ": " + ex.Message);
                         break;
                 }
                 return false;

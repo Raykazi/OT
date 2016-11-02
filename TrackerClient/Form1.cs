@@ -22,7 +22,7 @@ namespace TrackerClient
         bool _doingWork = false;
         bool _justRefreshed = false;
         Player _lastSelected = null;
-        string _serverId = "arma_1";
+        int _serverId = 1;
         internal Map PlayerMap;
         //SlackClient _sc = new SlackClient("https://hooks.slack.com/services/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");
         object _locker = new object();
@@ -225,45 +225,48 @@ namespace TrackerClient
                 switch (p.Faction)
                 {
                     case "cop":
-                        switch (p.CopLevel) {
+                        var lRank = Color.FromArgb(0, 97, 255);
+                        var hRank = Color.FromArgb(0, 46, 122);
+                        switch (p.CopLevel)
+                        {
                             case 1:
                                 text += " [Dep]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 97, 255)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(lRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;
                             case 2:
                                 text += " [PO]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 97, 255)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(lRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;
                             case 3:
                                 text += " [Corp]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 46, 122)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(hRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;
                             case 4:
                                 text += " [SGT]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 46, 122)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(hRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;
                             case 5:
                                 text += " [LT]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 46, 122)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(hRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;
                             case 6:
                                 text += " [DChief]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 46, 122)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(hRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;
                             case 7:
                                 text += " [Chief]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 46, 122)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(hRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
-                                break;                            
+                                break;
                             default:
                                 text += " [CopLev " + p.CopLevel + "]";
-                                g.FillRectangle(new SolidBrush(Color.FromArgb(0, 97, 255)), e.Bounds);
+                                g.FillRectangle(new SolidBrush(hRank), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;
                         }
@@ -299,15 +302,7 @@ namespace TrackerClient
             {
                 var highlight = SystemColors.MenuHighlight;
                 g.FillRectangle(new SolidBrush(highlight), e.Bounds);
-                //g.DrawRectangle(new Pen(Color.Black), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
-            }
-            else
-            {
-                //g.DrawString(text, e.Font, new SolidBrush(textColor), new PointF(e.Bounds.X, e.Bounds.Y));
-                //g.FillRectangle(new SolidBrush(Color.Transparent), e.Bounds);
-                ////g.DrawRectangle(new Pen(Color.Transparent), new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height));
-                //
             }
             e.DrawFocusRectangle();
         }
@@ -409,10 +404,14 @@ namespace TrackerClient
             }
             if (p.Houses != null)
             {
-                houses.AddRange(p.Houses);
+                foreach (var house in p.Houses)
+                {
+                    if (house.Server == _serverId)
+                        houses.Add(house);
+                }
             }
             houses = houses.OrderBy(h => h.Id).ToList();
-            lbHouses.DisplayMember = "lbname";
+            lbHouses.DisplayMember = houses.ToString();
             lbHouses.DataSource = houses;
             if (PlayerMap == null) return;
             if (_sw.ElapsedMilliseconds <= 1000) return;
@@ -543,13 +542,10 @@ namespace TrackerClient
             switch (b.Text)
             {
                 case "Server #1":
-                    _serverId = "arma_1";
+                    _serverId = 1;
                     break;
                 case "Server #2":
-                    _serverId = "arma_2_blame_poseidon";
-                    break;
-                case "Server #3":
-                    _serverId = "arma_3";
+                    _serverId = 2;
                     break;
             }
             Reset();
