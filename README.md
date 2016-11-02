@@ -6,8 +6,13 @@
 - **[REDACTED]**
 
 ### Background
- The Original Olympus Client was started around Aug 23rd by **[REDACTED]**, **[REDACTED]**, **[REDACTED]** and Former Olympus Moderator Dustin. Then Dustin was found untrustworthy while suspiosion of him **snitching** to Poseidon was founded. Which the caused Poseidon to tell Fedot to create a filter for the API he created. Later Dustin was EXILED from the group and **[REDACTED]** was added. **[REDACTED]** then proposed a plan that reborn the client. After months of Work version 2 was  released. For many months the Dev Team went undetected until *<TO BE ADDED>* fucked up and got all members of the Dev Team perm banned from the Server on *<To Be added>*. In rebilion the Dev Team released this Repository to the public on *<To be Added>*. Which was quickly stopped when a push was added to the API stopping the exploit the client uses.
- 
+ The Original Olympus Client was started on the 1st of August by **[REDACTED]**, **[REDACTED]**, and **[REDACTED]** after **[REDACTED]** and **[REDACTED]** got banned for fail RP and RDM. The original script was written in PHP. Former Olympus Moderator Dustin was given access to the script. Dustin was found untrustworthy and there was suspicion of him **snitching** to Poseidon. 
+
+After a few weeks of using the script, Poseidon made Fedot create a filter for his API to prevent unwhitelisted users from accessing the alias search. **[REDACTED]** quickly created a workaround that scraped ID from steam and was a massive bitch. Soon after, the first version of the c# client was created and released by **[REDACTED]**. Dustin was EXILED from the group after being told the client no longer worked.
+
+Some time passed, and the rest of the API was locked down.
+
+**[REDACTED]** joined the team because he had lots of useful information and access. **[REDACTED]** proposed a plan that revived the project. Version 2 was soon released. Everything worked well until a certain faggot (fed0t) sold the API for a ghosthawk. RIP.
  ## Change Log
  
  ### 9/10 **House Addition**
