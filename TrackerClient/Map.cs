@@ -8,18 +8,27 @@ namespace TrackerClient
 {
     public partial class Map : Form
     {
-        internal List<Player> Players;
-        private Font _font = new Font("Tahoma", 7F, FontStyle.Regular);
+        internal List<Player> Players; //List of Players
+        private Font _font = new Font("Tahoma", 7F, FontStyle.Regular); //Default font
         internal bool CanReset = false;
         public Map()
         {
             InitializeComponent();
         }
+        /// <summary>
+        /// Event to handle after main form loads
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Map_Load(object sender, EventArgs e)
         {
             CanReset = true;
         }
-
+        /// <summary>
+        /// Draws map with online players and corresponding colors 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void pbMap_Paint(object sender, PaintEventArgs e)
         {
             Point point = panel1.AutoScrollPosition;
@@ -65,16 +74,16 @@ namespace TrackerClient
                 CanReset = false;
             }
         }
+        //TODO Will probably remove this
         private void pbMap_MouseMove(object sender, MouseEventArgs e)
         {
             //Text = string.Format("Map X:{0} Y:{1} Size: {2},{3} ASP {4} {5}", e.X, e.Y, panel1.Size.Height, panel1.Size.Width, panel1.AutoScrollPosition.X, panel1.AutoScrollPosition.Y);
 
         }
-
-        private void pbMap_MouseClick(object sender, MouseEventArgs e)
-        {
-
-        }
+        /// <summary>
+        /// Centers map on selected player location
+        /// </summary>
+        /// <param name="location"></param>
         internal void pbMap_CenterPlayer(string[] location)
         {
             float[] newCords = Helper.performCordScale(location, pbMap);

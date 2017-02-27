@@ -5,6 +5,7 @@ using System.Windows.Forms;
 
 namespace TrackerClient
 {
+    //TODO Do i really need this
     public partial class ImagePanel : UserControl
     {
         public ImagePanel()

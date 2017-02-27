@@ -13,23 +13,26 @@ namespace TrackerClient
 
     public partial class FrmMain : Form
     {
+        /*WCF Variables*/
         private ChannelFactory<IWcfTrackerService> _channelFactory;
         private IWcfTrackerService _server;
+        /*List*/
         List<Player> _onlinePlayers = new List<Player>();
         List<Player> _slackPostList = new List<Player>();
         List<string> _debugListVeh = new List<string>();
         List<string> _debugListEqu = new List<string>();
-        bool _doingWork = false;
-        bool _justRefreshed = false;
-        Player _lastSelected = null;
-        int _serverId = 1;
-        internal Map PlayerMap;
-        //SlackClient _sc = new SlackClient("https://hooks.slack.com/services/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");
-        object _locker = new object();
 
+        bool _doingWork = false; //Prevents starting a player pull while one is still active
+        bool _justRefreshed = false; //TODO may remove this later
+        Player _lastSelected = null; 
+        int _serverId = 1; //Default server to pull from
+        internal Map PlayerMap; //Map object to pass to the Map form/user control
+        //SlackClient _sc = new SlackClient("https://hooks.slack.com/services/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");
+        /*Loop Variables*/
         Stopwatch _sw = new Stopwatch();
         public int RefreshTime = 60000;
 
+        /*More Lists*/
         string[] _watchListLegeals = {
                "salt","saltr",
                 "sand","glass",
@@ -53,10 +56,11 @@ namespace TrackerClient
                 "Taru (Bench)", "Taru (Fuel)", "Taru (Transport)", "Tempest (Device)", "Tempest Fuel", "Tempest Transport", "Tempest Transport (Covered)", "Truck", "Truck Box", "Truck Fuel",
                 "Zamak Fuel", "Zamak Transport", "Zamak Transport (Covered)"};
 
-
-        ListViewItemComparer _lvwItemComparer = new ListViewItemComparer();
+        ListViewItemComparer _lvwItemComparer = new ListViewItemComparer(); 
         private ListBox _activeListbox;
-
+        /// <summary>
+        /// Initialize the form
+        /// </summary>
         public FrmMain()
         {
             InitializeComponent();
@@ -65,7 +69,9 @@ namespace TrackerClient
             timerPLRefresh.Start();
             pbMap.Image = Properties.Resources.Altis3;
         }
-
+        /// <summary>
+        /// Close the WCF Connection
+        /// </summary>
         private void CloseConnection()
         {
             if (_channelFactory.State < CommunicationState.Closing)
@@ -73,13 +79,19 @@ namespace TrackerClient
                 _channelFactory.Close();
             }
         }
-
+        /// <summary>
+        /// Open WCF Connection
+        /// </summary>
         private void OpenConnection()
         {
             _channelFactory = new ChannelFactory<IWcfTrackerService>("TrackerClientEndpoint");
             _server = _channelFactory.CreateChannel();
         }
-
+        /// <summary>
+        /// En/Disable buttons depending on Background worker status
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void timerPLRefresh_Tick(object sender, EventArgs e)
         {
             switch (_sw.ElapsedMilliseconds)
@@ -96,7 +108,9 @@ namespace TrackerClient
                     break;
             }
         }
-
+        /// <summary>
+        /// Starts the BGW method
+        /// </summary>
         private void Reset()
         {
             try
@@ -112,7 +126,9 @@ namespace TrackerClient
                 // ignored
             }
         }
-
+        /// <summary>
+        /// Adds players with targeted items to a special list
+        /// </summary>
         private void BuildTargetList()
         {
             var targetPlayers = new List<Player>();
@@ -175,18 +191,32 @@ namespace TrackerClient
             lbPlayersTargets.DisplayMember = "name";
             lbPlayersTargets.DataSource = targetPlayers;
         }
-
+        /// <summary>
+        /// Sets the listbox that the mouse enters as the active one.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ListBox_MouseEnter(object sender, EventArgs e)
         {
             var lb = (ListBox)sender;
             _activeListbox = lb;
         }
+        /// <summary>
+        /// Displays the information of the selected house
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void lbHouses_SelectedIndexChanged(object sender, EventArgs e)
         {
             var lb = (ListBox)sender;
             var h = (House)lb.SelectedValue;
             DisplayHouse(h);
         }
+        /// <summary>
+        /// Displays the information of a selected player
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
@@ -206,6 +236,11 @@ namespace TrackerClient
                 //MessageBox.Show(ex.Message);
             }
         }
+        /// <summary>
+        /// Draws the listbox manually with corresponding colors
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ListBox_DrawItem(object sender, DrawItemEventArgs e)
         {
             e.DrawBackground();
@@ -306,7 +341,10 @@ namespace TrackerClient
             }
             e.DrawFocusRectangle();
         }
-
+        /// <summary>
+        /// Displays the house 
+        /// </summary>
+        /// <param name="h"></param>
         private void DisplayHouse(House h)
         {
             pbMap.Invalidate();
@@ -323,6 +361,10 @@ namespace TrackerClient
             if (h.Location.Length > 1)
                 pbHouses_CenterPlayer(h.Location);
         }
+        /// <summary>
+        /// Centers map on the given location
+        /// </summary>
+        /// <param name="location">Location of the house</param>
         internal void pbHouses_CenterPlayer(string[] location)
         {
             var newCords = Helper.performCordScale(location, pbMap);
@@ -333,7 +375,11 @@ namespace TrackerClient
             var offsetfromcenter = new Point((panelcenter.X - offsetinpicturebox.X), (panelcenter.Y - offsetinpicturebox.Y)); // find the difference between the mouse click and the center
             panelPictureBox.AutoScrollPosition = new Point((Math.Abs(panelPictureBox.AutoScrollPosition.X) + (-1 * offsetfromcenter.X)), (Math.Abs(panelPictureBox.AutoScrollPosition.Y) + (-1 * offsetfromcenter.Y)));
         }
-
+        /// <summary>
+        /// Draws on the map near the player's house
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void pbHouses_Paint(object sender, PaintEventArgs e)
         {
             if (lbHouses.SelectedValue == null) return;
@@ -341,6 +387,10 @@ namespace TrackerClient
             var newCords = Helper.performCordScale(h.Location, pbMap);
             e.Graphics.FillRectangle(new SolidBrush(Color.White), new RectangleF(new PointF(newCords[0], newCords[1]), new Size(4, 4)));
         }
+        /// <summary>
+        /// Displays information from the Player object on the form
+        /// </summary>
+        /// <param name="p"></param>
         private void DisplayPlayer(Player p)
         {
             var sortedList = new List<Vehicle>();
@@ -479,7 +529,11 @@ namespace TrackerClient
             }
             return position;
         }
-
+        /// <summary>
+        /// Connects to the server and pulls player information
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void bwPlayerListRefresh_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             try
@@ -506,7 +560,11 @@ namespace TrackerClient
                 MessageBox.Show(ex.Message);
             }
         }
-
+        /// <summary>
+        /// Runs tasks after pulling player information from the server
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void bwPlayerListRefresh_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
             _doingWork = false;
@@ -527,13 +585,21 @@ namespace TrackerClient
         {
             Reset();
         }
-
+        /// <summary>
+        /// Displays map with listed player location
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void mapToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PlayerMap = new Map { Players = _onlinePlayers };
             PlayerMap.Show();
         }
-
+        /// <summary>
+        /// Handles the selection of server to pull from
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void serverToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var b = (ToolStripMenuItem)sender;
@@ -555,7 +621,11 @@ namespace TrackerClient
         {
             Reset();
         }
-
+        /// <summary>
+        /// Zoom zoom zoom
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tbZoom_Scroll(object sender, EventArgs e)
         {
             var percent = (double)tbZoom.Value / 100;
@@ -566,7 +636,7 @@ namespace TrackerClient
             original.Dispose();
             GC.Collect();
         }
-
+        //TODO Remove this
         private void panelPictureBox_MouseEnter(object sender, EventArgs e)
         {
             if (pbMap.Focused == false)
@@ -574,42 +644,41 @@ namespace TrackerClient
                 //pbMap.Focus();
             }
         }
-
+        /// <summary>
+        /// Catches the mousewheel event and zooms appropriately
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void panelPictureBox_MouseWheel(object sender, MouseEventArgs e)
         {
+            int _minmax = 10;
+            double _zoomfactor = 1.25;
+            //Zoom In
             if (e.Delta < 0)
             {
-                ZoomIn();
+                if ((pbMap.Width < (_minmax * panelHouses.Width)) && (pbMap.Height < (_minmax * panelHouses.Height)))
+                {
+                    pbMap.Width = Convert.ToInt32(pbMap.Width * _zoomfactor);
+                    pbMap.Height = Convert.ToInt32(pbMap.Height * _zoomfactor);
+                    pbMap.SizeMode = PictureBoxSizeMode.StretchImage;
+                }
             }
+            //Zoom out
             else
             {
-                ZoomOut();
-
+                if ((pbMap.Width > (panelHouses.Width / _minmax)) && (pbMap.Height > (panelHouses.Height / _minmax)))
+                {
+                    pbMap.SizeMode = PictureBoxSizeMode.StretchImage;
+                    pbMap.Width = Convert.ToInt32(pbMap.Width / _zoomfactor);
+                    pbMap.Height = Convert.ToInt32(pbMap.Height / _zoomfactor);
+                }
             }
         }
-        private int _minmax = 10;
-        private double _zoomfactor = 1.25;
-        private void ZoomIn()
-        {
-            if ((pbMap.Width < (_minmax * panelHouses.Width)) &&
-                (pbMap.Height < (_minmax * panelHouses.Height)))
-            {
-                pbMap.Width = Convert.ToInt32(pbMap.Width * _zoomfactor);
-                pbMap.Height = Convert.ToInt32(pbMap.Height * _zoomfactor);
-                pbMap.SizeMode = PictureBoxSizeMode.StretchImage;
-            }
-        }
-        private void ZoomOut()
-        {
-            if ((pbMap.Width > (panelHouses.Width / _minmax)) &&
-                (pbMap.Height > (panelHouses.Height / _minmax)))
-            {
-                pbMap.SizeMode = PictureBoxSizeMode.StretchImage;
-                pbMap.Width = Convert.ToInt32(pbMap.Width / _zoomfactor);
-                pbMap.Height = Convert.ToInt32(pbMap.Height / _zoomfactor);
-            }
-        }
-
+        /// <summary>
+        /// Translate arma weapon names 
+        /// </summary>
+        /// <param name="a3Name"></param>
+        /// <returns></returns>
         public string TranslateWeapons(string a3Name)
         {
             var translatedName = "";

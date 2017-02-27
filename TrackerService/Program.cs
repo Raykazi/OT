@@ -5,11 +5,17 @@ namespace TrackerServer
 {
     class Program
     {
-        //Log events to the console window, with a timestamp for when they occured
+        /// <summary>
+        /// Log events to the console window, with a timestamp for when they occured
+        /// </summary>
         public static void ConsoleLog(string msg)
         {
             Console.WriteLine($"[{DateTime.Now}] {msg}");
         }
+        /// <summary>
+        /// Opens the server and listens for connection
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
             try
@@ -30,7 +36,7 @@ namespace TrackerServer
                 ConsoleLog("[EXCEPTION] " + ex.Message);
             }
         }
-
+        /*Event based handlers*/
         private static void Host_Closed(object sender, EventArgs e)
         {
             ConsoleLog("Server Offline");

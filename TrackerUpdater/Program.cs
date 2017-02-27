@@ -9,12 +9,19 @@ namespace TrackerUpdater
 {
     class Program
     {
-        private static ChannelFactory<IWcfTrackerService> _channelFactory;
+        /* WCF Stuff */
+        private static ChannelFactory<IWcfTrackerService> _channelFactory; 
         private static IWcfTrackerService _server;
-        private static readonly Stopwatch Sw = new Stopwatch();
-        private static readonly string[] Servers = new string[] { "arma_1" };
+        /*Loop Variables*/
+        private static readonly Stopwatch Sw = new Stopwatch();        
         private const long RefreshTime = 60000;
+        // Servers to pull from
+        private static readonly string[] Servers = new string[] { "arma_1" };
 
+        /// <summary>
+        /// Infinite loop that calls the update method every minute
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
             Update();
@@ -34,7 +41,9 @@ namespace TrackerUpdater
 
             }
         }
-
+        /// <summary>
+        /// Starts a new thread per server that is defined
+        /// </summary>
         private static void Update()
         {
             Servers.Select(id =>
@@ -46,7 +55,10 @@ namespace TrackerUpdater
             }).ToList().ForEach(t => t.Join());
             Sw.Reset();
         }
-
+        /// <summary>
+        /// Calls the method to pull player info from the server
+        /// </summary>
+        /// <param name="serverId"></param>
         private static void DoUpdate(string serverId)
         {
             try
@@ -62,8 +74,10 @@ namespace TrackerUpdater
                 ConsoleLog(e.Message);
             }
         }
-
-        //Log events to the console window, with a timestamp for when they occured
+        /// <summary>
+        /// Log events to the console window, with a timestamp for when they occured
+        /// </summary>
+        /// <param name="msg"></param>
         public static void ConsoleLog(string msg)
         {
             Console.WriteLine($"[{DateTime.Now}] {msg}");
