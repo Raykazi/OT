@@ -8,7 +8,9 @@ using TrackerServer;
 
 namespace TrackerInterface
 {
-    //Class for the virtual items
+    /// <summary>
+    /// Class that handles  player's virtual Items
+    /// </summary>
     [DataContract]
     public class Item
     {
@@ -19,6 +21,9 @@ namespace TrackerInterface
         [DataMember]
         public int Amount { get; set; }
     }
+    /// <summary>
+    /// Class that handles player's houses
+    /// </summary>
     [DataContract]
     public class House
     {
@@ -43,6 +48,10 @@ namespace TrackerInterface
             return $"{Id} {VirtualCount}/{Storage}";
         }
     }
+    /// <summary>
+    /// Class that handles player's housing crates
+    /// </summary>
+    [DataContract]
     public class Crate
     {
         [DataMember]
@@ -52,11 +61,13 @@ namespace TrackerInterface
         [DataMember]
         public DateTime LastAccessed { get; set; }
     }
-    //Class for vehicles owned by the player.
+    /// <summary>
+    /// Class for vehicles owned by the player.
+    /// </summary>
     [DataContract]
     public class Vehicle
     {
-        //Olympus vehicle ID
+        //Vehicle ID
         [DataMember]
         public int Id { get; private set; }
         //Vehicle name
@@ -80,6 +91,7 @@ namespace TrackerInterface
         [DataMember]
         //1-4 Space of the vehicle
         public int StorageLevel { get; private set; }
+        //Vehicle Constructor
         public Vehicle(int id, string name, int alive, int active, int insuranceLevel, int turboLevel, int secLevel, int storageLevel)
         {
             Id = id;
@@ -92,7 +104,9 @@ namespace TrackerInterface
             StorageLevel = storageLevel;
         }
     }
-    //Class for the player
+    /// <summary>
+    /// Class that handles player information
+    /// </summary>
     [DataContract]
     public class Player
     {
@@ -182,34 +196,42 @@ namespace TrackerInterface
         [DataMember]
         public string[] Location; //Thank you FeDot
         [DataMember]
-        public string Faction { get; private set; }
+        public string Faction { get; private set; } //Cop,Civ, Medic
         [DataMember]
-        public int Server { get; set; }
+        public int Server { get; set; } //Server 1 or 2
 
         private readonly Db _db = new Db();
-        //Constructor
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Player(int uid, long steamId, string name, string aliases, string gangN, int gangR, long lastActive, long lastUpdated, string location, string faction)
         {
+            // Initialize Lists
             Houses = new List<House>();
             Aliases = new List<string>();
             Equipment = new List<string>();
             CivVehicles = new List<Vehicle>();
+
+            //Setup player object with parameters from the calls
             Uid = uid;
             SteamId = steamId;
             Name = name;
+            //Seperate Gang history 
             var alias = aliases.Split(';');
             foreach (var aliasName in alias.Where(aliasName => aliasName.Length > 0))
                 Aliases.Add(aliasName);
             GangName = gangN;
             GangRank = gangR;
+            //Parse times into human readable format
             LastActive = Helper.FromUnixTime(lastActive);
             LastUpdated = Helper.FromUnixTime(lastUpdated);
-            location = Encoding.ASCII.GetString(Convert.FromBase64String(location));
-            location = location.Remove(0, 2);
-            location = location.Remove(location.IndexOf("]"));
-            Location = location.Split(',');
+            //Parse Location into X,Y format
+            Location = Helper.ParseLocation(location);
             Faction = faction;
         }
+        /// <summary>
+        /// Checks DB for an existing record, if one is found update if not create a record
+        /// </summary>
         public void Save(string aliases, string cAir, string cCar, string cShip, string aAir, string aCar, string aShip, string mAir, string mCar, string mShip, string aGear, string cGear, string mGear, int server)
         {
             var location = Helper.Base64Encode(Helper.ToSQL(Location));
@@ -226,6 +248,9 @@ namespace TrackerInterface
                 _db.ExecuteNonQuery(sql, Name, Cash, Bank, CopLevel, MedicLevel, AdminLevel, DonatorLevel, Helper.ToSQL(Aliases), Kills, Deaths, MedicRevives, BountyCollected, CopArrest, TimeCiv, TimeApd, TimeMed, BountyWanted, GangName, GangRank, LastActive.ToUnixTime(), aGear, cGear, mGear, aAir, aCar, aShip, cAir, cCar, cShip, mAir, mCar, mShip, LastUpdated.ToUnixTime(), location, Server, SteamId);
             }
         }
+        /// <summary>
+        /// Setup the player object in regards to player stats
+        /// </summary>
         public void AddStats(int cop, int medic, int admin, int donator, int kills, int deaths, int revives, int arrests)
         {
             CopLevel = cop;
@@ -237,12 +262,18 @@ namespace TrackerInterface
             MedicRevives = revives;
             CopArrest = arrests;
         }
+        /// <summary>
+        /// Setup the player object in regards to player times
+        /// </summary>        
         public void AddTime(int timeCiv, int timeApd, int timeMed)
         {
             TimeCiv = timeCiv;
             TimeApd = timeApd;
             TimeMed = timeMed;
         }
+        /// <summary>
+        /// Setup the player object in regards to player money
+        /// </summary>        
         public void AddMoney(int cash, int bank, int bountyCollected, int bountyWanted)
         {
             Cash = cash;
@@ -250,6 +281,9 @@ namespace TrackerInterface
             BountyCollected = bountyCollected;
             BountyWanted = bountyWanted;
         }
+        /// <summary>
+        /// Parse the JSON string regarding gear and inventory
+        /// </summary>
         public void AddGear(string gearCiv)
         {
             if (gearCiv.Length <= 2) return;
@@ -283,9 +317,14 @@ namespace TrackerInterface
                     }
             }
         }
-
+        /// <summary>
+        /// Parse the JSON string regarding player's vehicles
+        /// </summary>
+        /// <param name="vehicles"></param>
+        /// <param name="faction"></param>
         public void AddVehicles(string vehicles, string faction)
         {
+            //Only care about civ vehicles for now.
             switch (faction)
             {
                 case "civ":
@@ -306,12 +345,12 @@ namespace TrackerInterface
                         CivVehicles.Add(new Vehicle(id, vName, alive, active, insured, turbo, security, storage));
                     }
                     break;
-                case "apd":
-                    break;
-                case "med":
-                    break;
             }
         }
+        /// <summary>
+        /// Initialize vehicle lists depending on faction,
+        /// Calls function to add player's vehicles to their respective objects
+        /// </summary>
         public void AddVehicles(string air, string car, string ship, string faction)
         {
             switch (faction)
@@ -333,6 +372,10 @@ namespace TrackerInterface
             if (ship.Length > 2)
                 AddVehicles(ship, faction);
         }
+        /// <summary>
+        /// Parse JSON house string array and place information into House object
+        /// </summary>
+
         public void AddHouses(JArray houses, int server)
         {
             foreach (var jToken in houses)
@@ -412,67 +455,5 @@ namespace TrackerInterface
                 //}
             }
         }
-
-        public void AddHouse(int hid, string location, long lastUsed, string crates, string virtualStr, int maxStorage)
-        {
-            try
-            {
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-        //public void AddHouse(List<string>[] hr, int houseCount)
-        //{
-        //    //string.Format("{0} ({1}/{2})", ID, VirtualCount, Storage);
-        //    try
-        //    {
-        //        if (houseCount <= 0) return;
-        //        for (int j = 0; j < houseCount; j++)
-        //        {
-        //            string[] location = hr[3][j].Split(',');
-        //            JArray virtuals = JArray.Parse(Helper.ToJson(hr[5][j]));
-        //            int virtualCount = virtuals[0].Count();
-        //            int storage = hr[7][j].Length > 0 ? Convert.ToInt32(hr[7][j]) : 0;
-        //            Houses[j] = new House { Id = Convert.ToInt32(hr[1][j]), LastAccessed = Helper.FromUnixTime(Convert.ToInt64(hr[4][j])), Location = location, Storage = storage, VirtualCount = Convert.ToInt32(virtuals[1]) };
-        //            Houses[j].LbName = $"{Houses[j].Id} ({Houses[j].VirtualCount}/{Houses[j].Storage})";
-
-
-        //            if (virtualCount > 0)
-        //            {
-        //                Houses[j].Virtual = new Item[virtualCount];
-        //                int vCounter = 0;
-        //                foreach (JArray item in virtuals[0])
-        //                {
-        //                    Houses[j].Virtual[vCounter] = new Item { Name = (string)item[0], Amount = (int)item[1] };
-        //                    vCounter++;
-        //                }
-        //            }
-        //            //if (crateCount > 0)
-        //            //{
-        //            //    houses[j].Crates = new Crate[crateCount];
-        //            //    int cCounter = 0;
-        //            //    foreach (JObject c in crates)
-        //            //    {
-        //            //        houses[j].Crates[cCounter] = new Crate();
-        //            //        houses[j].Crates[cCounter].ID = (int)c["id"];
-        //            //        houses[j].Crates[cCounter].LastAccessed = DateTime.Parse((string)c["last_active"]);
-
-        //            //    }
-        //            //}
-        //        }
-        //    }
-        //    catch (ArgumentOutOfRangeException e)
-        //    {
-        //        Helper.ConsoleLog(e.Message);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Helper.ConsoleLog(e.Message);
-        //    }
-
-        //}
     }
 }

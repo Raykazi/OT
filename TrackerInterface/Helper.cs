@@ -9,30 +9,65 @@ namespace TrackerInterface
     //Functions that help the client and server run.
     public static class Helper
     {
-        //Convert time to Unix
+        /// <summary>
+        /// Convert time to Unix format
+        /// </summary>
+        /// <param name="date">DateTime object to convert</param>
+        /// <returns>Unix formatted time</returns>
         public static long ToUnixTime(this DateTime date)
         {
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             return Convert.ToInt64((date - epoch).TotalSeconds);
         }
-        //Convert to a human readable format
+
+        /// <summary>
+        /// Convert Unix time to Readable time
+        /// </summary>
+        /// <param name="unixTime">Unix time to convert</param>
+        /// <returns>DateTime formatted time</returns>
         public static DateTime FromUnixTime(long unixTime)
         {
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             return epoch.AddSeconds(unixTime);
         }
-
+        /// <summary>
+        /// Decode the location string, format it into X,Y,Z format
+        /// </summary>
+        /// <param name="location"></param>
+        /// <returns></returns>
+        public static string[] ParseLocation(string location)
+        {
+            location = System.Text.Encoding.ASCII.GetString(Convert.FromBase64String(location));
+            location = location.Remove(0, 2);
+            location = location.Remove(location.IndexOf("]"));
+            return location.Split(',');
+        }
+        /// <summary>
+        /// Cleanup strings to convert to JSON
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public static string ToJson(string data)
         {
             data = data.Trim('"');
             data = data.Replace('`', '"');
             return data;
         }
-
+        /// <summary>
+        /// Assumming this converts it into SQL format. Not 100% sure
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public static string ToSQL<T>(List<T> list)
         {
             return list.Aggregate("", (current, item) => current + (item + ","));
         }
+        /// <summary>
+        /// Converts string to SQL
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public static string ToSQL(string[] list)
         {
             var result = list.Aggregate("", (current, s) => current + (s + ","));
@@ -40,11 +75,20 @@ namespace TrackerInterface
             result.Insert(result.Length, "]");
             return result;
         }
+        /// <summary>
+        /// Converts String to Base 64
+        /// </summary>
         public static string Base64Encode(string plainText)
         {
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
             return System.Convert.ToBase64String(plainTextBytes);
         }
+        /// <summary>
+        /// Used to clean up the crate string for houses
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static IEnumerable<int> AllIndexesOf(this string str, string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -57,6 +101,13 @@ namespace TrackerInterface
                 yield return index;
             }
         }
+        /// <summary>
+        /// Scales given coordinates to match the map
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="pb"></param>
+        /// <returns></returns>
         public static float[] performCordScale(float x, float y, PictureBox pb)
         {
             float mapHeight = pb.Height;
@@ -69,12 +120,22 @@ namespace TrackerInterface
             coords[1] = (mapHeight - ((mapHeight * coordY) / altisDim));
             return coords;
         }
+        /// <summary>
+        /// Scales given coordinates to match the map
+        /// </summary>
+        /// <param name="location"></param>
+        /// <param name="pbMap"></param>
+        /// <returns></returns>
         public static float[] performCordScale(string[] location, PictureBox pbMap)
         {
             float coordX = float.Parse(location[0]);
             float coordY = float.Parse(location[1]);
-            return Helper.performCordScale(coordX, coordY, pbMap);
+            return performCordScale(coordX, coordY, pbMap);
         }
+        /// <summary>
+        /// Collection of POI 
+        /// </summary>
+        /// <returns></returns>
         public static List<Location> BuildPoi()
         {
             List<Location> locations = new List<Location>();
@@ -175,6 +236,11 @@ namespace TrackerInterface
             locations.Add(new Location { X = 15034.2F, Y = 11079F, Name = "Turtle Dealer", Color = Color.Red });
             return locations;
         }
+        /// <summary>
+        /// Draws the POI on the map
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="pbMap"></param>
         public static void PaintPoi(PaintEventArgs e, PictureBox pbMap)
         {
             foreach (Location l in BuildPoi())
@@ -184,13 +250,19 @@ namespace TrackerInterface
                 e.Graphics.DrawString(l.Name, new Font("Tahoma", 9F, FontStyle.Bold), new SolidBrush(l.Color), new PointF(newCords[0] + 12, newCords[1]));
             }
         }
+        /// <summary>
+        /// Logs output with a timestamp
+        /// </summary>
+        /// <param name="msg">Message to output</param>
         public static void ConsoleLog(string msg)
         {
             Console.WriteLine(string.Format("[{0}] {1}", DateTime.Now, msg));
         }
 
     }
-
+    /// <summary>
+    /// Class that handles locations of POI
+    /// </summary>
     public class Location
     {
         public float X { get; set; }

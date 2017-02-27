@@ -18,6 +18,11 @@ namespace TrackerServer
         private List<Player>[] _tempOnlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
         private readonly object _locker = new object();
         private readonly Db _db = new Db();
+        /// <summary>
+        /// Returns the steam ID of the given steam name
+        /// </summary>
+        /// <param name="steamName">Steam Name</param>
+        /// <returns></returns>
         public string GetMySteamId(string steamName)
         {
             var client = new RestClient("http://api.steampowered.com");
@@ -29,7 +34,12 @@ namespace TrackerServer
             var o = JObject.Parse(content);
             return (string)o["response"]["steamid"];
         }
-        //Curl method to fetch data from the API
+        
+        /// <summary>
+        /// Returns JSON string with player information
+        /// </summary>
+        /// <param name="playerId"></param>
+        /// <returns></returns>
         public string GetPlayerInfo(long playerId)
         {
             var client = new RestClient("http://olympusapi.xyz/apiv2");
@@ -39,6 +49,11 @@ namespace TrackerServer
             var content = response.Content;
             return content;
         }
+        /// <summary>
+        /// Returns JSON string with player's house information
+        /// </summary>
+        /// <param name="playerId"></param>
+        /// <returns></returns>
         public string GetPlayerHouseInfo(long playerId)
         {
             var client = new RestClient("http://olympusapi.xyz/apiv2");
@@ -48,7 +63,10 @@ namespace TrackerServer
             var content = response.Content;
             return content;
         }
-
+        /// <summary>
+        /// Returns object with active players on the server
+        /// </summary>
+        /// <returns></returns>
         public JObject GetActivePlayers()
         {
             var content = "";
@@ -69,6 +87,11 @@ namespace TrackerServer
             return null;
 
         }
+        /// <summary>
+        /// Returns list with player names on a server
+        /// </summary>
+        /// <param name="serverId"></param>
+        /// <returns></returns>
         public List<string> GetPlayers(string serverId)
         {
             var content = "";
@@ -99,6 +122,11 @@ namespace TrackerServer
             }
             return new List<string>();
         }
+        /// <summary>
+        /// Returns steam ID using the ingame name of a player
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public long GetSteamId(string name)
         {
             long steamId = 0;
@@ -140,6 +168,11 @@ namespace TrackerServer
             return steamId;
 
         }
+        /// <summary>
+        /// Returns list of online players on the server
+        /// </summary>
+        /// <param name="serverId"></param>
+        /// <returns></returns>
         public List<Player> GetPlayerList(int serverId)
         {
             try
@@ -162,7 +195,11 @@ namespace TrackerServer
             }
             return null;
         }
-        //Updates the players in the database
+        /// <summary>
+        /// Fetches the online players
+        /// Parses information and stores it in a Player object
+        /// </summary>
+        /// <param name="serverId"></param>
         public void PullPlayers(string serverId)
         {
             try
@@ -204,14 +241,24 @@ namespace TrackerServer
                 Program.ConsoleLog(e.Message);
             }
         }
-
+        /// <summary>
+        /// New thread method that calls the CreatePlayer method
+        /// </summary>
+        /// <param name="pToken">Player JSON string</param>
+        /// <param name="serverNum">Server #</param>
+        /// <param name="tempOnlinePlayers"></param>
         private void DoWork(JToken pToken, int serverNum, ref List<Player>[] tempOnlinePlayers)
         {
             var p = CreatePlayer(pToken, serverNum);
             if (p != null)
                 tempOnlinePlayers[serverNum].Add(p);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pInfo"></param>
+        /// <param name="serverNum"></param>
+        /// <returns></returns>
         private Player CreatePlayer(JToken pInfo, int serverNum)
         {
             try
