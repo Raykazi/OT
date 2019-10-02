@@ -159,10 +159,12 @@ namespace TrackerInterface
             locations.Add(new Location { X = 18399.6F, Y = 15280.7F, Name = "Black Market", Color = Color.Red });
 
             /*Rebels */
-            locations.Add(new Location { X = 8316.77F, Y = 10065.2F, Name = "Rebel Outpost", Color = Color.Red });
+            locations.Add(new Location { X = 8312.86F, Y = 10067.1F, Name = "Rebel Outpost", Color = Color.Red });
             locations.Add(new Location { X = 15104F, Y = 22619.2F, Name = "Rebel Outpost", Color = Color.Red });
             locations.Add(new Location { X = 21841.4F, Y = 8386.78F, Name = "Rebel Outpost", Color = Color.Red });
             locations.Add(new Location { X = 27648.8F, Y = 23613.2F, Name = "Rebel Outpost", Color = Color.Red });
+            /*Rebels BS*/
+            locations.Add(new Location { X = 27648.8F, Y = 23613.2F, Name = "Rebel Boat Shop", Color = Color.Red });
 
             /*Fields*/
             locations.Add(new Location { X = 19873F, Y = 17062.1F, Name = "Heroin Field", Color = Color.Red });
