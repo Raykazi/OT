@@ -27,7 +27,7 @@ namespace TrackerClient
         bool _doingWork = false; //Prevents starting a player pull while one is still active
         bool _justRefreshed = false; //TODO may remove this later
         Player _lastSelected = null;
-        int _serverId = 1; //Default server to pull from
+        int _serverId = 0; //Default server to pull from
         internal Map PlayerMap; //Map object to pass to the Map form/user control
         //SlackClient _sc = new SlackClient("https://hooks.slack.com/services/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");
         /*Loop Variables*/
@@ -393,7 +393,7 @@ namespace TrackerClient
             lblCash.Text = $"Cash: {p.Cash:C}";
             lblBounty.Text = $"Bounty: {p.BountyWanted:C}";
             lblKDR.Text =
-                $"K/D/R: {p.Kills:0,0}/{p.Deaths:0,0}/{Convert.ToDecimal(Convert.ToDecimal(p.Kills) / Convert.ToDecimal(p.Deaths)):0.##}";
+                $"K/D/R: {p.Kills}/{p.Deaths}/{Convert.ToDecimal(Convert.ToDecimal(p.Kills) / Convert.ToDecimal(p.Deaths)):0.##}";
             lblCopRank.Text = $"APD Rank: {ParseRank(p.CopLevel, 0)}";
             lblCopTime.Text = $"APD Time: {((p.TimeApd.ToString() == "-1") ? "N/A" : p.TimeApd.ToString()):0,0}";
             lblGang.Text = $"Gang: {(p.GangName == "-1" ? "N/A" : p.GangName)}";
@@ -523,12 +523,12 @@ namespace TrackerClient
         {
             try
             {
-                
+
                 //OpenConnection();
                 //_onlinePlayers = _server.GetPlayerList(_serverId);
                 //List<string>[] tmp = _db.ExecuteReader($"SELECT * FROM players  WHERE last_Server = '{_serverId}' AND last_active >= NOW() - INTERVAL 7.5 MINUTE ORDER BY `name` ASC");
                 DataTable tempPlayers = _db.ExecuteReaderDT($"SELECT * FROM players  WHERE last_active >= NOW() - INTERVAL 7.5 MINUTE ORDER BY `name` ASC");
-                foreach(var playerList in _tempOnlinePlayers)
+                foreach (var playerList in _tempOnlinePlayers)
                 {
                     playerList.Clear();
                 }
@@ -536,7 +536,7 @@ namespace TrackerClient
                 {
                     int server = (int)row["last_server"];
                     Player p = CreatePlayer(row, (int)row["last_server"]);
-                    _tempOnlinePlayers[server].Add(p);
+                    _tempOnlinePlayers[server - 1].Add(p);
 
                 }
                 _onlinePlayers = _tempOnlinePlayers[_serverId].OrderBy(p => p.Name).ToList();
@@ -562,17 +562,39 @@ namespace TrackerClient
 
         private Player CreatePlayer(DataRow row, int serverNum)
         {
+
+            int bounty = 0;
+
             int uid = (int)row["uid"];
             string steamID = (string)row["playerid"];
             string name = (string)row["name"];
             string gangName = (int)row["gangId"] == -1 ? "N/A" : (string)row["gangName"];
             int gangRank = Convert.ToInt32(row["gangRank"]);
             DateTime lastActive = Convert.ToDateTime(row["last_active"].ToString());
+            int coplvl = Convert.ToInt32(row["coplevel"]);
+            int medlvl = Convert.ToInt32(row["mediclevel"]);
+            int admlvl = Convert.ToInt32(row["adminlevel"]);
+            int donlvl = Convert.ToInt32(row["donatorlvl"]);
+
+            JArray stats = JArray.Parse(Helper.ToJson(row["player_stats"].ToString()));
+            int kills = (int)stats[0];
+            int deaths = (int)stats[1];
+            int revives = (int)stats[2];
+            int arrests = (int)stats[6];
+
+            JArray wanted = JArray.Parse(Helper.ToJson(row["wanted"].ToString()));
+            if (wanted.Count > 0)
+                bounty = (int)wanted[0];
+
+            JArray civ_gear = JArray.Parse(Helper.ToJson(row["civ_gear"].ToString()));
+
 
             var aliases = "";
-            aliases =  JToken.Parse(Helper.ToJson(row["aliases"].ToString())).Aggregate(aliases, (current, pAlias) => current + (pAlias + ";"));
+            aliases = JToken.Parse(Helper.ToJson(row["aliases"].ToString())).Aggregate(aliases, (current, pAlias) => current + (pAlias + ";"));
             Player p = new Player(uid, steamID, name, aliases, gangName, gangRank, lastActive.ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)row["coordinates"], (string)row["last_side"]);
-            p.AddMoney((int)row["cash"], (int)row["bankacc"], 0, 0);
+            p.AddMoney((int)row["cash"], (int)row["bankacc"], 0, bounty);
+            p.AddStats(coplvl, medlvl, admlvl, donlvl, kills, deaths, revives, arrests);
+            p.AddGear(civ_gear.ToString());
             return p;
 
         }
@@ -625,9 +647,12 @@ namespace TrackerClient
             switch (b.Text)
             {
                 case "Server #1":
-                    _serverId = 1;
+                    _serverId = 0;
                     break;
                 case "Server #2":
+                    _serverId = 1;
+                    break;
+                case "Server #3":
                     _serverId = 2;
                     break;
             }
