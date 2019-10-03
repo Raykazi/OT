@@ -115,7 +115,7 @@ namespace TrackerInterface
         public int Uid { get; private set; }
         [DataMember]
         //Player Steam64 ID
-        public long SteamId { get; private set; }
+        public string SteamId { get; private set; }
         [DataMember]
         //Player Name
         public string Name { get; private set; }
@@ -204,7 +204,7 @@ namespace TrackerInterface
         /// <summary>
         /// Constructor
         /// </summary>
-        public Player(int uid, long steamId, string name, string aliases, string gangN, int gangR, long lastActive, long lastUpdated, string location, string faction)
+        public Player(int uid, string steamId, string name, string aliases, string gangN, int gangR, long lastActive, long lastUpdated, string location, string faction)
         {
             // Initialize Lists
             Houses = new List<House>();
