@@ -37,7 +37,7 @@ namespace TrackerInterface
         /// <returns></returns>
         public static string[] ParseLocation(string location)
         {
-            location = System.Text.Encoding.ASCII.GetString(Convert.FromBase64String(location));
+            //location = System.Text.Encoding.ASCII.GetString(Convert.FromBase64String(location));
             location = location.Remove(0, 2);
             location = location.Remove(location.IndexOf("]"));
             return location.Split(',');
