@@ -1,30 +1,32 @@
-﻿using System;
-using System.ServiceModel;
-using TrackerInterface;
-using System.Windows.Forms;
-using System.Linq;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Threading;
+using System.Data;
 using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.ServiceModel;
+using System.Windows.Forms;
+using TrackerInterface;
 
 namespace TrackerClient
 {
 
     public partial class FrmMain : Form
     {
-        /*WCF Variables*/
-        private ChannelFactory<IWcfTrackerService> _channelFactory;
-        private IWcfTrackerService _server;
+        private readonly Db _db = new Db();
+
         /*List*/
         List<Player> _onlinePlayers = new List<Player>();
         List<Player> _slackPostList = new List<Player>();
         List<string> _debugListVeh = new List<string>();
         List<string> _debugListEqu = new List<string>();
+        //private readonly List<Player>[] _onlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
+        private List<Player>[] _tempOnlinePlayers = { new List<Player>(), new List<Player>(), new List<Player>() };
 
         bool _doingWork = false; //Prevents starting a player pull while one is still active
         bool _justRefreshed = false; //TODO may remove this later
-        Player _lastSelected = null; 
+        Player _lastSelected = null;
         int _serverId = 1; //Default server to pull from
         internal Map PlayerMap; //Map object to pass to the Map form/user control
         //SlackClient _sc = new SlackClient("https://hooks.slack.com/services/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");
@@ -56,7 +58,7 @@ namespace TrackerClient
                 "Taru (Bench)", "Taru (Fuel)", "Taru (Transport)", "Tempest (Device)", "Tempest Fuel", "Tempest Transport", "Tempest Transport (Covered)", "Truck", "Truck Box", "Truck Fuel",
                 "Zamak Fuel", "Zamak Transport", "Zamak Transport (Covered)"};
 
-        ListViewItemComparer _lvwItemComparer = new ListViewItemComparer(); 
+        ListViewItemComparer _lvwItemComparer = new ListViewItemComparer();
         private ListBox _activeListbox;
         /// <summary>
         /// Initialize the form
@@ -68,24 +70,6 @@ namespace TrackerClient
             timerPLRefresh.Enabled = true;
             timerPLRefresh.Start();
             pbMap.Image = Properties.Resources.Altis3;
-        }
-        /// <summary>
-        /// Close the WCF Connection
-        /// </summary>
-        private void CloseConnection()
-        {
-            if (_channelFactory.State < CommunicationState.Closing)
-            {
-                _channelFactory.Close();
-            }
-        }
-        /// <summary>
-        /// Open WCF Connection
-        /// </summary>
-        private void OpenConnection()
-        {
-            _channelFactory = new ChannelFactory<IWcfTrackerService>("TrackerClientEndpoint");
-            _server = _channelFactory.CreateChannel();
         }
         /// <summary>
         /// En/Disable buttons depending on Background worker status
@@ -529,6 +513,7 @@ namespace TrackerClient
             }
             return position;
         }
+        List<Player>[] onlineP = new List<Player>[3];
         /// <summary>
         /// Connects to the server and pulls player information
         /// </summary>
@@ -538,10 +523,24 @@ namespace TrackerClient
         {
             try
             {
-                OpenConnection();
-                _onlinePlayers = _server.GetPlayerList(_serverId);
-                _onlinePlayers = _onlinePlayers.OrderBy(p => p.Name).ToList();
-                CloseConnection();
+                
+                //OpenConnection();
+                //_onlinePlayers = _server.GetPlayerList(_serverId);
+                //List<string>[] tmp = _db.ExecuteReader($"SELECT * FROM players  WHERE last_Server = '{_serverId}' AND last_active >= NOW() - INTERVAL 7.5 MINUTE ORDER BY `name` ASC");
+                DataTable tempPlayers = _db.ExecuteReaderDT($"SELECT * FROM players  WHERE last_active >= NOW() - INTERVAL 7.5 MINUTE ORDER BY `name` ASC");
+                foreach(var playerList in _tempOnlinePlayers)
+                {
+                    playerList.Clear();
+                }
+                foreach (DataRow row in tempPlayers.Rows)
+                {
+                    int server = (int)row["last_server"];
+                    Player p = CreatePlayer(row, (int)row["last_server"]);
+                    _tempOnlinePlayers[server].Add(p);
+
+                }
+                _onlinePlayers = _tempOnlinePlayers[_serverId].OrderBy(p => p.Name).ToList();
+                //CloseConnection();
                 if (PlayerMap == null) return;
                 PlayerMap.Players = _onlinePlayers;
                 PlayerMap.CanReset = true;
@@ -560,6 +559,24 @@ namespace TrackerClient
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private Player CreatePlayer(DataRow row, int serverNum)
+        {
+            int uid = (int)row["uid"];
+            string steamID = (string)row["playerid"];
+            string name = (string)row["name"];
+            string gangName = (int)row["gangId"] == -1 ? "N/A" : (string)row["gangName"];
+            int gangRank = Convert.ToInt32(row["gangRank"]);
+            DateTime lastActive = Convert.ToDateTime(row["last_active"].ToString());
+
+            var aliases = "";
+            aliases =  JToken.Parse(Helper.ToJson(row["aliases"].ToString())).Aggregate(aliases, (current, pAlias) => current + (pAlias + ";"));
+            Player p = new Player(uid, steamID, name, aliases, gangName, gangRank, lastActive.ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)row["coordinates"], (string)row["last_side"]);
+            p.AddMoney((int)row["cash"], (int)row["bankacc"], 0, 0);
+            return p;
+
+        }
+
         /// <summary>
         /// Runs tasks after pulling player information from the server
         /// </summary>
