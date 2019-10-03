@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,14 +24,15 @@ namespace TrackerServer
         /// <returns></returns>
         public string GetMySteamId(string steamName)
         {
-            var client = new RestClient("http://api.steampowered.com");
-            var request = new RestRequest("ISteamUser/ResolveVanityURL/v0001/?key={key}&vanityurl={vanityurl}", Method.GET);
-            request.AddUrlSegment("key", "095A87F4340E4F2F21C22397D0E1376C"); // replaces matching token in request.Resource
-            request.AddUrlSegment("vanityurl", steamName); // replaces matching token in request.Resource
-            var response = client.Execute(request);
-            var content = response.Content; // raw content as string
-            var o = JObject.Parse(content);
-            return (string)o["response"]["steamid"];
+            //var client = new RestClient("http://api.steampowered.com");
+            //var request = new RestRequest("ISteamUser/ResolveVanityURL/v0001/?key={key}&vanityurl={vanityurl}", Method.GET);
+            //request.AddUrlSegment("key", "095A87F4340E4F2F21C22397D0E1376C"); // replaces matching token in request.Resource
+            //request.AddUrlSegment("vanityurl", steamName); // replaces matching token in request.Resource
+            //var response = client.Execute(request);
+            //var content = response.Content; // raw content as string
+            //var o = JObject.Parse(content);
+            //return (string)o["response"]["steamid"];
+            return null;
         }
         
         /// <summary>
@@ -42,12 +42,13 @@ namespace TrackerServer
         /// <returns></returns>
         public string GetPlayerInfo(long playerId)
         {
-            var client = new RestClient("http://olympusapi.xyz/apiv2");
-            var request = new RestRequest("player/{id}", Method.GET);
-            request.AddUrlSegment("id", playerId.ToString());
-            var response = client.Execute(request);
-            var content = response.Content;
-            return content;
+            //var client = new RestClient("http://olympusapi.xyz/apiv2");
+            //var request = new RestRequest("player/{id}", Method.GET);
+            //request.AddUrlSegment("id", playerId.ToString());
+            //var response = client.Execute(request);
+            //var content = response.Content;
+            //return content;
+            return null;
         }
         /// <summary>
         /// Returns JSON string with player's house information
@@ -56,12 +57,13 @@ namespace TrackerServer
         /// <returns></returns>
         public string GetPlayerHouseInfo(long playerId)
         {
-            var client = new RestClient("http://olympusapi.xyz/apiv2");
-            var request = new RestRequest("house/{id}", Method.GET);
-            request.AddUrlSegment("id", playerId.ToString());
-            var response = client.Execute(request);
-            var content = response.Content;
-            return content;
+            //var client = new RestClient("http://olympusapi.xyz/apiv2");
+            //var request = new RestRequest("house/{id}", Method.GET);
+            //request.AddUrlSegment("id", playerId.ToString());
+            //var response = client.Execute(request);
+            //var content = response.Content;
+            //return content;
+            return null;
         }
         /// <summary>
         /// Returns object with active players on the server
@@ -69,21 +71,21 @@ namespace TrackerServer
         /// <returns></returns>
         public JObject GetActivePlayers()
         {
-            var content = "";
-            try
-            {
-                var client = new RestClient("http://olympusapi.xyz/apiv2");
-                var request = new RestRequest("active", Method.GET);
-                var response = client.Execute(request);
-                content = response.Content;
-                var jsonObject = JObject.Parse(content);
-                return jsonObject;
-            }
-            catch (JsonReaderException e)
-            {
-                if (!content.Contains("Could not make contact with Server"))
-                    Program.ConsoleLog(e.Message);
-            }
+            //var content = "";
+            //try
+            //{
+            //    var client = new RestClient("http://olympusapi.xyz/apiv2");
+            //    var request = new RestRequest("active", Method.GET);
+            //    var response = client.Execute(request);
+            //    content = response.Content;
+            //    var jsonObject = JObject.Parse(content);
+            //    return jsonObject;
+            //}
+            //catch (JsonReaderException e)
+            //{
+            //    if (!content.Contains("Could not make contact with Server"))
+            //        Program.ConsoleLog(e.Message);
+            //}
             return null;
 
         }
@@ -97,22 +99,23 @@ namespace TrackerServer
             var content = "";
             try
             {
-                var playerNames = new List<string>();
-                var client = new RestClient("http://olympusapi.xyz/apiv2");
-                var request = new RestRequest("query/{serverNum}", Method.GET);
-                request.AddUrlSegment("serverNum", serverId);
-                var response = client.Execute(request);
-                content = response.Content;
-                var jsonObject = JObject.Parse(content);
-                var jsonArray = jsonObject["players"] as JArray;
-                dynamic playerArray = jsonArray;
-                if (playerArray == null) return playerNames;
-                foreach (var player in playerArray)
-                {
-                    string name = player["Name"];
-                    playerNames.Add(name);
-                }
-                return playerNames;
+                //var playerNames = new List<string>();
+                //var client = new RestClient("http://olympusapi.xyz/apiv2");
+                //var request = new RestRequest("query/{serverNum}", Method.GET);
+                //request.AddUrlSegment("serverNum", serverId);
+                //var response = client.Execute(request);
+                //content = response.Content;
+                //var jsonObject = JObject.Parse(content);
+                //var jsonArray = jsonObject["players"] as JArray;
+                //dynamic playerArray = jsonArray;
+                //if (playerArray == null) return playerNames;
+                //foreach (var player in playerArray)
+                //{
+                //    string name = player["Name"];
+                //    playerNames.Add(name);
+                //}
+                //return playerNames;
+                return null;
 
             }
             catch (JsonReaderException e)
@@ -129,43 +132,44 @@ namespace TrackerServer
         /// <returns></returns>
         public long GetSteamId(string name)
         {
-            long steamId = 0;
-            IRestResponse response = null;
-            try
-            {
-                Retry:
-                if (name.Length <= 0) return 0;
-                var client = new RestClient("http://olympusapi.xyz/apiv2");
-                var request = new RestRequest("?a=aliases&b={name}", Method.GET);
-                request.AddUrlSegment("name", name); // replaces matching token in request.Resource
-                //Program.ConsoleLog(String.Format("Fetching alias for {0}", name));
-                response = client.Execute(request);
-                var content = response.Content;
-                var startIndex = content.IndexOf("Player ID:");
-                if (startIndex == -1)
-                {
-                    name = name.Remove(name.LastIndexOf("[")).Trim();
-                    goto Retry;
-                }
-                var id = content.Substring(startIndex + 11, 17);
-                if (long.TryParse(id, out steamId))
-                    content = null;
-                else
-                {
-                    Program.ConsoleLog($"Failed to get ID {id}");
-                    steamId = -1;
-                }
-            }
-            catch (FormatException)
-            {
-                Program.ConsoleLog("Skipping player: " + name + " Reason" + response.Content);
-                steamId = -1;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
+            //long steamId = 0;
+            //IRestResponse response = null;
+            //try
+            //{
+            //    Retry:
+            //    if (name.Length <= 0) return 0;
+            //    var client = new RestClient("http://olympusapi.xyz/apiv2");
+            //    var request = new RestRequest("?a=aliases&b={name}", Method.GET);
+            //    request.AddUrlSegment("name", name); // replaces matching token in request.Resource
+            //    //Program.ConsoleLog(String.Format("Fetching alias for {0}", name));
+            //    response = client.Execute(request);
+            //    var content = response.Content;
+            //    var startIndex = content.IndexOf("Player ID:");
+            //    if (startIndex == -1)
+            //    {
+            //        name = name.Remove(name.LastIndexOf("[")).Trim();
+            //        goto Retry;
+            //    }
+            //    var id = content.Substring(startIndex + 11, 17);
+            //    if (long.TryParse(id, out steamId))
+            //        content = null;
+            //    else
+            //    {
+            //        Program.ConsoleLog($"Failed to get ID {id}");
+            //        steamId = -1;
+            //    }
+            //}
+            //catch (FormatException)
+            //{
+            //    Program.ConsoleLog("Skipping player: " + name + " Reason" + response.Content);
+            //    steamId = -1;
+            //}
+            //catch (ArgumentOutOfRangeException)
+            //{
 
-            }
-            return steamId;
+            //}
+            //return steamId;
+            return 0;
 
         }
         /// <summary>
@@ -278,12 +282,12 @@ namespace TrackerServer
                 var apdGear = pInfo["cop_gear"].ToString();
                 var medGear = pInfo["med_gear"].ToString();
                 var gangName = (int)pInfo["gang_id"] == -1 ? "N/A" : (string)pInfo["gang_name"];
-                var p = new Player((int)pInfo["uid"], (long)pInfo["playerid"], (string)pInfo["name"], aliases, gangName, (int)pInfo["gang_rank"], Convert.ToDateTime(pInfo["last_active"]).ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)pInfo["loc"], (string)pInfo["last_side"]);
+                var p = new Player((int)pInfo["uid"], (string)pInfo["playerid"], (string)pInfo["name"], aliases, gangName, (int)pInfo["gang_rank"], Convert.ToDateTime(pInfo["last_active"]).ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)pInfo["loc"], (string)pInfo["last_side"]);
                 p.AddGear(civGear);
                 p.AddMoney((int)pInfo["cash"], (int)pInfo["bank"], (int)pInfo["stat_bounties"], (int)pInfo["wanted_total"]);
                 p.AddStats((int)pInfo["coplevel"], (int)pInfo["mediclevel"], (int)pInfo["adminlevel"], (int)pInfo["donatorlevel"], (int)pInfo["stat_kills"], (int)pInfo["stat_deaths"], (int)pInfo["stat_revives"], (int)pInfo["stat_arrests"]);
                 p.AddTime((int)pInfo["stat_time_civ"], (int)pInfo["stat_time_apd"], (int)pInfo["stat_time_med"]);
-                p.AddVehicles(cAir, cCar, cShip,"civ");
+                p.AddVehicles(cAir, cCar, cShip, "civ");
                 p.AddVehicles(aAir, aCar, aShip, "apd");
                 p.AddVehicles(mAir, mCar, mShip, "med");
                 var phInfo = JObject.Parse(GetPlayerHouseInfo((long)pInfo["playerid"]));
@@ -297,7 +301,7 @@ namespace TrackerServer
                 var houses2 = JArray.Parse(phInfo["houses2data"].ToString());
                 p.AddHouses(houses1, 1);
                 p.AddHouses(houses2, 2);
-                p.Save(aliases, cAir, cCar, cShip, aAir,aCar,aShip,mAir,mCar,mShip, apdGear,civGear,medGear, serverNum);
+                p.Save(aliases, cAir, cCar, cShip, aAir, aCar, aShip, mAir, mCar, mShip, apdGear, civGear, medGear, serverNum);
                 Program.ConsoleLog($"Server #{serverNum + 1}: {p.Name} {_tempOnlinePlayers[serverNum].Count}/{_onlinePlayers[serverNum].Count}");
                 return p;
             }
