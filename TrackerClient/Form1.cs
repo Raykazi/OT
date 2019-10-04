@@ -402,9 +402,18 @@ namespace TrackerClient
             lblCivTime.Text = $"Civ Time: {p.TimeCiv:0,0}";
             lblMedicRank.Text = $"R&R Rank: {ParseRank(p.MedicLevel, 1)}";
             lblMedicTime.Text = $"R&R Time: {(p.TimeMed.ToString() == "-1" ? "N/A" : p.TimeMed.ToString()):0,0}";
-            lblVest.Text = $"Vest: {(p.Equipment.Count == 0 ? "None" : p.Equipment[1])}";
-            lblHelmet.Text = $"Helmet: {(p.Equipment.Count == 0 ? "None" : p.Equipment[4])}";
-            lblGun.Text = $"Gun: {(p.Equipment.Count == 0 ? "None" : TranslateWeapons(p.Equipment[5]))}";
+            if (p.Faction == "civ")
+            {
+                lblVest.Text = $"Vest: {(p.Equipment.Count == 0 ? "None" : p.Equipment[1])}";
+                lblHelmet.Text = $"Helmet: {(p.Equipment.Count == 0 ? "None" : p.Equipment[4])}";
+                lblGun.Text = $"Gun: {(p.Equipment.Count == 0 ? "None" : TranslateWeapons(p.Equipment[5]))}";
+            }
+            else if (p.Faction == "cop")
+            {
+                lblVest.Text = $"Vest: {(p.CopEquipment.Count == 0 ? "None" : p.CopEquipment[1])}";
+                lblHelmet.Text = $"Helmet: {(p.CopEquipment.Count == 0 ? "None" : p.CopEquipment[4])}";
+                lblGun.Text = $"Gun: {(p.CopEquipment.Count == 0 ? "None" : TranslateWeapons(p.CopEquipment[5]))}";
+            }
             lblUpdated.Text = $"Last Updated (UTC): {p.LastUpdated}";
             lblLocation.Text = p.Location.Length > 1 ? $"Last Seen @ X:{p.Location[0]} Y:{p.Location[1]}" : "Last Seen @ Unknown";
             //foreach (var equip in p.Equipment.Where(equip => !_debugListEqu.Contains(equip) && equip.Length > 0))
@@ -586,15 +595,13 @@ namespace TrackerClient
             if (wanted.Count > 0)
                 bounty = (int)wanted[0];
 
-            JArray civ_gear = JArray.Parse(Helper.ToJson(row["civ_gear"].ToString()));
-
-
             var aliases = "";
             aliases = JToken.Parse(Helper.ToJson(row["aliases"].ToString())).Aggregate(aliases, (current, pAlias) => current + (pAlias + ";"));
             Player p = new Player(uid, steamID, name, aliases, gangName, gangRank, lastActive.ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)row["coordinates"], (string)row["last_side"]);
             p.AddMoney((int)row["cash"], (int)row["bankacc"], 0, bounty);
             p.AddStats(coplvl, medlvl, admlvl, donlvl, kills, deaths, revives, arrests);
-            p.AddGear(civ_gear.ToString());
+            p.AddGear(Helper.ToJson(row["civ_gear"].ToString()));
+            p.AddCopGear(Helper.ToJson(row["cop_gear"].ToString()));
             return p;
 
         }

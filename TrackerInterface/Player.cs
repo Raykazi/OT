@@ -190,7 +190,10 @@ namespace TrackerInterface
         [DataMember]
         public List<string> Equipment { get; private set; }//String list with their physical equipment
         [DataMember]
+        public List<string> CopEquipment { get; private set; }//String list with their physical equipment
+        [DataMember]
         public List<Item> Virtuals { get; private set; } //Custom item class for the palyers virtual items
+        public List<Item> CopVirtuals { get; private set; } //Custom item class for the palyers virtual items
         [DataMember]
         public int TargetLevel = -1; //Because these ***holes wanted colors
         [DataMember]
@@ -210,6 +213,7 @@ namespace TrackerInterface
             Houses = new List<House>();
             Aliases = new List<string>();
             Equipment = new List<string>();
+            CopEquipment = new List<string>();
             CivVehicles = new List<Vehicle>();
 
             //Setup player object with parameters from the calls
@@ -312,6 +316,39 @@ namespace TrackerInterface
                             foreach (var vi in virtuals.Cast<JArray>())
                             {
                                 Virtuals.Add(new Item { Name = vi[0].ToString(), Amount = (int)vi[1] });
+                            }
+                            break;
+                    }
+            }
+        }
+        public void AddCopGear(string gearCop)
+        {
+            if (gearCop.Length <= 2) return;
+            gearCop = gearCop.Insert(0, "{\"cop_gear\": ");
+            gearCop += "}";
+            var equipment = JArray.Parse(JObject.Parse(gearCop)["cop_gear"].ToString());
+            for (var i = 0; i < equipment.Count(); i++)
+            {
+                if (i < 5 || i > 5 && i < 9)
+                {
+                    CopEquipment.Add(equipment[i].ToString());
+                }//Ammo
+                else
+                    switch (i)
+                    {
+                        case 12:
+
+                            break;
+                        case 15:
+                            if (equipment[15].ToString().Length < 4) continue;
+                            var virtualRawStr = equipment[15].ToString();
+                            virtualRawStr = virtualRawStr.Insert(0, "{\"Virtuals\": ");
+                            virtualRawStr += "}";
+                            var virtuals = JArray.Parse(JObject.Parse(virtualRawStr)["Virtuals"].First.ToString());
+                            CopVirtuals = new List<Item>();
+                            foreach (var vi in virtuals.Cast<JArray>())
+                            {
+                                CopVirtuals.Add(new Item { Name = vi[0].ToString(), Amount = (int)vi[1] });
                             }
                             break;
                     }
