@@ -5,105 +5,10 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
 using TrackerServer;
+using System.Data;
 
 namespace TrackerInterface
 {
-    /// <summary>
-    /// Class that handles  player's virtual Items
-    /// </summary>
-    [DataContract]
-    public class Item
-    {
-        //Name of the item on the player
-        [DataMember]
-        public string Name { get; set; }
-        //Amount of item on the player
-        [DataMember]
-        public int Amount { get; set; }
-    }
-    /// <summary>
-    /// Class that handles player's houses
-    /// </summary>
-    [DataContract]
-    public class House
-    {
-        [DataMember]
-        public int Id { get; set; }
-        [DataMember]
-        public int VirtualCount { get; set; }
-        [DataMember]
-        public int Storage { get; set; }
-        [DataMember]
-        public string[] Location { get; set; }
-        [DataMember]
-        public List<Item> Virtual { get; set; }
-        [DataMember]
-        public List<Crate> Crates { get; set; }
-        [DataMember]
-        public DateTime LastAccessed { get; set; }
-        [DataMember]
-        public int Server { get; set; }
-        public override string ToString()
-        {
-            return $"{Id} {VirtualCount}/{Storage}";
-        }
-    }
-    /// <summary>
-    /// Class that handles player's housing crates
-    /// </summary>
-    [DataContract]
-    public class Crate
-    {
-        [DataMember]
-        public int Id { get; set; }
-        [DataMember]
-        public List<Item> Items { get; set; }
-        [DataMember]
-        public DateTime LastAccessed { get; set; }
-    }
-    /// <summary>
-    /// Class for vehicles owned by the player.
-    /// </summary>
-    [DataContract]
-    public class Vehicle
-    {
-        //Vehicle ID
-        [DataMember]
-        public int Id { get; private set; }
-        //Vehicle name
-        [DataMember]
-        public string Name { get; private set; }
-        //If the vehicle is alive or not??
-        [DataMember]
-        public int Alive { get; private set; }
-        [DataMember]
-        //If the vehicle is out on the map right now
-        public int Active { get; private set; }
-        [DataMember]
-        //1 Basic Insurance 2 Full Insurance
-        public int InsuranceLevel { get; private set; }
-        [DataMember]
-        //Tier 1-4, speed and manueverability level
-        public int TurboLevel { get; private set; }
-        [DataMember]
-        //1 or 2 Security level for the car
-        public int SecLevel { get; private set; }
-        [DataMember]
-        //1-4 Space of the vehicle
-        public int StorageLevel { get; private set; }
-        //Vehicle Constructor
-        public Vehicle(int id, string name, int alive, int active, int insuranceLevel, int turboLevel, int secLevel, int storageLevel)
-        {
-            Id = id;
-            Name = name;
-            Alive = alive;
-            Active = active;
-            InsuranceLevel = insuranceLevel;
-            TurboLevel = turboLevel;
-            SecLevel = secLevel;
-            StorageLevel = storageLevel;
-        }
-    }
     /// <summary>
     /// Class that handles player information
     /// </summary>
@@ -408,6 +313,35 @@ namespace TrackerInterface
                 AddVehicles(car, faction);
             if (ship.Length > 2)
                 AddVehicles(ship, faction);
+        }
+        public void AddVehicles(string faction, DataTable data)
+        {
+            List<Vehicle> tmpVehicles = new List<Vehicle>();
+            foreach (DataRow row in data.Rows)
+            {
+                JArray mods = JArray.Parse(Helper.ToJson(row["modifications"].ToString()));
+                int id = (int)row["id"];
+                int insured = Convert.ToInt32(row["insured"]);
+                int active = Convert.ToInt32(row["active"]);
+                int turbo = Convert.ToInt32(mods[0]);
+                int trunk = Convert.ToInt32(mods[1]);
+                int security = Convert.ToInt32(mods[2]);
+                string name = (string)row["classname"];
+                tmpVehicles.Add(new Vehicle(id, name, 1, active, insured, turbo, security, trunk));
+            }
+            switch (faction)
+            {
+                case "civ":
+                    CivVehicles = tmpVehicles;
+                    break;
+                case "apd":
+                    ApdVehicles = tmpVehicles;
+                    break;
+                case "med":
+                    MedVehicles = tmpVehicles;
+                    break;
+            }
+
         }
         /// <summary>
         /// Parse JSON house string array and place information into House object

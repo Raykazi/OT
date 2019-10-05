@@ -32,7 +32,7 @@ namespace TrackerClient
         //SlackClient _sc = new SlackClient("https://hooks.slack.com/services/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");
         /*Loop Variables*/
         Stopwatch _sw = new Stopwatch();
-        public int RefreshTime = 60000;
+        public int RefreshTime = 15000;
 
         /*More Lists*/
         string[] _watchListLegeals = {
@@ -532,10 +532,6 @@ namespace TrackerClient
         {
             try
             {
-
-                //OpenConnection();
-                //_onlinePlayers = _server.GetPlayerList(_serverId);
-                //List<string>[] tmp = _db.ExecuteReader($"SELECT * FROM players  WHERE last_Server = '{_serverId}' AND last_active >= NOW() - INTERVAL 7.5 MINUTE ORDER BY `name` ASC");
                 DataTable tempPlayers = _db.ExecuteReaderDT($"SELECT * FROM players  WHERE last_active >= NOW() - INTERVAL 7.5 MINUTE ORDER BY `name` ASC");
                 foreach (var playerList in _tempOnlinePlayers)
                 {
@@ -548,6 +544,7 @@ namespace TrackerClient
                     _tempOnlinePlayers[server - 1].Add(p);
 
                 }
+
                 _onlinePlayers = _tempOnlinePlayers[_serverId].OrderBy(p => p.Name).ToList();
                 //CloseConnection();
                 if (PlayerMap == null) return;
@@ -598,10 +595,13 @@ namespace TrackerClient
             var aliases = "";
             aliases = JToken.Parse(Helper.ToJson(row["aliases"].ToString())).Aggregate(aliases, (current, pAlias) => current + (pAlias + ";"));
             Player p = new Player(uid, steamID, name, aliases, gangName, gangRank, lastActive.ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)row["coordinates"], (string)row["last_side"]);
+            DataTable player_vehicles = _db.ExecuteReaderDT($"SELECT * FROM vehicles WHERE `pid` = '{p.SteamId}' AND `side` = '{p.Faction}' ORDER BY  active DESC, type");
+            //SELECT * FROM vehicles WHERE `pid` = '76561198064919358' AND `side` = 'civ' ORDER BY  active DESC, type
             p.AddMoney((int)row["cash"], (int)row["bankacc"], 0, bounty);
             p.AddStats(coplvl, medlvl, admlvl, donlvl, kills, deaths, revives, arrests);
             p.AddGear(Helper.ToJson(row["civ_gear"].ToString()));
             p.AddCopGear(Helper.ToJson(row["cop_gear"].ToString()));
+            p.AddVehicles(p.Faction, player_vehicles);
             return p;
 
         }
