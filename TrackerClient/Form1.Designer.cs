@@ -48,13 +48,11 @@ namespace TrackerClient
             this.tpPlayerInfo = new System.Windows.Forms.TabPage();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpInfo = new System.Windows.Forms.TabPage();
-            this.lvVehicleInfo = new System.Windows.Forms.ListView();
-            this.chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chActive = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chTurbo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chSecurity = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chStorage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chInsurance = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lbVehicles = new System.Windows.Forms.ListBox();
+            this.lblVVirtuals = new System.Windows.Forms.Label();
+            this.lvVVirtuals = new System.Windows.Forms.ListView();
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvVirtualItems = new System.Windows.Forms.ListView();
             this.chItem = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chAmount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -106,10 +104,7 @@ namespace TrackerClient
             this.server3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.lvVVirtuals = new System.Windows.Forms.ListView();
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lblVVirtuals = new System.Windows.Forms.Label();
+            this.nud_RefreshTimer = new System.Windows.Forms.NumericUpDown();
             this.panelLeft.SuspendLayout();
             this.pPlayerList.SuspendLayout();
             this.tcPlayerLists.SuspendLayout();
@@ -130,6 +125,7 @@ namespace TrackerClient
             this.tpDebug.SuspendLayout();
             this.ssMain.SuspendLayout();
             this.menuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_RefreshTimer)).BeginInit();
             this.SuspendLayout();
             // 
             // panelLeft
@@ -216,7 +212,7 @@ namespace TrackerClient
             this.tpPlayersTargets.Location = new System.Drawing.Point(4, 4);
             this.tpPlayersTargets.Name = "tpPlayersTargets";
             this.tpPlayersTargets.Padding = new System.Windows.Forms.Padding(3);
-            this.tpPlayersTargets.Size = new System.Drawing.Size(166, 476);
+            this.tpPlayersTargets.Size = new System.Drawing.Size(166, 468);
             this.tpPlayersTargets.TabIndex = 1;
             this.tpPlayersTargets.Text = "Targets";
             this.tpPlayersTargets.UseVisualStyleBackColor = true;
@@ -230,7 +226,7 @@ namespace TrackerClient
             this.lbPlayersTargets.Location = new System.Drawing.Point(3, 3);
             this.lbPlayersTargets.Name = "lbPlayersTargets";
             this.lbPlayersTargets.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbPlayersTargets.Size = new System.Drawing.Size(160, 470);
+            this.lbPlayersTargets.Size = new System.Drawing.Size(160, 462);
             this.lbPlayersTargets.TabIndex = 36;
             this.lbPlayersTargets.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
             this.lbPlayersTargets.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
@@ -241,7 +237,7 @@ namespace TrackerClient
             this.tpWatchlist.Controls.Add(this.lbWatchlist);
             this.tpWatchlist.Location = new System.Drawing.Point(4, 4);
             this.tpWatchlist.Name = "tpWatchlist";
-            this.tpWatchlist.Size = new System.Drawing.Size(166, 476);
+            this.tpWatchlist.Size = new System.Drawing.Size(166, 468);
             this.tpWatchlist.TabIndex = 2;
             this.tpWatchlist.Text = "Watchlist";
             this.tpWatchlist.UseVisualStyleBackColor = true;
@@ -255,7 +251,7 @@ namespace TrackerClient
             this.lbWatchlist.Location = new System.Drawing.Point(0, 0);
             this.lbWatchlist.Name = "lbWatchlist";
             this.lbWatchlist.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbWatchlist.Size = new System.Drawing.Size(166, 476);
+            this.lbWatchlist.Size = new System.Drawing.Size(166, 468);
             this.lbWatchlist.TabIndex = 37;
             this.lbWatchlist.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
             this.lbWatchlist.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
@@ -268,7 +264,7 @@ namespace TrackerClient
             this.pMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pMain.Location = new System.Drawing.Point(0, 24);
             this.pMain.Name = "pMain";
-            this.pMain.Size = new System.Drawing.Size(1154, 494);
+            this.pMain.Size = new System.Drawing.Size(955, 494);
             this.pMain.TabIndex = 29;
             // 
             // tcMain
@@ -281,7 +277,7 @@ namespace TrackerClient
             this.tcMain.Multiline = true;
             this.tcMain.Name = "tcMain";
             this.tcMain.SelectedIndex = 0;
-            this.tcMain.Size = new System.Drawing.Size(980, 494);
+            this.tcMain.Size = new System.Drawing.Size(781, 494);
             this.tcMain.TabIndex = 30;
             // 
             // tpPlayerInfo
@@ -290,7 +286,7 @@ namespace TrackerClient
             this.tpPlayerInfo.Location = new System.Drawing.Point(4, 4);
             this.tpPlayerInfo.Name = "tpPlayerInfo";
             this.tpPlayerInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.tpPlayerInfo.Size = new System.Drawing.Size(953, 486);
+            this.tpPlayerInfo.Size = new System.Drawing.Size(754, 486);
             this.tpPlayerInfo.TabIndex = 1;
             this.tpPlayerInfo.Text = "Player Info";
             this.tpPlayerInfo.UseVisualStyleBackColor = true;
@@ -304,14 +300,14 @@ namespace TrackerClient
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(947, 480);
+            this.tabControl1.Size = new System.Drawing.Size(748, 480);
             this.tabControl1.TabIndex = 66;
             // 
             // tpInfo
             // 
+            this.tpInfo.Controls.Add(this.lbVehicles);
             this.tpInfo.Controls.Add(this.lblVVirtuals);
             this.tpInfo.Controls.Add(this.lvVVirtuals);
-            this.tpInfo.Controls.Add(this.lvVehicleInfo);
             this.tpInfo.Controls.Add(this.lvVirtualItems);
             this.tpInfo.Controls.Add(this.tbAliases);
             this.tpInfo.Controls.Add(this.lblLocation);
@@ -337,53 +333,54 @@ namespace TrackerClient
             this.tpInfo.Location = new System.Drawing.Point(4, 4);
             this.tpInfo.Name = "tpInfo";
             this.tpInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.tpInfo.Size = new System.Drawing.Size(939, 454);
+            this.tpInfo.Size = new System.Drawing.Size(740, 454);
             this.tpInfo.TabIndex = 0;
             this.tpInfo.Text = "Info";
             this.tpInfo.UseVisualStyleBackColor = true;
             // 
-            // lvVehicleInfo
+            // lbVehicles
             // 
-            this.lvVehicleInfo.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.chName,
-            this.chActive,
-            this.chTurbo,
-            this.chSecurity,
-            this.chStorage,
-            this.chInsurance});
-            this.lvVehicleInfo.HideSelection = false;
-            this.lvVehicleInfo.Location = new System.Drawing.Point(368, 176);
-            this.lvVehicleInfo.Name = "lvVehicleInfo";
-            this.lvVehicleInfo.Size = new System.Drawing.Size(394, 272);
-            this.lvVehicleInfo.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.lvVehicleInfo.TabIndex = 83;
-            this.lvVehicleInfo.UseCompatibleStateImageBehavior = false;
-            this.lvVehicleInfo.View = System.Windows.Forms.View.Details;
+            this.lbVehicles.ContextMenuStrip = this.cmsWatchlist;
+            this.lbVehicles.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.lbVehicles.FormattingEnabled = true;
+            this.lbVehicles.Location = new System.Drawing.Point(371, 184);
+            this.lbVehicles.Name = "lbVehicles";
+            this.lbVehicles.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.lbVehicles.Size = new System.Drawing.Size(160, 264);
+            this.lbVehicles.TabIndex = 91;
+            this.lbVehicles.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.LbVehicles_DrawItem);
+            this.lbVehicles.SelectedIndexChanged += new System.EventHandler(this.LbVehicles_SelectedIndexChanged);
             // 
-            // chName
+            // lblVVirtuals
             // 
-            this.chName.Text = "Name";
-            this.chName.Width = 88;
+            this.lblVVirtuals.AutoSize = true;
+            this.lblVVirtuals.Location = new System.Drawing.Point(534, 168);
+            this.lblVVirtuals.Name = "lblVVirtuals";
+            this.lblVVirtuals.Size = new System.Drawing.Size(73, 13);
+            this.lblVVirtuals.TabIndex = 90;
+            this.lblVVirtuals.Text = "Vehicle Items:";
             // 
-            // chActive
+            // lvVVirtuals
             // 
-            this.chActive.Text = "Active";
+            this.lvVVirtuals.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader5,
+            this.columnHeader6});
+            this.lvVVirtuals.HideSelection = false;
+            this.lvVVirtuals.Location = new System.Drawing.Point(537, 184);
+            this.lvVVirtuals.Name = "lvVVirtuals";
+            this.lvVVirtuals.Size = new System.Drawing.Size(173, 264);
+            this.lvVVirtuals.TabIndex = 89;
+            this.lvVVirtuals.UseCompatibleStateImageBehavior = false;
+            this.lvVVirtuals.View = System.Windows.Forms.View.Details;
             // 
-            // chTurbo
+            // columnHeader5
             // 
-            this.chTurbo.Text = "Turbo";
+            this.columnHeader5.Text = "Item";
+            this.columnHeader5.Width = 91;
             // 
-            // chSecurity
+            // columnHeader6
             // 
-            this.chSecurity.Text = "Security";
-            // 
-            // chStorage
-            // 
-            this.chStorage.Text = "Storage";
-            // 
-            // chInsurance
-            // 
-            this.chInsurance.Text = "Insurance";
+            this.columnHeader6.Text = "Amount";
             // 
             // lvVirtualItems
             // 
@@ -391,9 +388,9 @@ namespace TrackerClient
             this.chItem,
             this.chAmount});
             this.lvVirtualItems.HideSelection = false;
-            this.lvVirtualItems.Location = new System.Drawing.Point(207, 176);
+            this.lvVirtualItems.Location = new System.Drawing.Point(210, 184);
             this.lvVirtualItems.Name = "lvVirtualItems";
-            this.lvVirtualItems.Size = new System.Drawing.Size(155, 272);
+            this.lvVirtualItems.Size = new System.Drawing.Size(155, 264);
             this.lvVirtualItems.TabIndex = 81;
             this.lvVirtualItems.UseCompatibleStateImageBehavior = false;
             this.lvVirtualItems.View = System.Windows.Forms.View.Details;
@@ -409,12 +406,12 @@ namespace TrackerClient
             // 
             // tbAliases
             // 
-            this.tbAliases.Location = new System.Drawing.Point(6, 176);
+            this.tbAliases.Location = new System.Drawing.Point(9, 184);
             this.tbAliases.Multiline = true;
             this.tbAliases.Name = "tbAliases";
             this.tbAliases.ReadOnly = true;
             this.tbAliases.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbAliases.Size = new System.Drawing.Size(195, 272);
+            this.tbAliases.Size = new System.Drawing.Size(195, 264);
             this.tbAliases.TabIndex = 66;
             // 
             // lblLocation
@@ -465,7 +462,7 @@ namespace TrackerClient
             // lblVehicles
             // 
             this.lblVehicles.AutoSize = true;
-            this.lblVehicles.Location = new System.Drawing.Point(365, 160);
+            this.lblVehicles.Location = new System.Drawing.Point(368, 168);
             this.lblVehicles.Name = "lblVehicles";
             this.lblVehicles.Size = new System.Drawing.Size(50, 13);
             this.lblVehicles.TabIndex = 82;
@@ -474,7 +471,7 @@ namespace TrackerClient
             // lblVirtuals
             // 
             this.lblVirtuals.AutoSize = true;
-            this.lblVirtuals.Location = new System.Drawing.Point(207, 160);
+            this.lblVirtuals.Location = new System.Drawing.Point(207, 168);
             this.lblVirtuals.Name = "lblVirtuals";
             this.lblVirtuals.Size = new System.Drawing.Size(35, 13);
             this.lblVirtuals.TabIndex = 80;
@@ -555,7 +552,7 @@ namespace TrackerClient
             // lblAliases
             // 
             this.lblAliases.AutoSize = true;
-            this.lblAliases.Location = new System.Drawing.Point(6, 160);
+            this.lblAliases.Location = new System.Drawing.Point(9, 168);
             this.lblAliases.Name = "lblAliases";
             this.lblAliases.Size = new System.Drawing.Size(43, 13);
             this.lblAliases.TabIndex = 72;
@@ -604,7 +601,7 @@ namespace TrackerClient
             this.tpHouses.Location = new System.Drawing.Point(4, 4);
             this.tpHouses.Name = "tpHouses";
             this.tpHouses.Padding = new System.Windows.Forms.Padding(3);
-            this.tpHouses.Size = new System.Drawing.Size(809, 462);
+            this.tpHouses.Size = new System.Drawing.Size(939, 454);
             this.tpHouses.TabIndex = 1;
             this.tpHouses.Text = "Houses";
             this.tpHouses.UseVisualStyleBackColor = true;
@@ -617,7 +614,7 @@ namespace TrackerClient
             this.panelPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelPictureBox.Location = new System.Drawing.Point(346, 3);
             this.panelPictureBox.Name = "panelPictureBox";
-            this.panelPictureBox.Size = new System.Drawing.Size(460, 456);
+            this.panelPictureBox.Size = new System.Drawing.Size(590, 448);
             this.panelPictureBox.TabIndex = 86;
             this.panelPictureBox.MouseEnter += new System.EventHandler(this.panelPictureBox_MouseEnter);
             this.panelPictureBox.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.panelPictureBox_MouseWheel);
@@ -645,7 +642,7 @@ namespace TrackerClient
             this.panelHouses.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelHouses.Location = new System.Drawing.Point(3, 3);
             this.panelHouses.Name = "panelHouses";
-            this.panelHouses.Size = new System.Drawing.Size(343, 456);
+            this.panelHouses.Size = new System.Drawing.Size(343, 448);
             this.panelHouses.TabIndex = 85;
             // 
             // tbZoom
@@ -719,7 +716,7 @@ namespace TrackerClient
             this.tpDebug.Location = new System.Drawing.Point(4, 4);
             this.tpDebug.Name = "tpDebug";
             this.tpDebug.Padding = new System.Windows.Forms.Padding(3);
-            this.tpDebug.Size = new System.Drawing.Size(823, 494);
+            this.tpDebug.Size = new System.Drawing.Size(953, 486);
             this.tpDebug.TabIndex = 2;
             this.tpDebug.Text = "Debug Info";
             this.tpDebug.UseVisualStyleBackColor = true;
@@ -746,7 +743,7 @@ namespace TrackerClient
             this.tsslStatus});
             this.ssMain.Location = new System.Drawing.Point(0, 518);
             this.ssMain.Name = "ssMain";
-            this.ssMain.Size = new System.Drawing.Size(1154, 22);
+            this.ssMain.Size = new System.Drawing.Size(955, 22);
             this.ssMain.TabIndex = 2;
             // 
             // tsslStatus
@@ -774,7 +771,7 @@ namespace TrackerClient
             this.refreshToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1154, 24);
+            this.menuStrip.Size = new System.Drawing.Size(955, 24);
             this.menuStrip.TabIndex = 66;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -825,42 +822,26 @@ namespace TrackerClient
             this.refreshToolStripMenuItem.Text = "&Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
-            // lvVVirtuals
+            // nud_RefreshTimer
             // 
-            this.lvVVirtuals.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader5,
-            this.columnHeader6});
-            this.lvVVirtuals.HideSelection = false;
-            this.lvVVirtuals.Location = new System.Drawing.Point(768, 176);
-            this.lvVVirtuals.Name = "lvVVirtuals";
-            this.lvVVirtuals.Size = new System.Drawing.Size(155, 272);
-            this.lvVVirtuals.TabIndex = 89;
-            this.lvVVirtuals.UseCompatibleStateImageBehavior = false;
-            this.lvVVirtuals.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "Item";
-            this.columnHeader5.Width = 91;
-            // 
-            // columnHeader6
-            // 
-            this.columnHeader6.Text = "Amount";
-            // 
-            // lblVVirtuals
-            // 
-            this.lblVVirtuals.AutoSize = true;
-            this.lblVVirtuals.Location = new System.Drawing.Point(765, 160);
-            this.lblVVirtuals.Name = "lblVVirtuals";
-            this.lblVVirtuals.Size = new System.Drawing.Size(73, 13);
-            this.lblVVirtuals.TabIndex = 90;
-            this.lblVVirtuals.Text = "Vehicle Items:";
+            this.nud_RefreshTimer.Location = new System.Drawing.Point(155, 5);
+            this.nud_RefreshTimer.Name = "nud_RefreshTimer";
+            this.nud_RefreshTimer.Size = new System.Drawing.Size(35, 20);
+            this.nud_RefreshTimer.TabIndex = 67;
+            this.nud_RefreshTimer.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.nud_RefreshTimer.Value = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.nud_RefreshTimer.ValueChanged += new System.EventHandler(this.Nud_RefreshTimer_ValueChanged);
             // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1154, 540);
+            this.ClientSize = new System.Drawing.Size(955, 540);
+            this.Controls.Add(this.nud_RefreshTimer);
             this.Controls.Add(this.pMain);
             this.Controls.Add(this.ssMain);
             this.Controls.Add(this.menuStrip);
@@ -895,6 +876,7 @@ namespace TrackerClient
             this.ssMain.PerformLayout();
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_RefreshTimer)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -934,13 +916,6 @@ namespace TrackerClient
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tpInfo;
         private System.Windows.Forms.TabPage tpHouses;
-        private System.Windows.Forms.ListView lvVehicleInfo;
-        private System.Windows.Forms.ColumnHeader chName;
-        private System.Windows.Forms.ColumnHeader chActive;
-        private System.Windows.Forms.ColumnHeader chTurbo;
-        private System.Windows.Forms.ColumnHeader chSecurity;
-        private System.Windows.Forms.ColumnHeader chStorage;
-        private System.Windows.Forms.ColumnHeader chInsurance;
         private System.Windows.Forms.ListView lvVirtualItems;
         private System.Windows.Forms.ColumnHeader chItem;
         private System.Windows.Forms.ColumnHeader chAmount;
@@ -980,6 +955,8 @@ namespace TrackerClient
         private System.Windows.Forms.ListView lvVVirtuals;
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.ColumnHeader columnHeader6;
+        private System.Windows.Forms.ListBox lbVehicles;
+        private System.Windows.Forms.NumericUpDown nud_RefreshTimer;
     }
 }
 
