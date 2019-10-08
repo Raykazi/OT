@@ -324,7 +324,7 @@ namespace TrackerInterface
                         items.Add(new Item { Name = item[0].ToString(), Amount = Convert.ToInt32(item[1]) });
                     }
                 }
-                tmpVehicles.Add(new Vehicle(id, name, active, insured, turbo, security, trunk, items));                
+                tmpVehicles.Add(new Vehicle(id, Vehicle.TranslateName(name), active, insured, turbo, security, trunk, items));                
             }
             Vehicles = tmpVehicles;
         }
