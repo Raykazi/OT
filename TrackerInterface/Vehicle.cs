@@ -1,4 +1,7 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+using System.Windows.Forms;
 
 namespace TrackerInterface
 {
@@ -32,17 +35,20 @@ namespace TrackerInterface
         [DataMember]
         //1-4 Space of the vehicle
         public int StorageLevel { get; private set; }
+        [DataMember]
+        public List<Item> Inventory { get; private set; } //Custom item class for the palyers virtual items
         //Vehicle Constructor
-        public Vehicle(int id, string name, int alive, int active, int insuranceLevel, int turboLevel, int secLevel, int storageLevel)
+        public Vehicle(int id, string name, int active, int insuranceLevel, int turboLevel, int secLevel, int storageLevel, List<Item> inventory)
         {
             Id = id;
             Name = name;
-            Alive = alive;
             Active = active;
             InsuranceLevel = insuranceLevel;
             TurboLevel = turboLevel;
             SecLevel = secLevel;
             StorageLevel = storageLevel;
+            Inventory = inventory;
+
         }
     }
 }
