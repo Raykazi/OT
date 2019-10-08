@@ -79,17 +79,11 @@ namespace TrackerInterface
         //Rank of the player in the gang 1-5, -1 if not in one
         public int GangRank { get; private set; }
         [DataMember]
-
         public DateTime LastActive { get; private set; }//Last time of login
         [DataMember]
-
         public DateTime LastUpdated { get; private set; }//Last time they were saved
         [DataMember]
-        public List<Vehicle> CivVehicles { get; private set; } //Custom vehicle class array  with the players vehicle info
-        [DataMember]
-        public List<Vehicle> ApdVehicles { get; private set; } //Custom vehicle class array  with the players vehicle info
-        [DataMember]
-        public List<Vehicle> MedVehicles { get; private set; } //Custom vehicle class array  with the players vehicle info
+        public List<Vehicle> Vehicles { get; private set; } //Custom vehicle class array  with the players vehicle info
         [DataMember]
         public List<House> Houses { get; set; } //Thank you FeDot
         [DataMember]
@@ -119,7 +113,7 @@ namespace TrackerInterface
             Aliases = new List<string>();
             Equipment = new List<string>();
             CopEquipment = new List<string>();
-            CivVehicles = new List<Vehicle>();
+            Vehicles = new List<Vehicle>();
 
             //Setup player object with parameters from the calls
             Uid = uid;
@@ -284,7 +278,7 @@ namespace TrackerInterface
                         var turbo = (int)vehicle["modifications"]["turbo"];
                         var security = (int)vehicle["modifications"]["security"];
                         var storage = (int)vehicle["modifications"]["storage"];
-                        CivVehicles.Add(new Vehicle(id, vName, alive, active, insured, turbo, security, storage));
+                        //Vehicles.Add(new Vehicle(id, vName, alive, active, insured, turbo, security, storage));
                     }
                     break;
             }
@@ -298,13 +292,7 @@ namespace TrackerInterface
             switch (faction)
             {
                 case "civ":
-                    CivVehicles = new List<Vehicle>();
-                    break;
-                case "apd":
-                    ApdVehicles = new List<Vehicle>();
-                    break;
-                case "med":
-                    MedVehicles = new List<Vehicle>();
+                    Vehicles = new List<Vehicle>();
                     break;
             }
             if (air.Length > 2)
@@ -327,21 +315,18 @@ namespace TrackerInterface
                 int trunk = Convert.ToInt32(mods[1]);
                 int security = Convert.ToInt32(mods[2]);
                 string name = (string)row["classname"];
-                tmpVehicles.Add(new Vehicle(id, name, 1, active, insured, turbo, security, trunk));
+                List<Item> items = new List<Item>();
+                JArray inv_array = JArray.Parse(Helper.ToJson(row["inventory"].ToString()));
+                if (inv_array.Count > 0)
+                {
+                    foreach (JToken item in inv_array[0].Cast<JArray>())
+                    {
+                        items.Add(new Item { Name = item[0].ToString(), Amount = Convert.ToInt32(item[1]) });
+                    }
+                }
+                tmpVehicles.Add(new Vehicle(id, name, active, insured, turbo, security, trunk, items));                
             }
-            switch (faction)
-            {
-                case "civ":
-                    CivVehicles = tmpVehicles;
-                    break;
-                case "apd":
-                    ApdVehicles = tmpVehicles;
-                    break;
-                case "med":
-                    MedVehicles = tmpVehicles;
-                    break;
-            }
-
+            Vehicles = tmpVehicles;
         }
         /// <summary>
         /// Parse JSON house string array and place information into House object
