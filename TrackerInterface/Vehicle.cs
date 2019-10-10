@@ -35,6 +35,7 @@ namespace TrackerInterface
         [DataMember]
         //1-4 Space of the vehicle
         public int StorageLevel { get; private set; }
+        public int TargetLevel { get; set; } = -1;
         [DataMember]
         public List<Item> Inventory { get; private set; } //Custom item class for the palyers virtual items
         //Vehicle Constructor
@@ -179,7 +180,7 @@ namespace TrackerInterface
                     actual = "Truck Boxer";
                     break;
                 case "C_Van_01_fuel_F":
-                    actual = "Fuel Truck";
+                    actual = "Truck Fuel";
                     break;
                 case "C_Van_01_transport_F":
                     actual = "Truck";

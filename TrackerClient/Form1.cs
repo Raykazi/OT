@@ -56,9 +56,12 @@ namespace TrackerClient
                 "ephedra", "lithium", "phosphorus","crystalmeth","methu",
                 "yeast", "sugar", "corn","moonshine",
                 "goldbar", "moneybag" };
-        string[] _watchListVehicles = { "Hellcat", "HEMTT Box", "HEMTT Fuel", "HEMTT Transport", "Hummingbird", "Huron", "Ifrit", "Offroad (Armed)", "Orca", "M900", "Mohawk", "SDV",
-                "Taru (Bench)", "Taru (Fuel)", "Taru (Transport)", "Tempest (Device)", "Tempest Fuel", "Tempest Transport", "Tempest Transport (Covered)", "Truck", "Truck Box", "Truck Fuel",
-                "Zamak Fuel", "Zamak Transport", "Zamak Transport (Covered)"};
+        string[] _watchListRunVehicles = { "Van (Cargo)", "CH-67 Huron", "SDV", "HEMTT", "V-44 X Blackfish", "Truck", "CH-49 Mohawk", "Zamak", "Tempest", "Mi-290 Taru (Fuel)" };
+        string[] _watchListMiscVehicles = { "Y-32 Xi'an", "Qilin (Minigun)", "Ifrit", "Strider", "Offroad (AT)", "MB 4WD (LMG)", "Prowler (HMG)", "Hunter", "UH-80 Ghost Hawk" };
+        //_watchListVehicles = { "Hellcat", "HEMTT Box", "HEMTT Fuel", "HEMTT Transport", "Hummingbird", "Ifrit", "Offroad (Armed)", "Orca", "M900", "Mohawk", "SDV",
+        //"Taru (Bench)", "Taru (Fuel)", "Taru (Transport)", "Tempest (Device)", "Tempest Fuel", "Tempest Transport", "Tempest Transport (Covered)", "Truck", "Truck Box", "Truck Fuel",
+        //"Zamak Fuel", "Zamak Transport", "Zamak Transport (Covered)","UH-80 Ghost Hawk", "CH-67 Huron", "Mi-290 Taru", "Mi-290 Taru (Fuel)", "Hunter", "V-44 X Blackfish", "WY-55 Hellcat"};
+
 
         ListViewItemComparer _lvwItemComparer = new ListViewItemComparer();
         private ListBox _activeListbox;
@@ -120,31 +123,59 @@ namespace TrackerClient
             var targetPlayers = new List<Player>();
             foreach (var p in _onlinePlayers)
             {
-
-                var wItem = "";
-                var wVehicle = "";
                 p.TargetLevel = -1;
                 if (p.Vehicles != null)
-                    foreach (var vehicle in from vehicle in p.Vehicles from watchVehicle in _watchListVehicles where watchVehicle == vehicle.Name && vehicle.Active >= 1 select vehicle)
+                {
+                    foreach (var vehicle in from vehicle in p.Vehicles from watchVehicle in _watchListRunVehicles where vehicle.Name.Contains(watchVehicle) && vehicle.Active >= 1 select vehicle)
                     {
-                        wVehicle += vehicle.Name + "\r\n";
                         if (!targetPlayers.Contains(p))
                             targetPlayers.Add(p);
                         p.TargetLevel = 0;
+                        vehicle.TargetLevel = 0;
                     }
+                    foreach (var vehicle in from vehicle in p.Vehicles from watchVehicle in _watchListMiscVehicles where vehicle.Name.Contains(watchVehicle) && vehicle.Active >= 1 select vehicle)
+                    {
+                        if (!targetPlayers.Contains(p))
+                            targetPlayers.Add(p);
+                        p.TargetLevel = 3;
+                        vehicle.TargetLevel = 3;
+                        //p.Vehicles.FindIndex()                        
+                    }
+                    foreach (Vehicle v in p.Vehicles)
+                    {
+                        if (v.Inventory != null && v.Active == 1)
+                        {
+                            foreach (Item item in v.Inventory)
+                            {
+                                foreach (var watchItem in _watchListLegeals.Where(watchItem => watchItem == item.Name))
+                                {
+                                    if (!targetPlayers.Contains(p))
+                                        targetPlayers.Add(p);
+                                    p.TargetLevel = 1;
+                                    v.TargetLevel = 1;
+                                }
+                                foreach (var watchItem in _watchListIllegals.Where(watchItem => watchItem == item.Name))
+                                {
+                                    if (!targetPlayers.Contains(p))
+                                        targetPlayers.Add(p);
+                                    p.TargetLevel = 2;
+                                    v.TargetLevel = 2;
+                                }
+                            }
+                        }
+                    }
+                }
                 if (p.Virtuals != null)
                     foreach (var item in p.Virtuals)
                     {
                         foreach (var watchItem in _watchListLegeals.Where(watchItem => watchItem == item.Name))
                         {
-                            wItem += item.Name + "\r\n";
                             if (!targetPlayers.Contains(p))
                                 targetPlayers.Add(p);
                             p.TargetLevel = 1;
                         }
                         foreach (var watchItem in _watchListIllegals.Where(watchItem => watchItem == item.Name))
                         {
-                            wItem += item.Name + "\r\n";
                             if (!targetPlayers.Contains(p))
                                 targetPlayers.Add(p);
                             p.TargetLevel = 2;
@@ -226,21 +257,42 @@ namespace TrackerClient
             var v = (Vehicle)lb.Items[e.Index];
             var selected = ((e.State & DrawItemState.Selected) == DrawItemState.Selected);
             var text = v.Name; // p.AdminLevel == 0 ? p.Name : p.Name.Insert(p.Name.Length, $" [{p.Faction.ToUpper()}] ({p.AdminLevel})");
+
+            if (v.Active == 1)
+            {
+                g.FillRectangle(new SolidBrush(Color.GreenYellow), e.Bounds);
+                g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+                switch (v.TargetLevel)
+                {
+                    case 0:
+                        g.FillRectangle(new SolidBrush(Color.Yellow), e.Bounds);
+                        g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+                        break;
+                    case 1:
+                        g.FillRectangle(new SolidBrush(Color.DeepPink), e.Bounds);
+                        g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                        break;
+                    case 2:
+                        g.FillRectangle(new SolidBrush(Color.Red), e.Bounds);
+                        g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                        break;
+                    case 3:
+                        g.FillRectangle(new SolidBrush(Color.IndianRed), e.Bounds);
+                        g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                        break;
+                }
+            } else
+            {
+                g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
+                g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+            }
+
+
             if (selected)
             {
                 var highlight = SystemColors.MenuHighlight;
                 g.FillRectangle(new SolidBrush(highlight), e.Bounds);
-                g.DrawString(text, e.Font, new SolidBrush(Color.DimGray), new PointF(e.Bounds.X, e.Bounds.Y));
-            }
-            else if (v.Active == 1)
-            {
-                g.FillRectangle(new SolidBrush(Color.Wheat), e.Bounds);
-                g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
-            }
-            else
-            {
-                g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
-                g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
+                g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
             }
             e.DrawFocusRectangle();
 
@@ -332,6 +384,10 @@ namespace TrackerClient
                                 break;
                             case 2:
                                 g.FillRectangle(new SolidBrush(Color.Red), e.Bounds);
+                                g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
+                                break;
+                            case 3:
+                                g.FillRectangle(new SolidBrush(Color.IndianRed), e.Bounds);
                                 g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                                 break;
                             default:
@@ -432,13 +488,13 @@ namespace TrackerClient
             lblKDR.Text =
                 $"K/D/R: {p.Kills}/{p.Deaths}/{Convert.ToDecimal(Convert.ToDecimal(p.Kills) / Convert.ToDecimal(p.Deaths)):0.##}";
             lblCopRank.Text = $"APD Rank: {ParseRank(p.CopLevel, 0)}";
-            lblCopTime.Text = $"APD Time: {((p.TimeApd.ToString() == "-1") ? "N/A" : p.TimeApd.ToString()):0,0}";
+            //lblCopTime.Text = $"APD Time: {((p.TimeApd.ToString() == "-1") ? "N/A" : p.TimeApd.ToString()):0,0}";
             lblGang.Text = $"Gang: {(p.GangName == "-1" ? "N/A" : p.GangName)}";
             lblBank.Text = $"Bank: {p.Bank:C}";
             lblVigiBounty.Text = $"Bounty Collected: {(p.BountyCollected == -1 ? 0 : p.BountyCollected):C}";
             lblCivTime.Text = $"Civ Time: {p.TimeCiv:0,0}";
             lblMedicRank.Text = $"R&R Rank: {ParseRank(p.MedicLevel, 1)}";
-            lblMedicTime.Text = $"R&R Time: {(p.TimeMed.ToString() == "-1" ? "N/A" : p.TimeMed.ToString()):0,0}";
+            //lblMedicTime.Text = $"R&R Time: {(p.TimeMed.ToString() == "-1" ? "N/A" : p.TimeMed.ToString()):0,0}";
             if (p.Faction == "civ")
             {
                 lblVest.Text = $"Vest: {(p.Equipment.Count == 0 ? "None" : p.Equipment[1])}";
@@ -451,7 +507,7 @@ namespace TrackerClient
                 lblHelmet.Text = $"Helmet: {(p.CopEquipment.Count == 0 ? "None" : p.CopEquipment[4])}";
                 lblGun.Text = $"Gun: {(p.CopEquipment.Count == 0 ? "None" : TranslateWeapons(p.CopEquipment[5]))}";
             }
-            lblUpdated.Text = $"Last Updated (UTC): {p.LastUpdated}";
+            //lblUpdated.Text = $"Last Updated (UTC): {p.LastUpdated}";
             lblLocation.Text = p.Location.Length > 1 ? $"Last Seen @ X:{p.Location[0]} Y:{p.Location[1]}" : "Last Seen @ Unknown";
             //foreach (var equip in p.Equipment.Where(equip => !_debugListEqu.Contains(equip) && equip.Length > 0))
             //{
