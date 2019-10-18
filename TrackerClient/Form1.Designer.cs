@@ -102,6 +102,8 @@ namespace TrackerClient
             this.mapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nud_RefreshTimer = new System.Windows.Forms.NumericUpDown();
+            this.lblSecondary = new System.Windows.Forms.Label();
+            this.lblLauncher = new System.Windows.Forms.Label();
             this.panelLeft.SuspendLayout();
             this.pPlayerList.SuspendLayout();
             this.tcPlayerLists.SuspendLayout();
@@ -301,6 +303,8 @@ namespace TrackerClient
             // 
             // tpInfo
             // 
+            this.tpInfo.Controls.Add(this.lblLauncher);
+            this.tpInfo.Controls.Add(this.lblSecondary);
             this.tpInfo.Controls.Add(this.lbVehicles);
             this.tpInfo.Controls.Add(this.lblVVirtuals);
             this.tpInfo.Controls.Add(this.lvVVirtuals);
@@ -419,7 +423,7 @@ namespace TrackerClient
             // lblHelmet
             // 
             this.lblHelmet.AutoSize = true;
-            this.lblHelmet.Location = new System.Drawing.Point(465, 57);
+            this.lblHelmet.Location = new System.Drawing.Point(465, 108);
             this.lblHelmet.Name = "lblHelmet";
             this.lblHelmet.Size = new System.Drawing.Size(46, 13);
             this.lblHelmet.TabIndex = 86;
@@ -428,7 +432,7 @@ namespace TrackerClient
             // lblVest
             // 
             this.lblVest.AutoSize = true;
-            this.lblVest.Location = new System.Drawing.Point(480, 30);
+            this.lblVest.Location = new System.Drawing.Point(480, 81);
             this.lblVest.Name = "lblVest";
             this.lblVest.Size = new System.Drawing.Size(31, 13);
             this.lblVest.TabIndex = 85;
@@ -437,11 +441,11 @@ namespace TrackerClient
             // lblGun
             // 
             this.lblGun.AutoSize = true;
-            this.lblGun.Location = new System.Drawing.Point(478, 3);
+            this.lblGun.Location = new System.Drawing.Point(464, 3);
             this.lblGun.Name = "lblGun";
-            this.lblGun.Size = new System.Drawing.Size(33, 13);
+            this.lblGun.Size = new System.Drawing.Size(47, 13);
             this.lblGun.TabIndex = 84;
-            this.lblGun.Text = "Gun: ";
+            this.lblGun.Text = "Primary: ";
             // 
             // lblVehicles
             // 
@@ -567,7 +571,7 @@ namespace TrackerClient
             this.tpHouses.Location = new System.Drawing.Point(4, 4);
             this.tpHouses.Name = "tpHouses";
             this.tpHouses.Padding = new System.Windows.Forms.Padding(3);
-            this.tpHouses.Size = new System.Drawing.Size(740, 454);
+            this.tpHouses.Size = new System.Drawing.Size(698, 454);
             this.tpHouses.TabIndex = 1;
             this.tpHouses.Text = "Houses";
             this.tpHouses.UseVisualStyleBackColor = true;
@@ -580,7 +584,7 @@ namespace TrackerClient
             this.panelPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelPictureBox.Location = new System.Drawing.Point(346, 3);
             this.panelPictureBox.Name = "panelPictureBox";
-            this.panelPictureBox.Size = new System.Drawing.Size(391, 448);
+            this.panelPictureBox.Size = new System.Drawing.Size(349, 448);
             this.panelPictureBox.TabIndex = 86;
             this.panelPictureBox.MouseEnter += new System.EventHandler(this.panelPictureBox_MouseEnter);
             this.panelPictureBox.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.panelPictureBox_MouseWheel);
@@ -682,7 +686,7 @@ namespace TrackerClient
             this.tpDebug.Location = new System.Drawing.Point(4, 4);
             this.tpDebug.Name = "tpDebug";
             this.tpDebug.Padding = new System.Windows.Forms.Padding(3);
-            this.tpDebug.Size = new System.Drawing.Size(754, 486);
+            this.tpDebug.Size = new System.Drawing.Size(712, 486);
             this.tpDebug.TabIndex = 2;
             this.tpDebug.Text = "Debug Info";
             this.tpDebug.UseVisualStyleBackColor = true;
@@ -802,6 +806,24 @@ namespace TrackerClient
             0});
             this.nud_RefreshTimer.ValueChanged += new System.EventHandler(this.Nud_RefreshTimer_ValueChanged);
             // 
+            // lblSecondary
+            // 
+            this.lblSecondary.AutoSize = true;
+            this.lblSecondary.Location = new System.Drawing.Point(450, 30);
+            this.lblSecondary.Name = "lblSecondary";
+            this.lblSecondary.Size = new System.Drawing.Size(61, 13);
+            this.lblSecondary.TabIndex = 92;
+            this.lblSecondary.Text = "Secondary:";
+            // 
+            // lblLauncher
+            // 
+            this.lblLauncher.AutoSize = true;
+            this.lblLauncher.Location = new System.Drawing.Point(453, 57);
+            this.lblLauncher.Name = "lblLauncher";
+            this.lblLauncher.Size = new System.Drawing.Size(58, 13);
+            this.lblLauncher.TabIndex = 93;
+            this.lblLauncher.Text = "Launcher: ";
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -920,6 +942,8 @@ namespace TrackerClient
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.ListBox lbVehicles;
         private System.Windows.Forms.NumericUpDown nud_RefreshTimer;
+        private System.Windows.Forms.Label lblLauncher;
+        private System.Windows.Forms.Label lblSecondary;
     }
 }
 
