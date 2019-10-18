@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
-using TrackerServer;
 using System.Data;
 
 namespace TrackerInterface
@@ -89,10 +88,7 @@ namespace TrackerInterface
         [DataMember]
         public List<string> Equipment { get; private set; }//String list with their physical equipment
         [DataMember]
-        public List<string> CopEquipment { get; private set; }//String list with their physical equipment
-        [DataMember]
         public List<Item> Virtuals { get; private set; } //Custom item class for the palyers virtual items
-        public List<Item> CopVirtuals { get; private set; } //Custom item class for the palyers virtual items
         [DataMember]
         public int TargetLevel = -1; //Because these ***holes wanted colors
         [DataMember]
@@ -112,7 +108,6 @@ namespace TrackerInterface
             Houses = new List<House>();
             Aliases = new List<string>();
             Equipment = new List<string>();
-            CopEquipment = new List<string>();
             Vehicles = new List<Vehicle>();
 
             //Setup player object with parameters from the calls
@@ -187,17 +182,17 @@ namespace TrackerInterface
         /// <summary>
         /// Parse the JSON string regarding gear and inventory
         /// </summary>
-        public void AddGear(string gearCiv)
+        public void AddGear(string gear)
         {
-            if (gearCiv.Length <= 2) return;
-            gearCiv = gearCiv.Insert(0, "{\"civ_gear\": ");
-            gearCiv += "}";
-            var equipment = JArray.Parse(JObject.Parse(gearCiv)["civ_gear"].ToString());
+            if (gear.Length <= 2) return;
+            gear = gear.Insert(0, "{\"gear\": ");
+            gear += "}";
+            var equipment = JArray.Parse(JObject.Parse(gear)["gear"].ToString());
             for (var i = 0; i < equipment.Count(); i++)
             {
                 if (i < 5 || i > 5 && i < 9)
                 {
-                    Equipment.Add(equipment[i].ToString());
+                    Equipment.Add(TranslateEquipment(equipment[i].ToString()));
                 }//Ammo
                 else
                     switch (i)
@@ -220,89 +215,7 @@ namespace TrackerInterface
                     }
             }
         }
-        public void AddCopGear(string gearCop)
-        {
-            if (gearCop.Length <= 2) return;
-            gearCop = gearCop.Insert(0, "{\"cop_gear\": ");
-            gearCop += "}";
-            var equipment = JArray.Parse(JObject.Parse(gearCop)["cop_gear"].ToString());
-            for (var i = 0; i < equipment.Count(); i++)
-            {
-                if (i < 5 || i > 5 && i < 9)
-                {
-                    CopEquipment.Add(equipment[i].ToString());
-                }//Ammo
-                else
-                    switch (i)
-                    {
-                        case 12:
-
-                            break;
-                        case 15:
-                            if (equipment[15].ToString().Length < 4) continue;
-                            var virtualRawStr = equipment[15].ToString();
-                            virtualRawStr = virtualRawStr.Insert(0, "{\"Virtuals\": ");
-                            virtualRawStr += "}";
-                            var virtuals = JArray.Parse(JObject.Parse(virtualRawStr)["Virtuals"].First.ToString());
-                            CopVirtuals = new List<Item>();
-                            foreach (var vi in virtuals.Cast<JArray>())
-                            {
-                                CopVirtuals.Add(new Item { Name = vi[0].ToString(), Amount = (int)vi[1] });
-                            }
-                            break;
-                    }
-            }
-        }
-        /// <summary>
-        /// Parse the JSON string regarding player's vehicles
-        /// </summary>
-        /// <param name="vehicles"></param>
-        /// <param name="faction"></param>
-        public void AddVehicles(string vehicles, string faction)
-        {
-            //Only care about civ vehicles for now.
-            switch (faction)
-            {
-                case "civ":
-                    vehicles = vehicles.Insert(0, "{\"vehicle\": ");
-                    vehicles += "}";
-                    var v = JArray.Parse(JObject.Parse(vehicles)["vehicle"].ToString());
-                    foreach (var jToken in v)
-                    {
-                        var vehicle = (JObject)jToken;
-                        var id = (int)vehicle["id"];
-                        var vName = (string)vehicle["vehicle"];
-                        var alive = (int)vehicle["alive"];
-                        var active = (int)vehicle["active"];
-                        var insured = (int)vehicle["modifications"]["insured"];
-                        var turbo = (int)vehicle["modifications"]["turbo"];
-                        var security = (int)vehicle["modifications"]["security"];
-                        var storage = (int)vehicle["modifications"]["storage"];
-                        //Vehicles.Add(new Vehicle(id, vName, alive, active, insured, turbo, security, storage));
-                    }
-                    break;
-            }
-        }
-        /// <summary>
-        /// Initialize vehicle lists depending on faction,
-        /// Calls function to add player's vehicles to their respective objects
-        /// </summary>
-        public void AddVehicles(string air, string car, string ship, string faction)
-        {
-            switch (faction)
-            {
-                case "civ":
-                    Vehicles = new List<Vehicle>();
-                    break;
-            }
-            if (air.Length > 2)
-                AddVehicles(air, faction);
-            if (car.Length > 2)
-                AddVehicles(car, faction);
-            if (ship.Length > 2)
-                AddVehicles(ship, faction);
-        }
-        public void AddVehicles(string faction, DataTable data)
+        public void AddVehicles(DataTable data)
         {
             List<Vehicle> tmpVehicles = new List<Vehicle>();
             foreach (DataRow row in data.Rows)
@@ -311,6 +224,7 @@ namespace TrackerInterface
                 int id = (int)row["id"];
                 int insured = Convert.ToInt32(row["insured"]);
                 int active = Convert.ToInt32(row["active"]);
+                int alive = Convert.ToInt32(row["alive"]);
                 int turbo = Convert.ToInt32(mods[0]);
                 int trunk = Convert.ToInt32(mods[1]);
                 int security = Convert.ToInt32(mods[2]);
@@ -324,7 +238,7 @@ namespace TrackerInterface
                         items.Add(new Item { Name = item[0].ToString(), Amount = Convert.ToInt32(item[1]) });
                     }
                 }
-                tmpVehicles.Add(new Vehicle(id, Vehicle.TranslateName(name), active, insured, turbo, security, trunk, items));                
+                tmpVehicles.Add(new Vehicle(id, Vehicle.TranslateName(name), active, insured, turbo, security, trunk, items));
             }
             Vehicles = tmpVehicles;
         }
@@ -410,6 +324,166 @@ namespace TrackerInterface
                 //    resultH += _db.ExecuteNonQuery(sql, steamId, pos, lastUsed, crates, virtuals, maxStorage, _serverName, hid) == 1 ? 1 : 0;
                 //}
             }
+        }
+        /// <summary>
+        /// Translate arma names 
+        /// </summary>
+        /// <param name="a3Name"></param>
+        /// <returns></returns>
+        public string TranslateEquipment(string a3Name)
+        {
+            var translatedName = "";
+            switch (a3Name)
+            {
+                default:
+                    translatedName = a3Name;
+                    break;
+                case "hgun_P07_khk_F":
+                case "hgun_P07_khk_Snds_F":
+                    translatedName = "P07 9 mm";
+                    break;
+                case "hgun_Pistol_01_F":
+                    translatedName = "PM 9 mm";
+                    break;
+                case "SMG_05_F":
+                    translatedName = "Protector 9 mm";
+                    break;
+                case "hgun_Rook40_F":
+                    translatedName = "Rook-40 9 mm";
+                    break;
+                case "hgun_PDW2000_F":
+                    translatedName = "PDW2000 9 mm";
+                    break;
+                case "sgun_HunterShotgun_01_sawedoff_F":
+                    translatedName = "Kozlice 12G (Sawed-Off)";
+                    break;
+                case "sgun_HunterShotgun_01_F":
+                    translatedName = "Kozlice 12G";
+                    break;
+                case "arifle_SDAR_F":
+                    translatedName = "SDAR 5.56 mm";
+                    break;
+                case "SMG_03_TR_camo":
+                    translatedName = "ADR-97 TR 5.7 mm";
+                    break;
+                case "SMG_01_F":
+                    translatedName = "Vermin SMG .45 ACP";
+                    break;
+                case "arifle_Mk20C_F":
+                    translatedName = "Mk20C 5.56 mm";
+                    break;
+                case "arifle_TRG21_F":
+                    translatedName = "TRG-21 5.56 mm";
+                    break;
+                case "arifle_Katiba_F":
+                    translatedName = "Katiba 6.5 mm";
+                    break;
+                case "arifle_MX_khk_F":
+                case "arifle_MX_F":
+                    translatedName = "MX 6.5 mm";
+                    break;
+                case "arifle_MSBS65_sand_F":
+                case "arifle_MSBS65_camo_F":
+                    translatedName = "Promet 6.5 mm";
+                    break;
+                case "arifle_MXM_F":
+                case "arifle_MXM_khk_F":
+                    translatedName = "MXM 6.5 mm";
+                    break;
+                case "arifle_MSBS65_Mark_F":
+                case "arifle_MSBS65_Mark_camo_F":
+                case "arifle_MSBS65_Mark_sand_F":
+                    translatedName = "Promet MR 6.5 mm";
+                    break;
+                case "arifle_MX_SW_F":
+                case "arifle_MX_SW_khk_F":
+                    translatedName = "MX SW 6.5 mm";
+                    break;
+                case "arifle_AK12_arid_F":
+                case "arifle_AK12_lush_F":
+                    translatedName = "AK-12 7.62 mm";
+                    break;
+                case "arifle_AK12U_arid_F":
+                case "arifle_AK12U_lush_F":
+                    translatedName = "AKU-12 7.62 mm";
+                    break;
+                case "arifle_RPK12_arid_F":
+                case "arifle_RPK12_lush_F":
+                    translatedName = "RPK-12 7.62 mm";
+                    break;
+                case "srifle_DMR_07_ghex_F":
+                case "srifle_DMR_07_hex_F":
+                    translatedName = "CMR-76 6.5 mm";
+                    break;
+                case "srifle_DMR_03_khaki_F":
+                case "srifle_DMR_03_tan_F":
+                case "srifle_DMR_03_woodland_F":
+                case "srifle_DMR_03_multicam_F":
+                case "srifle_DMR_01_F":
+                    translatedName = "Mk-I EMR 7.62 mm";
+                    break;
+                case "srifle_EBR_F":
+                    translatedName = "Mk18 ABR 7.62 mm";
+                    break;
+                case "srifle_DMR_06_camo_F":
+                case "srifle_DMR_06_olive_F":
+                case "srifle_DMR_06_hunter_F":
+                    translatedName = "Mk14 7.62 mm";
+                    break;
+                case "LMG_Mk200_F":
+                case "LMG_Mk200_black_F":
+                    translatedName = "Mk200 6.5 mm";
+                    break;
+                case "LMG_Zafir_F":
+                    translatedName = "Zafir 7.62 mm";
+                    break;
+                case "launch_B_Titan_olive_F":
+                case "launch_I_Titan_F":
+                case "launch_Titan_F":
+                    translatedName = "Titan MPRL";
+                    break;
+                case "arifle_AKS_F":
+                    translatedName = "AKS-74U 5.45 mm";
+                    break;
+                case "LMG_03_F":
+                    translatedName = "LIM-85 5.56 mm";
+                    break;
+                case "arifle_SPAR_01_blk_F":
+                case "arifle_SPAR_01_khk_F":
+                case "arifle_SPAR_01_snd_F":
+                    translatedName = "SPAR-16 5.56 mm";
+                    break;
+                case "arifle_SPAR_02_blk_F":
+                case "arifle_SPAR_02_khk_F":
+                case "arifle_SPAR_02_snd_F":
+                    translatedName = "SPAR-16S 5.56 mm";
+                    break;
+                case "arifle_CTAR_blk_F":
+                    translatedName = "CAR-95 5.8 mm";
+                    break;
+                case "arifle_CTARS_blk_F":
+                    translatedName = "CAR-95-1 5.8 mm";
+                    break;
+                case "arifle_ARX_blk_F":
+                case "arifle_ARX_ghex_F":
+                case "arifle_ARX_hex_F":
+                    translatedName = "Type 115 6.5 mm";
+                    break;
+                case "arifle_AK12_F":
+                    translatedName = "AK-12 7.62 mm";
+                    break;
+                case "arifle_AKM_F":
+                case "arifle_AKM_FL_F":
+                    translatedName = "AKM 7.62 mm";
+                    break;
+                case "arifle_SPAR_03_blk_F":
+                case "arifle_SPAR_03_khk_F":
+                case "arifle_SPAR_03_snd_F":
+                    translatedName = "SPAR-17 7.62 mm";
+                    break;
+            }
+            return translatedName;
+
         }
     }
 }
