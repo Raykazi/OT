@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 
-namespace TrackerServer
+namespace TrackerInterface
 {
     public class Db
     {
