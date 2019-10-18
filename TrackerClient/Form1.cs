@@ -146,7 +146,7 @@ namespace TrackerClient
                         if (!targetPlayers.Contains(p))
                             targetPlayers.Add(p);
                         p.TargetLevel = 3;
-                        vehicle.TargetLevel = 3;                     
+                        vehicle.TargetLevel = 3;
                     }
                     foreach (Vehicle v in p.Vehicles)
                     {
@@ -188,11 +188,12 @@ namespace TrackerClient
                             p.TargetLevel = 2;
                         }
                     }
-                if(p.Equipment[7].Contains("Titan"))
-                {
-                    p.TargetLevel = 4;
-                    targetPlayers.Add(p);
-                }
+                if (p.Equipment.Count >= 8)
+                    if (p.Equipment[7].Contains("Titan"))
+                    {
+                        p.TargetLevel = 4;
+                        targetPlayers.Add(p);
+                    }
             }
             targetPlayers = targetPlayers.OrderBy(p => p.Name).ToList();
             lbPlayersTargets.DataSource = targetPlayers;
@@ -291,7 +292,8 @@ namespace TrackerClient
                         g.DrawString(text, e.Font, new SolidBrush(Color.White), new PointF(e.Bounds.X, e.Bounds.Y));
                         break;
                 }
-            } else
+            }
+            else
             {
                 g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
                 g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
@@ -676,7 +678,7 @@ namespace TrackerClient
             p.AddMoney((int)row["cash"], (int)row["bankacc"], 0, bounty);
             p.AddStats(coplvl, medlvl, admlvl, donlvl, kills, deaths, revives, arrests);
             string gear = "";
-            switch(p.Faction)
+            switch (p.Faction)
             {
                 case "civ":
                     gear = Helper.ToJson(row["civ_gear"].ToString());
@@ -690,6 +692,14 @@ namespace TrackerClient
             }
             p.AddGear(gear);
             p.AddVehicles(player_vehicles);
+            foreach (var item in p.Equipment)
+            {
+                if (item.Contains("_") && !_debugListEqu.Contains(item))
+                {
+                    _debugListEqu.Add(item);
+                    rtbDebugEquipment.Text += $"{item}{Environment.NewLine}";
+                }
+            }
             return p;
 
         }

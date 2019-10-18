@@ -48,6 +48,8 @@ namespace TrackerClient
             this.tpPlayerInfo = new System.Windows.Forms.TabPage();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpInfo = new System.Windows.Forms.TabPage();
+            this.lblLauncher = new System.Windows.Forms.Label();
+            this.lblSecondary = new System.Windows.Forms.Label();
             this.lbVehicles = new System.Windows.Forms.ListBox();
             this.lblVVirtuals = new System.Windows.Forms.Label();
             this.lvVVirtuals = new System.Windows.Forms.ListView();
@@ -102,8 +104,6 @@ namespace TrackerClient
             this.mapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nud_RefreshTimer = new System.Windows.Forms.NumericUpDown();
-            this.lblSecondary = new System.Windows.Forms.Label();
-            this.lblLauncher = new System.Windows.Forms.Label();
             this.panelLeft.SuspendLayout();
             this.pPlayerList.SuspendLayout();
             this.tcPlayerLists.SuspendLayout();
@@ -176,7 +176,6 @@ namespace TrackerClient
             this.lbPlayersAll.FormattingEnabled = true;
             this.lbPlayersAll.Location = new System.Drawing.Point(3, 3);
             this.lbPlayersAll.Name = "lbPlayersAll";
-            this.lbPlayersAll.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.lbPlayersAll.Size = new System.Drawing.Size(160, 462);
             this.lbPlayersAll.TabIndex = 35;
             this.lbPlayersAll.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
@@ -335,6 +334,24 @@ namespace TrackerClient
             this.tpInfo.Text = "Info";
             this.tpInfo.UseVisualStyleBackColor = true;
             // 
+            // lblLauncher
+            // 
+            this.lblLauncher.AutoSize = true;
+            this.lblLauncher.Location = new System.Drawing.Point(453, 57);
+            this.lblLauncher.Name = "lblLauncher";
+            this.lblLauncher.Size = new System.Drawing.Size(58, 13);
+            this.lblLauncher.TabIndex = 93;
+            this.lblLauncher.Text = "Launcher: ";
+            // 
+            // lblSecondary
+            // 
+            this.lblSecondary.AutoSize = true;
+            this.lblSecondary.Location = new System.Drawing.Point(450, 30);
+            this.lblSecondary.Name = "lblSecondary";
+            this.lblSecondary.Size = new System.Drawing.Size(61, 13);
+            this.lblSecondary.TabIndex = 92;
+            this.lblSecondary.Text = "Secondary:";
+            // 
             // lbVehicles
             // 
             this.lbVehicles.ContextMenuStrip = this.cmsWatchlist;
@@ -342,7 +359,6 @@ namespace TrackerClient
             this.lbVehicles.FormattingEnabled = true;
             this.lbVehicles.Location = new System.Drawing.Point(340, 184);
             this.lbVehicles.Name = "lbVehicles";
-            this.lbVehicles.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.lbVehicles.Size = new System.Drawing.Size(160, 264);
             this.lbVehicles.TabIndex = 91;
             this.lbVehicles.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.LbVehicles_DrawItem);
@@ -805,24 +821,6 @@ namespace TrackerClient
             0,
             0});
             this.nud_RefreshTimer.ValueChanged += new System.EventHandler(this.Nud_RefreshTimer_ValueChanged);
-            // 
-            // lblSecondary
-            // 
-            this.lblSecondary.AutoSize = true;
-            this.lblSecondary.Location = new System.Drawing.Point(450, 30);
-            this.lblSecondary.Name = "lblSecondary";
-            this.lblSecondary.Size = new System.Drawing.Size(61, 13);
-            this.lblSecondary.TabIndex = 92;
-            this.lblSecondary.Text = "Secondary:";
-            // 
-            // lblLauncher
-            // 
-            this.lblLauncher.AutoSize = true;
-            this.lblLauncher.Location = new System.Drawing.Point(453, 57);
-            this.lblLauncher.Name = "lblLauncher";
-            this.lblLauncher.Size = new System.Drawing.Size(58, 13);
-            this.lblLauncher.TabIndex = 93;
-            this.lblLauncher.Text = "Launcher: ";
             // 
             // FrmMain
             // 
