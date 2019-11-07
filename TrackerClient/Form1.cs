@@ -690,13 +690,29 @@ namespace TrackerClient
                 if (item.Contains("_") && !_debugListEqu.Contains(item))
                 {
                     _debugListEqu.Add(item);
-                    rtbDebugEquipment.Text += $"{item}{Environment.NewLine}";
+
+                    SetText($"{item}{Environment.NewLine}");
                 }
             }
             return p;
 
         }
-
+        delegate void SetTextCallback(string text);
+        private void SetText(string text)
+        {
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (rtbDebugEquipment.InvokeRequired)
+            {
+                SetTextCallback d = new SetTextCallback(SetText);
+                Invoke(d, new object[] { text });
+            }
+            else
+            {
+                rtbDebugEquipment.Text += $"{text}";
+            }
+        }
         /// <summary>
         /// Runs tasks after pulling player information from the server
         /// </summary>
@@ -824,7 +840,5 @@ namespace TrackerClient
             NumericUpDown refreshTime = (NumericUpDown)sender;
             RefreshTime = Convert.ToInt32(refreshTime.Value) * 1000;
         }
-
     }
-
 }
