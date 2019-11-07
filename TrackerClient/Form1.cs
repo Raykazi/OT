@@ -250,11 +250,10 @@ namespace TrackerClient
                 var lb = (ListBox)sender;
                 if (lb.SelectedIndices.Count != 1) return;
                 var v = (Vehicle)lb.SelectedValue;
-                DisplayVehicle(v);
-            }
-            catch (Exception)
+                DisplayVehicle(v);          }
+            catch (Exception ex)
             {
-                //MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message);
             }
 
         }
@@ -298,8 +297,6 @@ namespace TrackerClient
                 g.FillRectangle(new SolidBrush(Color.White), e.Bounds);
                 g.DrawString(text, e.Font, new SolidBrush(Color.Black), new PointF(e.Bounds.X, e.Bounds.Y));
             }
-
-
             if (selected)
             {
                 var highlight = SystemColors.MenuHighlight;
@@ -504,19 +501,15 @@ namespace TrackerClient
             lblKDR.Text =
                 $"K/D/R: {p.Kills}/{p.Deaths}/{Convert.ToDecimal(Convert.ToDecimal(p.Kills) / Convert.ToDecimal(p.Deaths)):0.##}";
             lblCopRank.Text = $"APD Rank: {ParseRank(p.CopLevel, 0)}";
-            //lblCopTime.Text = $"APD Time: {((p.TimeApd.ToString() == "-1") ? "N/A" : p.TimeApd.ToString()):0,0}";
             lblGang.Text = $"Gang: {(p.GangName == "-1" ? "N/A" : p.GangName)}";
             lblBank.Text = $"Bank: {p.Bank:C}";
             lblVigiBounty.Text = $"Bounty Collected: {(p.BountyCollected == -1 ? 0 : p.BountyCollected):C}";
-            lblCivTime.Text = $"Civ Time: {p.TimeCiv:0,0}";
             lblMedicRank.Text = $"R&R Rank: {ParseRank(p.MedicLevel, 1)}";
-            //lblMedicTime.Text = $"R&R Time: {(p.TimeMed.ToString() == "-1" ? "N/A" : p.TimeMed.ToString()):0,0}";
             lblVest.Text = $"Vest: {(p.Equipment.Count == 0 ? "None" : p.Equipment[1])}";
             lblHelmet.Text = $"Helmet: {(p.Equipment.Count == 0 ? "None" : p.Equipment[4])}";
             lblGun.Text = $"Primary: {(p.Equipment.Count == 0 ? "None" : (p.Equipment[5]))}";
             lblSecondary.Text = $"Secondary: {(p.Equipment.Count == 0 ? "None" : (p.Equipment[6]))}";
             lblLauncher.Text = $"Launcher: {(p.Equipment.Count == 0 ? "None" : (p.Equipment[7]))}";
-            //lblUpdated.Text = $"Last Updated (UTC): {p.LastUpdated}";
             lblLocation.Text = p.Location.Length > 1 ? $"Last Seen @ X:{p.Location[0]} Y:{p.Location[1]}" : "Last Seen @ Unknown";
             //foreach (var equip in p.Equipment.Where(equip => !_debugListEqu.Contains(equip) && equip.Length > 0))
             //{
@@ -545,7 +538,7 @@ namespace TrackerClient
             }
             houses = houses.OrderBy(h => h.Id).ToList();
 
-            lbVehicles.DisplayMember = "name";
+            //lbVehicles.DisplayMember = "name";
             lbVehicles.DataSource = p.Vehicles.OrderByDescending(v => v.Active).ToList();
             lbHouses.DisplayMember = houses.ToString();
             lbHouses.DataSource = houses;
@@ -715,9 +708,6 @@ namespace TrackerClient
             _justRefreshed = true;
             if (!_sw.IsRunning)
                 _sw.Start();
-            //lbPlayersAll.DisplayMember = "";
-            //lbPlayersAll.DisplayMember = "name";
-            //lbPlayersAll.ValueMember = "id";
             lbPlayersAll.DataSource = _onlinePlayers;
             BuildTargetList();
             if (_activeListbox == null)

@@ -66,7 +66,6 @@ namespace TrackerClient
             this.lblVehicles = new System.Windows.Forms.Label();
             this.lblVirtuals = new System.Windows.Forms.Label();
             this.lblVigiBounty = new System.Windows.Forms.Label();
-            this.lblCivTime = new System.Windows.Forms.Label();
             this.lblMedicRank = new System.Windows.Forms.Label();
             this.lblCopRank = new System.Windows.Forms.Label();
             this.lblGang = new System.Windows.Forms.Label();
@@ -316,7 +315,6 @@ namespace TrackerClient
             this.tpInfo.Controls.Add(this.lblVehicles);
             this.tpInfo.Controls.Add(this.lblVirtuals);
             this.tpInfo.Controls.Add(this.lblVigiBounty);
-            this.tpInfo.Controls.Add(this.lblCivTime);
             this.tpInfo.Controls.Add(this.lblMedicRank);
             this.tpInfo.Controls.Add(this.lblCopRank);
             this.tpInfo.Controls.Add(this.lblGang);
@@ -430,7 +428,7 @@ namespace TrackerClient
             // lblLocation
             // 
             this.lblLocation.AutoSize = true;
-            this.lblLocation.Location = new System.Drawing.Point(220, 108);
+            this.lblLocation.Location = new System.Drawing.Point(220, 84);
             this.lblLocation.Name = "lblLocation";
             this.lblLocation.Size = new System.Drawing.Size(46, 13);
             this.lblLocation.TabIndex = 88;
@@ -490,15 +488,6 @@ namespace TrackerClient
             this.lblVigiBounty.TabIndex = 79;
             this.lblVigiBounty.Text = "Bounty Collected:";
             // 
-            // lblCivTime
-            // 
-            this.lblCivTime.AutoSize = true;
-            this.lblCivTime.Location = new System.Drawing.Point(19, 108);
-            this.lblCivTime.Name = "lblCivTime";
-            this.lblCivTime.Size = new System.Drawing.Size(51, 13);
-            this.lblCivTime.TabIndex = 77;
-            this.lblCivTime.Text = "Civ Time:";
-            // 
             // lblMedicRank
             // 
             this.lblMedicRank.AutoSize = true;
@@ -511,7 +500,7 @@ namespace TrackerClient
             // lblCopRank
             // 
             this.lblCopRank.AutoSize = true;
-            this.lblCopRank.Location = new System.Drawing.Point(205, 135);
+            this.lblCopRank.Location = new System.Drawing.Point(9, 108);
             this.lblCopRank.Name = "lblCopRank";
             this.lblCopRank.Size = new System.Drawing.Size(61, 13);
             this.lblCopRank.TabIndex = 74;
@@ -913,7 +902,6 @@ namespace TrackerClient
         private System.Windows.Forms.Label lblVehicles;
         private System.Windows.Forms.Label lblVirtuals;
         private System.Windows.Forms.Label lblVigiBounty;
-        private System.Windows.Forms.Label lblCivTime;
         private System.Windows.Forms.Label lblMedicRank;
         private System.Windows.Forms.Label lblCopRank;
         private System.Windows.Forms.Label lblGang;
