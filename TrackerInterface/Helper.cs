@@ -143,99 +143,104 @@ namespace TrackerInterface
             /*HQ*/
             locations.Add(new Location { X = 14166.5F, Y = 16267.8F, Name = "Air HQ", Color = Color.Blue });
             locations.Add(new Location { X = 3268.08F, Y = 12968.4F, Name = "Kavala HQ", Color = Color.Blue });
-            locations.Add(new Location { X = 13824.8F, Y = 18969F, Name = "Athira HQ", Color = Color.Blue });
-            locations.Add(new Location { X = 12409.6F, Y = 14093.9F, Name = "Neochori HQ", Color = Color.Blue });
+            locations.Add(new Location { X = 13797.1F, Y = 18947.6F, Name = "Athira HQ", Color = Color.Blue });
+            locations.Add(new Location { X = 12436.5F, Y = 14128.8F, Name = "Neochori HQ", Color = Color.Blue });
             locations.Add(new Location { X = 17416.9F, Y = 13177.4F, Name = "Pyrgos HQ", Color = Color.Blue });
 
             /*Hospitals*/
-            locations.Add(new Location { X = 3771.83F, Y = 12985.1F, Name = "Hospital", Color = Color.Pink });
+            locations.Add(new Location { X = 3743.86F, Y = 13002.1F, Name = "Hospital", Color = Color.Pink });
             locations.Add(new Location { X = 15231.5F, Y = 17198.3F, Name = "Hospital", Color = Color.Pink });
-            locations.Add(new Location { X = 17522.8F, Y = 13287.8F, Name = "Hospital", Color = Color.Pink });
-            locations.Add(new Location { X = 25322F, Y = 20964.6F, Name = "Hospital", Color = Color.Pink });
+            locations.Add(new Location { X = 16951.7F, Y = 12108.6F, Name = "Hospital", Color = Color.Pink });
+            locations.Add(new Location { X = 25322.9F, Y = 20997F, Name = "Hospital", Color = Color.Pink });
+
+            /*Dealers*/
+            locations.Add(new Location { X = 15170.8F, Y = 18684.4F, Name = "Drug Dealer", Color = Color.Red });
+            locations.Add(new Location { X = 12401.5F, Y = 14822.7F, Name = "Drug Dealer", Color = Color.Red });
+            locations.Add(new Location { X = 17413.6F, Y = 12129.8F, Name = "Drug Dealer", Color = Color.Red });
+            locations.Add(new Location { X = 27858.6F, Y = 21646.3F, Name = "Drug Dealer", Color = Color.Red });
+            locations.Add(new Location { X = 3265.43F, Y = 14118.1F, Name = "Drug Dealer", Color = Color.Red });
+
+            locations.Add(new Location { X = 3550.69F, Y = 14003.1F, Name = "Turtle Dealer", Color = Color.Red });
+            locations.Add(new Location { X = 16405.5F, Y = 12683.6F, Name = "Turtle Dealer", Color = Color.Red });
 
             /*Black Markets*/
-            locations.Add(new Location { X = 11693.3F, Y = 15915.6F, Name = "Black Market", Color = Color.Red });
-            locations.Add(new Location { X = 4987.7F, Y = 14552F, Name = "Black Market", Color = Color.Red });
-            locations.Add(new Location { X = 18399.6F, Y = 15280.7F, Name = "Black Market", Color = Color.Red });
+            locations.Add(new Location { X = 5238.88F, Y = 14790.7F, Name = "Black Market", Color = Color.Red });
+            locations.Add(new Location { X = 18398.7F, Y = 15284.9F, Name = "Black Market", Color = Color.Red });
+            locations.Add(new Location { X = 11802.2F, Y = 16503.3F, Name = "Black Market", Color = Color.Red });
 
             /*Rebels */
             locations.Add(new Location { X = 8312.86F, Y = 10067.1F, Name = "Rebel Outpost", Color = Color.Red });
-            locations.Add(new Location { X = 15104F, Y = 22619.2F, Name = "Rebel Outpost", Color = Color.Red });
-            locations.Add(new Location { X = 21841.4F, Y = 8386.78F, Name = "Rebel Outpost", Color = Color.Red });
-            locations.Add(new Location { X = 27648.8F, Y = 23613.2F, Name = "Rebel Outpost", Color = Color.Red });
+            locations.Add(new Location { X = 27648.3F, Y = 23612.8F, Name = "Rebel Outpost", Color = Color.Red });
+            locations.Add(new Location { X = 14191F, Y = 21230.8F, Name = "Rebel Outpost", Color = Color.Red });
+            locations.Add(new Location { X = 12291.4F, Y = 8864.7F, Name = "Rebel Outpost", Color = Color.Red });
+            locations.Add(new Location { X = 10253.6F, Y = 10368.1F, Name = "Rebel Outpost", Color = Color.Red });
+            locations.Add(new Location { X = 21861.5F, Y = 10971.5F, Name = "Rebel Outpost", Color = Color.Red });
             /*Rebels BS*/
-            locations.Add(new Location { X = 27648.8F, Y = 23613.2F, Name = "Rebel Boat Shop", Color = Color.Red });
+            //locations.Add(new Location { X = 27648.8F, Y = 23613.2F, Name = "Rebel Boat Shop", Color = Color.Red });
 
             /*Fields*/
-            locations.Add(new Location { X = 19873F, Y = 17062.1F, Name = "Heroin Field", Color = Color.Red });
-            locations.Add(new Location { X = 6210.05F, Y = 16852.6F, Name = "Weed Field", Color = Color.Red });
-            locations.Add(new Location { X = 11489.9F, Y = 19568.6F, Name = "Cocaine Field", Color = Color.Red });
-            locations.Add(new Location { X = 12339.7F, Y = 22373.4F, Name = "Ephedra Field", Color = Color.Red });
-            locations.Add(new Location { X = 8064.69F, Y = 22530.1F, Name = "Phosphorus Field", Color = Color.Red });
+            locations.Add(new Location { X = 19724.9F, Y = 17009.5F, Name = "Heroin Field", Color = Color.Red });
+            locations.Add(new Location { X = 6209.9F, Y = 16852.7F, Name = "Weed Field", Color = Color.Red });
+            locations.Add(new Location { X = 8560, Y = 19125.6F, Name = "Cocaine Field", Color = Color.Red });
+            locations.Add(new Location { X = 13012.6F, Y = 22375.9F, Name = "Ephedra Field", Color = Color.Red });
+            locations.Add(new Location { X = 8064.59F, Y = 22529.9F, Name = "Phosphorus Field", Color = Color.Red });
             locations.Add(new Location { X = 18967.4F, Y = 12337.1F, Name = "Sugar Cane Field", Color = Color.Orange });
             locations.Add(new Location { X = 17564.8F, Y = 10272F, Name = "Yeast Field", Color = Color.Orange });
             locations.Add(new Location { X = 19654.9F, Y = 8093.64F, Name = "Corn Field", Color = Color.Orange });
-            locations.Add(new Location { X = 22400.1F, Y = 13921F, Name = "Cow Manure Field", Color = Color.Orange });
+            locations.Add(new Location { X = 25053.7F, Y = 18857.9F, Name = "Cow Manure Field", Color = Color.Orange });
 
             /*Processors*/
-            locations.Add(new Location { X = 9743.13F, Y = 19434.5F, Name = "Oil Processing", Color = Color.LightGreen });
-            locations.Add(new Location { X = 7855.42F, Y = 16127.6F, Name = "Copper Processing", Color = Color.LightGreen });
-            locations.Add(new Location { X = 17323.8F, Y = 17434.1F, Name = "Diamond Processing", Color = Color.LightGreen });
-            locations.Add(new Location { X = 5405.18F, Y = 17905.9F, Name = "Silver Processing", Color = Color.LightGreen });
-            locations.Add(new Location { X = 12575.1F, Y = 16381.2F, Name = "Sand Processing", Color = Color.LightGreen });
-            locations.Add(new Location { X = 12833.4F, Y = 15764, Name = "Iron Processing", Color = Color.LightGreen });
-            locations.Add(new Location { X = 25696.2F, Y = 23554.6F, Name = "Salt Processing", Color = Color.LightGreen });
-            locations.Add(new Location { X = 9357.22F, Y = 21150.7F, Name = "Platinum Processing", Color = Color.LightGreen });
-            locations.Add(new Location { X = 19028F, Y = 14565.9F, Name = "Rock Mixing", Color = Color.LightGreen });
-
-            locations.Add(new Location { X = 21257.4F, Y = 11032.1F, Name = "Heroin Processing", Color = Color.Red });
-            locations.Add(new Location { X = 8440.54F, Y = 12757.9F, Name = "Cocaine Processing", Color = Color.Red });
-            locations.Add(new Location { X = 24600F, Y = 23776.6F, Name = "Magic Mushroom Processing", Color = Color.Red });
-            locations.Add(new Location { X = 4202.2F, Y = 11266.7F, Name = "Weed Processing", Color = Color.Red });
-            locations.Add(new Location { X = 15407.2F, Y = 15883.5F, Name = "Frog Factory", Color = Color.Red });
+            locations.Add(new Location { X = 6034.12F, Y = 16186.7F, Name = "Oil Processing", Color = Color.LightGreen });
+            locations.Add(new Location { X = 5451.21F, Y = 14227.9F, Name = "Copper Processing", Color = Color.LightGreen });
+            locations.Add(new Location { X = 17327, Y = 17436.5F, Name = "Diamond Processing", Color = Color.LightGreen });
+            locations.Add(new Location { X = 16100F, Y = 21264.3F, Name = "Silver Processing", Color = Color.LightGreen });
+            locations.Add(new Location { X = 12543.6F, Y = 16306.3F, Name = "Sand Processing", Color = Color.LightGreen });
+            locations.Add(new Location { X = 10150.8F, Y = 15050.5F, Name = "Iron Processing", Color = Color.LightGreen });
+            locations.Add(new Location { X = 23226F, Y = 21854F, Name = "Salt Processing", Color = Color.LightGreen });
+            locations.Add(new Location { X = 7067.01F, Y = 11511.3F, Name = "Platinum Processing", Color = Color.LightGreen });
+            locations.Add(new Location { X = 19031.5F, Y = 14567.1F, Name = "Rock Processing", Color = Color.LightGreen });
+            locations.Add(new Location { X = 23935.7F, Y = 16076.1F, Name = "Heroin Processing", Color = Color.Red });
+            locations.Add(new Location { X = 5391.96F, Y = 17903.1F, Name = "Cocaine Processing", Color = Color.Red });
+            locations.Add(new Location { X = 24589.8F, Y = 23780.6F, Name = "Magic Mushroom Processing", Color = Color.Red });
+            locations.Add(new Location { X = 6453.96F, Y = 14668F, Name = "Weed Processing", Color = Color.Red });
+            locations.Add(new Location { X = 18787.9F, Y = 18207.7F, Name = "Frog Processing", Color = Color.Red });       
             locations.Add(new Location { X = 18700.7F, Y = 6444.88F, Name = "Moonshine Brewery", Color = Color.Red });
-            locations.Add(new Location { X = 5506.02F, Y = 19785.8F, Name = "Crystal Meth Lab", Color = Color.Red });
+            locations.Add(new Location { X = 5515.75F, Y = 19759F, Name = "Crystal Meth Lab", Color = Color.Red });
 
             /*Mines*/
-            locations.Add(new Location { X = 24541.3F, Y = 19252.3F, Name = "Salt Mine", Color = Color.SaddleBrown });
-            locations.Add(new Location { X = 24541.3F, Y = 19252.3F, Name = "Salt Mine", Color = Color.SaddleBrown });
-            locations.Add(new Location { X = 8136.89F, Y = 14452.2F, Name = "Copper Mine", Color = Color.SaddleBrown });
-            locations.Add(new Location { X = 18508F, Y = 14303.3F, Name = "Diamond Mine", Color = Color.SaddleBrown });
-            locations.Add(new Location { X = 3665.75F, Y = 19775.1F, Name = "Silver Mine", Color = Color.SaddleBrown });
-            locations.Add(new Location { X = 16560.9F, Y = 15538F, Name = "Sand Mine", Color = Color.SaddleBrown });
-            locations.Add(new Location { X = 10556.7F, Y = 21346.2F, Name = "Lithium Mine", Color = Color.SaddleBrown });
-            locations.Add(new Location { X = 4677.2F, Y = 21800.8F, Name = "Platinum Mine", Color = Color.SaddleBrown });
-            locations.Add(new Location { X = 7465.58F, Y = 13896.2F, Name = "Oil Tower", Color = Color.SaddleBrown });
-            locations.Add(new Location { X = 15515.8F, Y = 14492.5F, Name = "Oil Rig", Color = Color.SaddleBrown });
-            locations.Add(new Location { X = 17067.7F, Y = 11353.2F, Name = "Rock Quarry", Color = Color.SaddleBrown });
-            locations.Add(new Location { X = 8919.93F, Y = 15523.8F, Name = "Iron Collection", Color = Color.SaddleBrown });
+            locations.Add(new Location { X = 23559.4F, Y = 19351.2F, Name = "Salt Mine", Color = Color.MediumSeaGreen });
+            locations.Add(new Location { X = 5926.82F, Y = 12444.5F, Name = "Copper Mine", Color = Color.MediumSeaGreen });
+            locations.Add(new Location { X = 18508F, Y = 14303.3F, Name = "Diamond Mine", Color = Color.MediumSeaGreen });
+            locations.Add(new Location { X = 16010F, Y = 18160.5F, Name = "Silver Mine", Color = Color.MediumSeaGreen });
+            locations.Add(new Location { X = 14323.6F, Y = 15374.2F, Name = "Sand Mine", Color = Color.MediumSeaGreen });
+            locations.Add(new Location { X = 10551F, Y = 21346.7F, Name = "Lithium Mine", Color = Color.MediumSeaGreen });
+            locations.Add(new Location { X = 4511.84F, Y = 10521.2F, Name = "Platinum Mine", Color = Color.MediumSeaGreen });
+            locations.Add(new Location { X = 9264.14F, Y = 13852.7F, Name = "Oil Tower", Color = Color.MediumSeaGreen });
+            locations.Add(new Location { X = 17049.5F, Y = 11341.7F, Name = "Rock Mine", Color = Color.MediumSeaGreen });
+            locations.Add(new Location { X = 8924.56F, Y = 15525.4F, Name = "Iron Mine", Color = Color.MediumSeaGreen });
 
             /*Tutle Poaching*/
-            locations.Add(new Location { X = 14856.3F, Y = 12226.4F, Name = "Turtle Poaching", Color = Color.Red });
-            locations.Add(new Location { X = 1384.2F, Y = 10635.3F, Name = "Turtle Poaching", Color = Color.Red });
-            locations.Add(new Location { X = 14483.2F, Y = 9528.17F, Name = "Turtle Poaching", Color = Color.Red });
-            locations.Add(new Location { X = 3597.28F, Y = 8247.33F, Name = "Turtle Poaching", Color = Color.Red });
+            locations.Add(new Location { X = 1502.52F, Y = 11703.7F, Name = "Turtle Poaching", Color = Color.Red });
+            locations.Add(new Location { X = 13758.8F, Y = 11640.9F, Name = "Turtle Poaching", Color = Color.Red });
 
             /*Traders*/
-            locations.Add(new Location { X = 4243.81F, Y = 15026.6F, Name = "Copper Trader", Color = Color.Orange });
-            locations.Add(new Location { X = 19294.1F, Y = 16525.6F, Name = "Cement Trader", Color = Color.Orange });
-            locations.Add(new Location { X = 10249.8F, Y = 14863.5F, Name = "Glass Trader", Color = Color.Orange });
-            locations.Add(new Location { X = 21849.2F, Y = 20924.5F, Name = "Salt Trader", Color = Color.Orange });
-            locations.Add(new Location { X = 18371.8F, Y = 15566.4F, Name = "Iron Trader", Color = Color.Orange });
-            locations.Add(new Location { X = 6312.38F, Y = 16253.7F, Name = "Oil Trader", Color = Color.Orange });
-            locations.Add(new Location { X = 8564.91F, Y = 18169.7F, Name = "Platinum Trader", Color = Color.Orange });
-            locations.Add(new Location { X = 9559.76F, Y = 15647.6F, Name = "Silver Trader", Color = Color.Orange });
-            locations.Add(new Location { X = 9007.71F, Y = 16057.7F, Name = "Diamond Trader", Color = Color.Orange });
+            locations.Add(new Location { X = 4382.27F, Y = 12612.5F, Name = "Copper Trader", Color = Color.Orange });
+            locations.Add(new Location { X = 19293.8F, Y = 16525F, Name = "Cement Trader", Color = Color.Orange });
+            locations.Add(new Location { X = 12292.4F, Y = 14132.9F, Name = "Glass Trader", Color = Color.Orange });
+            locations.Add(new Location { X = 24561.1F, Y = 21081F, Name = "Salt Trader", Color = Color.Orange });
+            locations.Add(new Location { X = 12783F, Y = 15709.9F, Name = "Iron Trader", Color = Color.Orange });
+            locations.Add(new Location { X = 9009.23F, Y = 16076.9F, Name = "Oil Trader", Color = Color.Orange });
+            locations.Add(new Location { X = 10787.2F, Y = 12375.7F, Name = "Platinum Trader", Color = Color.Orange });
+            locations.Add(new Location { X = 13675.4F, Y = 18662.1F, Name = "Silver Trader", Color = Color.Orange });
+            locations.Add(new Location { X = 20858.6F, Y = 16876.2F, Name = "Diamond Trader", Color = Color.Orange });
+            locations.Add(new Location { X = 16682.8F, Y = 12449.6F, Name = "Salvage Trader", Color = Color.Orange });
+            locations.Add(new Location { X = 12659.8F, Y = 14205.1F, Name = "Salvage Trader", Color = Color.Orange });
+            locations.Add(new Location { X = 3443.57F, Y = 12660.9F, Name = "Salvage Trader", Color = Color.Orange });
             locations.Add(new Location { X = 17964.1F, Y = 18034.5F, Name = "Moonshine Distributor", Color = Color.Red });
+            locations.Add(new Location { X = 18839.3F, Y = 15617.1F, Name = "Gold Trader", Color = Color.Orange });
+            locations.Add(new Location { X = 18070.5F, Y = 19188.5F, Name = "Gold Trader", Color = Color.Orange });
+            locations.Add(new Location { X = 12553.8F, Y = 16421.1F, Name = "Gold Trader", Color = Color.Orange });
 
-            /*Dealers*/
-            locations.Add(new Location { X = 3594.42F, Y = 13829.7F, Name = "Drug Dealer", Color = Color.Red });
-            locations.Add(new Location { X = 14548.4F, Y = 18852.1F, Name = "Drug Dealer", Color = Color.Red });
-            locations.Add(new Location { X = 12642.4F, Y = 14629.4F, Name = "Drug Dealer", Color = Color.Red });
-            locations.Add(new Location { X = 17507.6F, Y = 12324.7F, Name = "Drug Dealer", Color = Color.Red });
-            locations.Add(new Location { X = 26363.7F, Y = 21128.1F, Name = "Drug Dealer", Color = Color.Red });
-            locations.Add(new Location { X = 2627.36F, Y = 9840F, Name = "Turtle Dealer", Color = Color.Red });
-            locations.Add(new Location { X = 15034.2F, Y = 11079F, Name = "Turtle Dealer", Color = Color.Red });
             return locations;
         }
         /// <summary>
