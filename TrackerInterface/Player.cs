@@ -32,9 +32,11 @@ namespace TrackerInterface
         [DataMember]
         //APD Cop Rank
         public int CopLevel { get; private set; }
+        public string CopRank { get; set; }
         [DataMember]
         //R&R Rank
         public int MedicLevel { get; private set; }
+        public string MedicRank { get; set; }
         [DataMember]
         //Sneaky Admin rank
         public int AdminLevel { get; private set; }
@@ -159,7 +161,67 @@ namespace TrackerInterface
             Deaths = deaths;
             MedicRevives = revives;
             CopArrest = arrests;
+            ParseLevel();
         }
+
+        private void ParseLevel()
+        {
+            switch (CopLevel)
+            {
+                case 0:
+                    CopRank = "N/A";
+                    break;
+                case 1:
+                    CopRank = "Derputy";
+                    break;
+                case 2:
+                    CopRank = "Patrol Officer";
+                    break;
+                case 3:
+                    CopRank = "Corporal";
+                    break;
+                case 4:
+                    CopRank = "Sergeant";
+                    break;
+                case 5:
+                    CopRank = "Lieutenant";
+                    break;
+                case 6:
+                    CopRank = "Dep. Chief";
+                    break;
+                case 7:
+                    CopRank = "Chief";
+                    break;
+            }
+            switch (MedicLevel)
+            {
+                case 0:
+                    MedicRank = "N/A";
+                    break;
+                case 1:
+                    MedicRank = "EMT";
+                    break;
+                case 2:
+                    MedicRank = "Basic Paramedic";
+                    break;
+                case 3:
+                    MedicRank = "Adv Paramedic";
+                    break;
+                case 4:
+                    MedicRank = "S && R";
+                    break;
+                case 5:
+                    MedicRank = "Supervisor";
+                    break;
+                case 6:
+                    MedicRank = "Coordinator";
+                    break;
+                case 7:
+                    MedicRank = "Director";
+                    break;
+            }
+        }
+
         /// <summary>
         /// Setup the player object in regards to player times
         /// </summary>        

@@ -500,11 +500,11 @@ namespace TrackerClient
             lblBounty.Text = $"Bounty: {p.BountyWanted:C}";
             lblKDR.Text =
                 $"K/D/R: {p.Kills}/{p.Deaths}/{Convert.ToDecimal(Convert.ToDecimal(p.Kills) / Convert.ToDecimal(p.Deaths)):0.##}";
-            lblCopRank.Text = $"APD Rank: {ParseRank(p.CopLevel, 0)}";
+            lblCopRank.Text = $"APD Rank: {p.CopRank}";
             lblGang.Text = $"Gang: {(p.GangName == "-1" ? "N/A" : p.GangName)}";
             lblBank.Text = $"Bank: {p.Bank:C}";
             lblVigiBounty.Text = $"Bounty Collected: {(p.BountyCollected == -1 ? 0 : p.BountyCollected):C}";
-            lblMedicRank.Text = $"R&R Rank: {ParseRank(p.MedicLevel, 1)}";
+            lblMedicRank.Text = $"R&R Rank: {p.MedicRank}";
             lblVest.Text = $"Vest: {(p.Equipment.Count == 0 ? "None" : p.Equipment[1])}";
             lblHelmet.Text = $"Helmet: {(p.Equipment.Count == 0 ? "None" : p.Equipment[4])}";
             lblGun.Text = $"Primary: {(p.Equipment.Count == 0 ? "None" : (p.Equipment[5]))}";
@@ -548,66 +548,6 @@ namespace TrackerClient
                 PlayerMap.pbMap_CenterPlayer(p.Location);
         }
 
-        private object ParseRank(int jobLevel, int job)
-        {
-            var position = "";
-            if (job == 0)
-            {
-                switch (jobLevel)
-                {
-                    case 0:
-                        position = "N/A";
-                        break;
-                    case 1:
-                        position = "Derputy";
-                        break;
-                    case 2:
-                        position = "Patrol Officer";
-                        break;
-                    case 3:
-                        position = "Corporal";
-                        break;
-                    case 4:
-                        position = "Sergeant";
-                        break;
-                    case 5:
-                        position = "Lieutenant";
-                        break;
-                    case 6:
-                        position = "Dep. Chief";
-                        break;
-                    case 7:
-                        position = "Chief of Police";
-                        break;
-                }
-            }
-            else
-            {
-                switch (jobLevel)
-                {
-                    case 0:
-                        position = "N/A";
-                        break;
-                    case 1:
-                        position = "EMT";
-                        break;
-                    case 2:
-                        position = "Paramedic";
-                        break;
-                    case 3:
-                        position = "S && R";
-                        break;
-                    case 4:
-                        position = "Air Responder";
-                        break;
-                    case 5:
-                        position = "Coordinator";
-                        break;
-                }
-
-            }
-            return position;
-        }
         /// <summary>
         /// Connects to the server and pulls player information
         /// </summary>
@@ -748,6 +688,10 @@ namespace TrackerClient
         /// <param name="e"></param>
         private void mapToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if(PlayerMap != null)
+            {
+                PlayerMap.Close();
+            }
             PlayerMap = new Map { Players = _onlinePlayers };
             PlayerMap.Show();
         }
