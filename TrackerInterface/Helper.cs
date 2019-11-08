@@ -236,7 +236,7 @@ namespace TrackerInterface
             locations.Add(new Location { X = 16682.8F, Y = 12449.6F, Name = "Salvage Trader", Color = Color.Orange });
             locations.Add(new Location { X = 12659.8F, Y = 14205.1F, Name = "Salvage Trader", Color = Color.Orange });
             locations.Add(new Location { X = 3443.57F, Y = 12660.9F, Name = "Salvage Trader", Color = Color.Orange });
-            locations.Add(new Location { X = 17964.1F, Y = 18034.5F, Name = "Moonshine Distributor", Color = Color.Red });
+            locations.Add(new Location { X = 22150.8F, Y = 13610.5F, Name = "Moonshine Distributor", Color = Color.Red });
             locations.Add(new Location { X = 18839.3F, Y = 15617.1F, Name = "Gold Trader", Color = Color.Orange });
             locations.Add(new Location { X = 18070.5F, Y = 19188.5F, Name = "Gold Trader", Color = Color.Orange });
             locations.Add(new Location { X = 12553.8F, Y = 16421.1F, Name = "Gold Trader", Color = Color.Orange });
