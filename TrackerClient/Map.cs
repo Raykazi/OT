@@ -8,9 +8,16 @@ namespace TrackerClient
 {
     public partial class Map : Form
     {
+
         internal List<Player> Players; //List of Players
         private Font _font = new Font("Tahoma", 7F, FontStyle.Regular); //Default font
         internal bool CanReset = false;
+        bool AltPressed = false;
+        double zoomMax = 250;
+        double zoomMin = 50;
+        double currentZoom = 100;
+        Bitmap map = Properties.Resources.Altis3;
+
         public Map()
         {
             InitializeComponent();
@@ -23,7 +30,58 @@ namespace TrackerClient
         private void Map_Load(object sender, EventArgs e)
         {
             CanReset = true;
+            pbMap.MouseWheel += PbMap_MouseWheel;
+
         }
+        private void Map_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Alt)
+            {
+                AltPressed = true;
+            }
+        }
+        private void Map_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Menu)
+            {
+                AltPressed = false;
+            }
+        }
+
+        private void PbMap_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (AltPressed)
+            {
+                ((HandledMouseEventArgs)e).Handled = true;
+            }
+            if(AltPressed)
+            {
+                if (e.Delta > 0)
+                {
+                    if (currentZoom <= (zoomMax - 5))
+                        currentZoom += 5;
+                }
+                else
+                {
+                    if (currentZoom >= (zoomMin + 5))
+                        currentZoom -= 5;
+                }
+                Text = currentZoom.ToString();
+                var original = Properties.Resources.Altis3;
+                var percent = currentZoom / 100;
+                var newSize = new Size((int)(original.Width * percent), (int)(original.Height * percent));
+                var picture = new Bitmap(original, newSize);
+                pbMap.Image = picture;
+                map = picture;
+                original.Dispose();
+                GC.Collect();
+                Point panelcenter = new Point((panel1.Width / 2), (panel1.Height / 2)); // find the centerpoint of the panel
+                Point offsetinpicturebox = new Point((pbMap.Location.X + e.X), (pbMap.Location.Y + e.Y)); // find the offset of the mouse click
+                Point offsetfromcenter = new Point((panelcenter.X - offsetinpicturebox.X), (panelcenter.Y - offsetinpicturebox.Y)); // find the difference between the mouse click and the center
+                panel1.AutoScrollPosition = new Point((Math.Abs(panel1.AutoScrollPosition.X) + (-1 * offsetfromcenter.X)), (Math.Abs(panel1.AutoScrollPosition.Y) + (-1 * offsetfromcenter.Y)));
+            }
+        }
+
         /// <summary>
         /// Draws map with online players and corresponding colors 
         /// </summary>
@@ -35,7 +93,7 @@ namespace TrackerClient
             if (CanReset == true)
             {
                 e.Graphics.Clear(Color.Transparent);
-                pbMap.Image = Properties.Resources.Altis3;
+                pbMap.Image = map;
             }
             Helper.PaintPoi(e, pbMap);
             try
@@ -59,6 +117,12 @@ namespace TrackerClient
                             break;
                         case 2:
                             mapColor = Color.Red;
+                            break;
+                        case 3:
+                            mapColor = Color.IndianRed;
+                            break;
+                        case 4:
+                            mapColor = Color.Black;
                             break;
                     }
                     e.Graphics.FillRectangle(new SolidBrush(mapColor), new RectangleF(new PointF(newCords[0], newCords[1]), new Size(4, 4)));
@@ -94,5 +158,6 @@ namespace TrackerClient
             Point offsetfromcenter = new Point((panelcenter.X - offsetinpicturebox.X), (panelcenter.Y - offsetinpicturebox.Y)); // find the difference between the mouse click and the center
             panel1.AutoScrollPosition = new Point((Math.Abs(panel1.AutoScrollPosition.X) + (-1 * offsetfromcenter.X)), (Math.Abs(panel1.AutoScrollPosition.Y) + (-1 * offsetfromcenter.Y)));
         }
+
     }
 }

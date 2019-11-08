@@ -83,6 +83,8 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Map";
             this.Load += new System.EventHandler(this.Map_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Map_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Map_KeyUp);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbMap)).EndInit();
