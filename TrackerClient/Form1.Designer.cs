@@ -99,7 +99,6 @@ namespace TrackerClient
             this.serverToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.server1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.server2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.server3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nud_RefreshTimer = new System.Windows.Forms.NumericUpDown();
@@ -754,8 +753,7 @@ namespace TrackerClient
             // 
             this.serverToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.server1ToolStripMenuItem,
-            this.server2ToolStripMenuItem,
-            this.server3ToolStripMenuItem});
+            this.server2ToolStripMenuItem});
             this.serverToolStripMenuItem.Name = "serverToolStripMenuItem";
             this.serverToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
             this.serverToolStripMenuItem.Text = "&Server";
@@ -765,23 +763,16 @@ namespace TrackerClient
             this.server1ToolStripMenuItem.Checked = true;
             this.server1ToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.server1ToolStripMenuItem.Name = "server1ToolStripMenuItem";
-            this.server1ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.server1ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.server1ToolStripMenuItem.Text = "Server #1";
             this.server1ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
             // 
             // server2ToolStripMenuItem
             // 
             this.server2ToolStripMenuItem.Name = "server2ToolStripMenuItem";
-            this.server2ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.server2ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.server2ToolStripMenuItem.Text = "Server #2";
             this.server2ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
-            // 
-            // server3ToolStripMenuItem
-            // 
-            this.server3ToolStripMenuItem.Name = "server3ToolStripMenuItem";
-            this.server3ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
-            this.server3ToolStripMenuItem.Text = "Server #3";
-            this.server3ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
             // 
             // mapToolStripMenuItem
             // 
@@ -886,7 +877,6 @@ namespace TrackerClient
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem server1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem server2ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem server3ToolStripMenuItem;
         private System.Windows.Forms.Panel pPlayerList;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tpInfo;

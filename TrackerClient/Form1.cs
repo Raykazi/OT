@@ -86,7 +86,7 @@ namespace TrackerClient
             switch (_sw.ElapsedMilliseconds)
             {
                 default:
-                    server1ToolStripMenuItem.Enabled = server2ToolStripMenuItem.Enabled = server3ToolStripMenuItem.Enabled = refreshToolStripMenuItem.Enabled = !_doingWork;
+                    server1ToolStripMenuItem.Enabled = server2ToolStripMenuItem.Enabled = refreshToolStripMenuItem.Enabled = !_doingWork;
                     if (_sw.IsRunning)
                     {
                         tsslStatus.Text =
