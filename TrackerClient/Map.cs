@@ -21,6 +21,10 @@ namespace TrackerClient
         public Map()
         {
             InitializeComponent();
+            SetStyle(ControlStyles.ResizeRedraw, true);
+            SetStyle(ControlStyles.UserPaint, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
         }
         /// <summary>
         /// Event to handle after main form loads
