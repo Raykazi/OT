@@ -176,6 +176,7 @@ namespace TrackerClient
             this.lbPlayersAll.Name = "lbPlayersAll";
             this.lbPlayersAll.Size = new System.Drawing.Size(160, 462);
             this.lbPlayersAll.TabIndex = 35;
+            this.lbPlayersAll.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lbPlayersAll_MouseClick);
             this.lbPlayersAll.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
             this.lbPlayersAll.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
             this.lbPlayersAll.MouseEnter += new System.EventHandler(this.ListBox_MouseEnter);
@@ -522,6 +523,8 @@ namespace TrackerClient
             this.lblName.Size = new System.Drawing.Size(38, 13);
             this.lblName.TabIndex = 68;
             this.lblName.Text = "Name:";
+            this.lblName.Click += new System.EventHandler(this.lblName_Click);
+            this.lblName.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lblName_MouseClick);
             // 
             // lblAliases
             // 
@@ -763,14 +766,14 @@ namespace TrackerClient
             this.server1ToolStripMenuItem.Checked = true;
             this.server1ToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.server1ToolStripMenuItem.Name = "server1ToolStripMenuItem";
-            this.server1ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.server1ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.server1ToolStripMenuItem.Text = "Server #1";
             this.server1ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
             // 
             // server2ToolStripMenuItem
             // 
             this.server2ToolStripMenuItem.Name = "server2ToolStripMenuItem";
-            this.server2ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.server2ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.server2ToolStripMenuItem.Text = "Server #2";
             this.server2ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
             // 

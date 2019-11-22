@@ -607,7 +607,7 @@ namespace TrackerClient
             var aliases = "";
             aliases = JToken.Parse(Helper.ToJson(row["aliases"].ToString())).Aggregate(aliases, (current, pAlias) => current + (pAlias + ";"));
             Player p = new Player(uid, steamID, name, aliases, gangName, gangRank, lastActive.ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)row["coordinates"], (string)row["last_side"]);
-            DataTable player_vehicles = _db.ExecuteReaderDT($"SELECT * FROM vehicles WHERE `pid` = '{p.SteamId}' AND `side` = '{p.Faction}' AND `active` = '{serverNum}' AND `alive` = '1' ORDER BY  active DESC, type");
+            DataTable player_vehicles = _db.ExecuteReaderDT($"SELECT * FROM vehicles WHERE `pid` = '{p.SteamId}' AND `side` = '{p.Faction}' AND `active` > 0  AND `alive` = '1' ORDER BY  active DESC, type");
             p.AddMoney((int)row["cash"], (int)row["bankacc"], 0, bounty);
             p.AddStats(coplvl, medlvl, admlvl, donlvl, kills, deaths, revives, arrests);
             string gear = "";
@@ -783,6 +783,21 @@ namespace TrackerClient
         {
             NumericUpDown refreshTime = (NumericUpDown)sender;
             RefreshTime = Convert.ToInt32(refreshTime.Value) * 1000;
+        }
+
+        private void lblName_MouseClick(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void lbPlayersAll_MouseClick(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void lblName_Click(object sender, EventArgs e)
+        {            
+            Clipboard.SetText(_lastSelected.SteamId);
         }
     }
 }
