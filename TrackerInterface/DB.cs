@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using MySql.Data.MySqlClient;
 
 namespace TrackerInterface
@@ -97,6 +98,28 @@ namespace TrackerInterface
             _mCmd = null;
             CloseConnection();
             return mObject;
+        }
+        internal DataTable ExecuteReaderDT(string sql, params object[] args)
+        {
+            DataTable dataTable = new DataTable();
+            try
+            {
+                if (!OpenConnection()) return null;
+                MySqlCommand mCmd = new MySqlCommand(sql, _connection);
+                for (int i = 0; i < args.Length; i++)
+                    mCmd.Parameters.AddWithValue("?" + i, args[i]);
+                dataTable.Load(mCmd.ExecuteReader());
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine(string.Format("Error {1}: {0}", ex.Message, ex.ErrorCode));
+                dataTable = null;
+            }
+            finally
+            {
+                CloseConnection();
+            }
+            return dataTable;
         }
         internal List<string>[] ExecuteReader(string sql, params object[] args)
         {

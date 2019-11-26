@@ -737,6 +737,10 @@ namespace TrackerClient
             this.bwPlayerListRefresh.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwPlayerListRefresh_DoWork);
             this.bwPlayerListRefresh.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwPlayerListRefresh_RunWorkerCompleted);
             // 
+            // bwPlayerListFilter
+            // 
+            this.bwPlayerListFilter.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwPlayerListFilter_DoWork);
+            // 
             // menuStrip
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -763,14 +767,14 @@ namespace TrackerClient
             this.server1ToolStripMenuItem.Checked = true;
             this.server1ToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.server1ToolStripMenuItem.Name = "server1ToolStripMenuItem";
-            this.server1ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.server1ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.server1ToolStripMenuItem.Text = "Server #1";
             this.server1ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
             // 
             // server2ToolStripMenuItem
             // 
             this.server2ToolStripMenuItem.Name = "server2ToolStripMenuItem";
-            this.server2ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.server2ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.server2ToolStripMenuItem.Text = "Server #2";
             this.server2ToolStripMenuItem.Click += new System.EventHandler(this.serverToolStripMenuItem_Click);
             // 
@@ -881,6 +885,25 @@ namespace TrackerClient
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tpInfo;
         private System.Windows.Forms.TabPage tpHouses;
+        private System.Windows.Forms.ListBox lbHouses;
+        private System.Windows.Forms.ListView lvHVirtuals;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ListView lvHInventory;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.Panel panelHouses;
+        private System.Windows.Forms.Panel panelPictureBox;
+        internal System.Windows.Forms.PictureBox pbMap;
+        private System.Windows.Forms.TrackBar tbZoom;
+        private System.Windows.Forms.NumericUpDown nud_RefreshTimer;
+        private System.Windows.Forms.Label lblLauncher;
+        private System.Windows.Forms.Label lblSecondary;
+        private System.Windows.Forms.ListBox lbVehicles;
+        private System.Windows.Forms.Label lblVVirtuals;
+        private System.Windows.Forms.ListView lvVVirtuals;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
+        private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.ListView lvVirtualItems;
         private System.Windows.Forms.ColumnHeader chItem;
         private System.Windows.Forms.ColumnHeader chAmount;
@@ -901,25 +924,6 @@ namespace TrackerClient
         private System.Windows.Forms.Label lblBounty;
         private System.Windows.Forms.Label lblBank;
         private System.Windows.Forms.Label lblCash;
-        private System.Windows.Forms.ListBox lbHouses;
-        private System.Windows.Forms.ListView lvHVirtuals;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.ListView lvHInventory;
-        private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.ColumnHeader columnHeader4;
-        private System.Windows.Forms.Panel panelHouses;
-        private System.Windows.Forms.Panel panelPictureBox;
-        internal System.Windows.Forms.PictureBox pbMap;
-        private System.Windows.Forms.TrackBar tbZoom;
-        private System.Windows.Forms.Label lblVVirtuals;
-        private System.Windows.Forms.ListView lvVVirtuals;
-        private System.Windows.Forms.ColumnHeader columnHeader5;
-        private System.Windows.Forms.ColumnHeader columnHeader6;
-        private System.Windows.Forms.ListBox lbVehicles;
-        private System.Windows.Forms.NumericUpDown nud_RefreshTimer;
-        private System.Windows.Forms.Label lblLauncher;
-        private System.Windows.Forms.Label lblSecondary;
     }
 }
 

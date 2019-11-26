@@ -5,7 +5,6 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.ServiceModel;
 using System.Windows.Forms;
 using TrackerInterface;
 
@@ -139,38 +138,36 @@ namespace TrackerClient
                         if (!targetPlayers.Contains(p))
                             targetPlayers.Add(p);
                         p.TargetLevel = 0;
-                        vehicle.TargetLevel = 0;
                     }
                     foreach (var vehicle in from vehicle in p.Vehicles from watchVehicle in _watchListMiscVehicles where vehicle.Name.Contains(watchVehicle) && vehicle.Active >= 1 select vehicle)
                     {
                         if (!targetPlayers.Contains(p))
                             targetPlayers.Add(p);
                         p.TargetLevel = 3;
-                        vehicle.TargetLevel = 3;
                     }
-                    foreach (Vehicle v in p.Vehicles)
-                    {
-                        if (v.Inventory != null && v.Active == 1)
-                        {
-                            foreach (Item item in v.Inventory)
-                            {
-                                foreach (var watchItem in _watchListLegeals.Where(watchItem => watchItem == item.Name))
-                                {
-                                    if (!targetPlayers.Contains(p))
-                                        targetPlayers.Add(p);
-                                    p.TargetLevel = 1;
-                                    v.TargetLevel = 1;
-                                }
-                                foreach (var watchItem in _watchListIllegals.Where(watchItem => watchItem == item.Name))
-                                {
-                                    if (!targetPlayers.Contains(p))
-                                        targetPlayers.Add(p);
-                                    p.TargetLevel = 2;
-                                    v.TargetLevel = 2;
-                                }
-                            }
-                        }
-                    }
+                    //foreach (Vehicle v in p.Vehicles)
+                    //{
+                    //    if (v.Inventory != null && v.Active == 1)
+                    //    {
+                    //        foreach (Item item in v.Inventory)
+                    //        {
+                    //            foreach (var watchItem in _watchListLegeals.Where(watchItem => watchItem == item.Name))
+                    //            {
+                    //                if (!targetPlayers.Contains(p))
+                    //                    targetPlayers.Add(p);
+                    //                p.TargetLevel = 1;
+                    //                v.TargetLevel = 1;
+                    //            }
+                    //            foreach (var watchItem in _watchListIllegals.Where(watchItem => watchItem == item.Name))
+                    //            {
+                    //                if (!targetPlayers.Contains(p))
+                    //                    targetPlayers.Add(p);
+                    //                p.TargetLevel = 2;
+                    //                v.TargetLevel = 2;
+                    //            }
+                    //        }
+                    //    }
+                    //}
                 }
                 if (p.Virtuals != null)
                     foreach (var item in p.Virtuals)
@@ -605,8 +602,8 @@ namespace TrackerClient
                 bounty = (int)wanted[0];
 
             var aliases = "";
-            aliases = JToken.Parse(Helper.ToJson(row["aliases"].ToString())).Aggregate(aliases, (current, pAlias) => current + (pAlias + ";"));
-            Player p = new Player(uid, steamID, name, aliases, gangName, gangRank, lastActive.ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)row["coordinates"], (string)row["last_side"]);
+            aliases = row["aliases"].ToString();
+            Player p = new Player(uid, steamID, name, aliases, gangName, gangRank, lastActive.ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)row["coordinates"], (string)row["last_side"], row["bm_id"].ToString());
             DataTable player_vehicles = _db.ExecuteReaderDT($"SELECT * FROM vehicles WHERE `pid` = '{p.SteamId}' AND `side` = '{p.Faction}' AND `active` = '{serverNum}' AND `alive` = '1' ORDER BY  active DESC, type");
             p.AddMoney((int)row["cash"], (int)row["bankacc"], 0, bounty);
             p.AddStats(coplvl, medlvl, admlvl, donlvl, kills, deaths, revives, arrests);
@@ -783,6 +780,11 @@ namespace TrackerClient
         {
             NumericUpDown refreshTime = (NumericUpDown)sender;
             RefreshTime = Convert.ToInt32(refreshTime.Value) * 1000;
+        }
+
+        private void bwPlayerListFilter_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+
         }
     }
 }
