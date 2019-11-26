@@ -60,7 +60,6 @@ namespace TrackerFetcher
         {
             try
             {
-                //string where_clause = "";
 #if DEBUG
                 Db os_db = new Db("127.0.0.1", 3307, "lc_prod", "apistorage_web", "tzHdFBi!LIJ5&cmeezX3rlR5Jajgukg");
                 Db ot_db = new Db("157.230.200.22", 3306, "otdb", "otuser", "2016againlol");
@@ -69,18 +68,7 @@ namespace TrackerFetcher
                 Db ot_db = new Db("127.0.0.1", 3306, "otdb", "otuser", "2016againlol");
 #endif
 
-                //BM_Scraper scraper = new BM_Scraper(BMUrl[serverId - 1]);
-                //await scraper.ScrapeAsync();
-                //for (int i = 0; i < scraper.BMIDs.Count; i++)
-                //{
-                //    if (i != (scraper.BMIDs.Count - 1))
-                //        where_clause += $"bm_id = {scraper.BMIDs[i]} OR ";
-                //    else
-                //        where_clause += $"bm_id = {scraper.BMIDs[i]}";
-                //}
-                //string t = string.Format(player_query, where_clause);
                 string t = string.Format(player_query2, serverId);
-                //Console.WriteLine(t);
                 DataTable os_dt = os_db.ExecuteReaderDT(t);
                 if (os_dt == null) return;
                 int pip = 0;
@@ -94,7 +82,7 @@ namespace TrackerFetcher
                     int count = Convert.ToInt32(ot_db.ExecuteScalar($"SELECT COUNT(*) FROM players WHERE playerid = '{playerid}';"));
                     if (count == 0)
                     {
-                        string sql = $"INSERT INTO players (`uid`,`name`,`playerid`,`cash`,`bankacc`,`coplevel`,`cop_licenses`,`civ_licenses`,`med_licenses`,`cop_gear`,`med_gear`,`mediclevel`,`arrested`,`adminlevel`,`newdonor`,`donatorlvl`,`civ_gear`,`coordinates`,`player_stats`,`wanted`,`last_active`,`joined`,`last_side`,`last_server`,`newslevel`,`warpts`,`warkills`,`wardeaths`,`supportteam`,`vigiarrests`,`current_title`,`gangID`,`gangName`,`gangRank`, `aliases`) VALUES ('{row["uid"]}', '{row["name"]}', '{row["playerid"]}', '{row["cash"]}', '{row["bankacc"]}', '{row["coplevel"]}', '{row["cop_licenses"]}', '{row["civ_licenses"]}', '{row["med_licenses"]}', '{row["cop_gear"]}', '{row["med_gear"]}', '{row["mediclevel"]}', '{row["arrested"]}', '{row["aliases"]}', '{row["adminlevel"]}', '{row["newdonor"]}', '{row["donatorlvl"]}', '{row["civ_gear"]}', '{row["coordinates"]}', '{row["player_stats"]}', '{row["wanted"]}', '{((DateTime) row["last_active"]).ToString("yyyy-MM-dd HH:mm:ss")}', '{((DateTime) row["joined"]).ToString("yyyy-MM-dd HH:mm:ss")}', '{row["last_side"]}', '{row["last_server"]}', '{row["newslevel"]}', '{row["warpts"]}', '{row["warkills"]}', '{row["wardeaths"]}', '{row["supportteam"]}', '{row["vigiarrests"]}', '{row["current_title"]}', '{row["gangid"]}', '{row["gangname"]}', '{row["rank"]}', '{row["name"]};');";
+                        string sql = $"INSERT INTO players (`uid`,`name`,`playerid`,`cash`,`bankacc`,`coplevel`,`cop_licenses`,`civ_licenses`,`med_licenses`,`cop_gear`,`med_gear`,`mediclevel`,`arrested`,`adminlevel`,`newdonor`,`donatorlvl`,`civ_gear`,`coordinates`,`player_stats`,`wanted`,`last_active`,`joined`,`last_side`,`last_server`,`newslevel`,`warpts`,`warkills`,`wardeaths`,`supportteam`,`vigiarrests`,`current_title`,`gangID`,`gangName`,`gangRank`, `aliases`) VALUES ('{row["uid"]}', '{row["name"]}', '{row["playerid"]}', '{row["cash"]}', '{row["bankacc"]}', '{row["coplevel"]}', '{row["cop_licenses"]}', '{row["civ_licenses"]}', '{row["med_licenses"]}', '{row["cop_gear"]}', '{row["med_gear"]}', '{row["mediclevel"]}', '{row["arrested"]}', '{row["adminlevel"]}', '{row["newdonor"]}', '{row["donatorlvl"]}', '{row["civ_gear"]}', '{row["coordinates"]}', '{row["player_stats"]}', '{row["wanted"]}', '{((DateTime) row["last_active"]).ToString("yyyy-MM-dd HH:mm:ss")}', '{((DateTime) row["joined"]).ToString("yyyy-MM-dd HH:mm:ss")}', '{row["last_side"]}', '{row["last_server"]}', '{row["newslevel"]}', '{row["warpts"]}', '{row["warkills"]}', '{row["wardeaths"]}', '{row["supportteam"]}', '{row["vigiarrests"]}', '{row["current_title"]}', '{row["gangid"]}', '{row["gangname"]}', '{row["rank"]}', '{row["name"]};');";
                         results = ot_db.ExecuteNonQuery(sql);
                         _ = results > 0 ? pip++ : 0;
                     }
@@ -111,15 +99,6 @@ namespace TrackerFetcher
                     }
                     ot_db.ExecuteNonQuery(string.Format(vehicle_delete_query, playerid));
                     DataTable os_veh_dt = os_db.ExecuteReaderDT(string.Format(vehicle_query, playerid));
-                    //List<string>[] os_veh_results = os_db.ExecuteReader(string.Format(vehicle_query, playerid));
-                    //for (int c = 0; c < os_veh_results.Length; c++)
-                    //{
-                    //    for(int r = 0; r < os_veh_results[c].Count; r++)
-                    //    {
-                    //        ConsoleLog(os_veh_results[c][r]);
-
-                    //    }
-                    //}
                     foreach (DataRow row2 in os_veh_dt.Rows)
                     {
                         string sql = string.Format("INSERT INTO `vehicles` (id, pid, side, `type`, classname, alive, active, insured, modifications, inventory) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}');", row2["id"], row2["pid"], row2["side"], row2["type"], row2["classname"], Convert.ToInt32(row2["alive"]), Convert.ToInt32(row2["active"]), Convert.ToInt32(row2["insured"]), row2["modifications"], row2["inventory"]);

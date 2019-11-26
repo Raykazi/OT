@@ -742,7 +742,6 @@ namespace TrackerClient
             // 
             // bwPlayerListFilter
             // 
-            this.bwPlayerListFilter.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwPlayerListFilter_DoWork);
             // 
             // menuStrip
             // 
