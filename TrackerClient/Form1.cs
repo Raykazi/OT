@@ -5,7 +5,6 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.ServiceModel;
 using System.Windows.Forms;
 using TrackerInterface;
 
@@ -75,6 +74,8 @@ namespace TrackerClient
             timerPLRefresh.Enabled = true;
             timerPLRefresh.Start();
             pbMap.Image = Properties.Resources.Altis3;
+
+            _activeListbox = lbPlayersAll;
         }
         /// <summary>
         /// En/Disable buttons depending on Background worker status
@@ -107,6 +108,10 @@ namespace TrackerClient
                 if (bwPlayerListRefresh.IsBusy) return;
                 _doingWork = true;
                 tsslStatus.Text = @"Refreshing player list now.";
+                if (_activeListbox.SelectedValue != null)
+                {
+                    _lastSelected = (Player)_activeListbox.SelectedItem;
+                }
                 bwPlayerListRefresh.RunWorkerAsync();
                 _sw.Reset();
                 //for(int i = 0; i< lbPlayersAll.Items.Count; i++)
@@ -139,38 +144,36 @@ namespace TrackerClient
                         if (!targetPlayers.Contains(p))
                             targetPlayers.Add(p);
                         p.TargetLevel = 0;
-                        vehicle.TargetLevel = 0;
                     }
                     foreach (var vehicle in from vehicle in p.Vehicles from watchVehicle in _watchListMiscVehicles where vehicle.Name.Contains(watchVehicle) && vehicle.Active >= 1 select vehicle)
                     {
                         if (!targetPlayers.Contains(p))
                             targetPlayers.Add(p);
                         p.TargetLevel = 3;
-                        vehicle.TargetLevel = 3;
                     }
-                    foreach (Vehicle v in p.Vehicles)
-                    {
-                        if (v.Inventory != null && v.Active == 1)
-                        {
-                            foreach (Item item in v.Inventory)
-                            {
-                                foreach (var watchItem in _watchListLegeals.Where(watchItem => watchItem == item.Name))
-                                {
-                                    if (!targetPlayers.Contains(p))
-                                        targetPlayers.Add(p);
-                                    p.TargetLevel = 1;
-                                    v.TargetLevel = 1;
-                                }
-                                foreach (var watchItem in _watchListIllegals.Where(watchItem => watchItem == item.Name))
-                                {
-                                    if (!targetPlayers.Contains(p))
-                                        targetPlayers.Add(p);
-                                    p.TargetLevel = 2;
-                                    v.TargetLevel = 2;
-                                }
-                            }
-                        }
-                    }
+                    //foreach (Vehicle v in p.Vehicles)
+                    //{
+                    //    if (v.Inventory != null && v.Active == 1)
+                    //    {
+                    //        foreach (Item item in v.Inventory)
+                    //        {
+                    //            foreach (var watchItem in _watchListLegeals.Where(watchItem => watchItem == item.Name))
+                    //            {
+                    //                if (!targetPlayers.Contains(p))
+                    //                    targetPlayers.Add(p);
+                    //                p.TargetLevel = 1;
+                    //                v.TargetLevel = 1;
+                    //            }
+                    //            foreach (var watchItem in _watchListIllegals.Where(watchItem => watchItem == item.Name))
+                    //            {
+                    //                if (!targetPlayers.Contains(p))
+                    //                    targetPlayers.Add(p);
+                    //                p.TargetLevel = 2;
+                    //                v.TargetLevel = 2;
+                    //            }
+                    //        }
+                    //    }
+                    //}
                 }
                 if (p.Virtuals != null)
                     foreach (var item in p.Virtuals)
@@ -235,7 +238,7 @@ namespace TrackerClient
                 }
                 if (lb.SelectedIndices.Count != 1) return;
                 var p = (Player)lb.SelectedValue;
-                _lastSelected = p;
+                //_lastSelected = p;
                 DisplayPlayer(p);
             }
             catch (Exception)
@@ -605,9 +608,15 @@ namespace TrackerClient
                 bounty = (int)wanted[0];
 
             var aliases = "";
+<<<<<<< HEAD
             aliases = JToken.Parse(Helper.ToJson(row["aliases"].ToString())).Aggregate(aliases, (current, pAlias) => current + (pAlias + ";"));
             Player p = new Player(uid, steamID, name, aliases, gangName, gangRank, lastActive.ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)row["coordinates"], (string)row["last_side"]);
             DataTable player_vehicles = _db.ExecuteReaderDT($"SELECT * FROM vehicles WHERE `pid` = '{p.SteamId}' AND `side` = '{p.Faction}' AND `active` > 0  AND `alive` = '1' ORDER BY  active DESC, type");
+=======
+            aliases = row["aliases"].ToString();
+            Player p = new Player(uid, steamID, name, aliases, gangName, gangRank, lastActive.ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)row["coordinates"], (string)row["last_side"], row["bm_id"].ToString());
+            DataTable player_vehicles = _db.ExecuteReaderDT($"SELECT * FROM vehicles WHERE `pid` = '{p.SteamId}' AND `side` = '{p.Faction}' AND `active` = '{serverNum}' AND `alive` = '1' ORDER BY  active DESC, type");
+>>>>>>> dev
             p.AddMoney((int)row["cash"], (int)row["bankacc"], 0, bounty);
             p.AddStats(coplvl, medlvl, admlvl, donlvl, kills, deaths, revives, arrests);
             string gear = "";
@@ -668,7 +677,14 @@ namespace TrackerClient
             BuildTargetList();
             if (_activeListbox == null)
                 _activeListbox = lbPlayersAll;
-            _activeListbox.SelectedItem = _lastSelected;
+            //_activeListbox.SelectedItem = _lastSelected;
+
+            for (int i = 0; i < _activeListbox.Items.Count; i++)
+            {
+                Player p = (Player)_activeListbox.Items[i];
+                if (_lastSelected == null || p.Name != _lastSelected.Name) continue;
+                _activeListbox.SelectedIndex = i;
+            }
 
         }
 
@@ -785,6 +801,7 @@ namespace TrackerClient
             RefreshTime = Convert.ToInt32(refreshTime.Value) * 1000;
         }
 
+<<<<<<< HEAD
         private void lblName_MouseClick(object sender, MouseEventArgs e)
         {
 
@@ -799,5 +816,11 @@ namespace TrackerClient
         {            
             Clipboard.SetText(_lastSelected.SteamId);
         }
+=======
+        private void bwPlayerListFilter_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+
+        }
+>>>>>>> dev
     }
 }

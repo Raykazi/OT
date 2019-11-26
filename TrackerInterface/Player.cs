@@ -17,6 +17,7 @@ namespace TrackerInterface
         [DataMember]
         //Olympus User ID
         public int Uid { get; private set; }
+        public string BMId { get; private set; }
         [DataMember]
         //Player Steam64 ID
         public string SteamId { get; private set; }
@@ -100,11 +101,11 @@ namespace TrackerInterface
         [DataMember]
         public int Server { get; set; } //Server 1 or 2
 
-        private readonly Db _db = new Db();
+        private static readonly Db _db = new Db();
         /// <summary>
         /// Constructor
         /// </summary>
-        public Player(int uid, string steamId, string name, string aliases, string gangN, int gangR, long lastActive, long lastUpdated, string location, string faction)
+        public Player(int uid, string steamId, string name, string aliases, string gangN, int gangR, long lastActive, long lastUpdated, string location, string faction, string bmId)
         {
             // Initialize Lists
             Houses = new List<House>();
@@ -128,6 +129,62 @@ namespace TrackerInterface
             //Parse Location into X,Y format
             Location = Helper.ParseLocation(location);
             Faction = faction;
+            BMId = bmId;
+        }
+        public static Player CreatePlayer(DataRow row, int serverNum)
+        {
+            int bounty = 0;
+            int uid = (int)row["uid"];
+            string steamID = (string)row["playerid"];
+            string name = (string)row["name"];
+            string gangName = (int)row["gangId"] == -1 ? "N/A" : (string)row["gangName"];
+            int gangRank = Convert.ToInt32(row["gangRank"]);
+            DateTime lastActive = Convert.ToDateTime(row["last_active"].ToString());
+            int coplvl = Convert.ToInt32(row["coplevel"]);
+            int medlvl = Convert.ToInt32(row["mediclevel"]);
+            int admlvl = Convert.ToInt32(row["adminlevel"]);
+            int donlvl = Convert.ToInt32(row["donatorlvl"]);
+
+            JArray stats = JArray.Parse(Helper.ToJson(row["player_stats"].ToString()));
+            int kills = (int)stats[0];
+            int deaths = (int)stats[1];
+            int revives = (int)stats[2];
+            int arrests = (int)stats[6];
+
+            JArray wanted = JArray.Parse(Helper.ToJson(row["wanted"].ToString()));
+            if (wanted.Count > 0)
+                bounty = (int)wanted[0];
+
+            var aliases = "";
+            aliases = JToken.Parse(Helper.ToJson(row["aliases"].ToString())).Aggregate(aliases, (current, pAlias) => current + (pAlias + ";"));
+            Player p = new Player(uid, steamID, name, aliases, gangName, gangRank, lastActive.ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)row["coordinates"], (string)row["last_side"], (string)row["bm_id"]);
+            DataTable player_vehicles = _db.ExecuteReaderDT($"SELECT * FROM vehicles WHERE `pid` = '{p.SteamId}' AND `side` = '{p.Faction}' AND `active` = '{serverNum}' AND `alive` = '1' ORDER BY  active DESC, type");
+            p.AddMoney((int)row["cash"], (int)row["bankacc"], 0, bounty);
+            p.AddStats(coplvl, medlvl, admlvl, donlvl, kills, deaths, revives, arrests);
+            string gear = "";
+            switch (p.Faction)
+            {
+                case "civ":
+                    gear = Helper.ToJson(row["civ_gear"].ToString());
+                    break;
+                case "cop":
+                    gear = Helper.ToJson(row["cop_gear"].ToString());
+                    break;
+                case "med":
+                    gear = Helper.ToJson(row["med_gear"].ToString());
+                    break;
+            }
+            p.AddGear(gear);
+            p.AddVehicles(player_vehicles);
+            //foreach (string item in p.Equipment)
+            //{
+            //    if (item.Contains("_") && !_debugListEqu.Contains(item))
+            //    {
+            //        _debugListEqu.Add(item);
+            //        //SetText($"{item}{Environment.NewLine}");
+            //    }
+            //}
+            return p;
         }
         /// <summary>
         /// Checks DB for an existing record, if one is found update if not create a record
