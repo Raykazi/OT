@@ -74,6 +74,8 @@ namespace TrackerClient
             timerPLRefresh.Enabled = true;
             timerPLRefresh.Start();
             pbMap.Image = Properties.Resources.Altis3;
+
+            _activeListbox = lbPlayersAll;
         }
         /// <summary>
         /// En/Disable buttons depending on Background worker status
@@ -106,6 +108,10 @@ namespace TrackerClient
                 if (bwPlayerListRefresh.IsBusy) return;
                 _doingWork = true;
                 tsslStatus.Text = @"Refreshing player list now.";
+                if (_activeListbox.SelectedValue != null)
+                {
+                    _lastSelected = (Player)_activeListbox.SelectedItem;
+                }
                 bwPlayerListRefresh.RunWorkerAsync();
                 _sw.Reset();
                 //for(int i = 0; i< lbPlayersAll.Items.Count; i++)
@@ -232,7 +238,7 @@ namespace TrackerClient
                 }
                 if (lb.SelectedIndices.Count != 1) return;
                 var p = (Player)lb.SelectedValue;
-                _lastSelected = p;
+                //_lastSelected = p;
                 DisplayPlayer(p);
             }
             catch (Exception)
@@ -665,7 +671,14 @@ namespace TrackerClient
             BuildTargetList();
             if (_activeListbox == null)
                 _activeListbox = lbPlayersAll;
-            _activeListbox.SelectedItem = _lastSelected;
+            //_activeListbox.SelectedItem = _lastSelected;
+
+            for (int i = 0; i < _activeListbox.Items.Count; i++)
+            {
+                Player p = (Player)_activeListbox.Items[i];
+                if (_lastSelected == null || p.Name != _lastSelected.Name) continue;
+                _activeListbox.SelectedIndex = i;
+            }
 
         }
 
