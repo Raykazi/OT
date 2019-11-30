@@ -514,11 +514,7 @@ namespace TrackerClient
             lblSecondary.Text = $"Secondary: {(p.Equipment.Count == 0 ? "None" : (p.Equipment[6]))}";
             lblLauncher.Text = $"Launcher: {(p.Equipment.Count == 0 ? "None" : (p.Equipment[7]))}";
             lblLocation.Text = p.Location.Length > 1 ? $"Last Seen @ X:{p.Location[0]} Y:{p.Location[1]}" : "Last Seen @ Unknown";
-            //foreach (var equip in p.Equipment.Where(equip => !_debugListEqu.Contains(equip) && equip.Length > 0))
-            //{
-            //    _debugListVeh.Add(equip);
-            //    rtbDebugEquipment.Text += $"{equip}{Environment.NewLine}";
-            //}
+
             foreach (var alias in p.Aliases)
             {
                 tbAliases.Text += $"{alias}{Environment.NewLine}";

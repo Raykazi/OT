@@ -79,10 +79,10 @@ namespace TrackerClient
                 map = picture;
                 original.Dispose();
                 GC.Collect();
-                Point panelcenter = new Point((panel1.Width / 2), (panel1.Height / 2)); // find the centerpoint of the panel
-                Point offsetinpicturebox = new Point((pbMap.Location.X + e.X), (pbMap.Location.Y + e.Y)); // find the offset of the mouse click
-                Point offsetfromcenter = new Point((panelcenter.X - offsetinpicturebox.X), (panelcenter.Y - offsetinpicturebox.Y)); // find the difference between the mouse click and the center
-                panel1.AutoScrollPosition = new Point((Math.Abs(panel1.AutoScrollPosition.X) + (-1 * offsetfromcenter.X)), (Math.Abs(panel1.AutoScrollPosition.Y) + (-1 * offsetfromcenter.Y)));
+                Point panelCenter = new Point((panel1.Width / 2), (panel1.Height / 2)); // find the centerpoint of the panel
+                Point pbOffset = new Point((pbMap.Location.X + e.X), (pbMap.Location.Y + e.Y)); // find the offset of the mouse click
+                Point centerOffset = new Point((panelCenter.X - pbOffset.X), (panelCenter.Y - pbOffset.Y)); // find the difference between the mouse click and the center
+                panel1.AutoScrollPosition = new Point((Math.Abs(panel1.AutoScrollPosition.X) + (-1 * centerOffset.X)), (Math.Abs(panel1.AutoScrollPosition.Y) + (-1 * centerOffset.Y)));
             }
         }
 
