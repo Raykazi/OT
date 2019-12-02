@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn3 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 0", "Item");
-            Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn4 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 1", "Amount");
+            Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn1 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 0", "Item");
+            Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn2 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 1", "Amount");
             this.rtVSDark = new Telerik.WinControls.Themes.VisualStudio2012DarkTheme();
             this.rpvMain = new Telerik.WinControls.UI.RadPageView();
             this.rpvpPlayers = new Telerik.WinControls.UI.RadPageViewPage();
@@ -202,13 +202,13 @@
             // rlvVirItems
             // 
             this.rlvVirItems.AllowColumnResize = false;
-            listViewDetailColumn3.HeaderText = "Item";
-            listViewDetailColumn3.Width = 100F;
-            listViewDetailColumn4.HeaderText = "Amount";
-            listViewDetailColumn4.Width = 50F;
+            listViewDetailColumn1.HeaderText = "Item";
+            listViewDetailColumn1.Width = 100F;
+            listViewDetailColumn2.HeaderText = "Amount";
+            listViewDetailColumn2.Width = 50F;
             this.rlvVirItems.Columns.AddRange(new Telerik.WinControls.UI.ListViewDetailColumn[] {
-            listViewDetailColumn3,
-            listViewDetailColumn4});
+            listViewDetailColumn1,
+            listViewDetailColumn2});
             this.rlvVirItems.HorizontalScrollState = Telerik.WinControls.UI.ScrollState.AlwaysHide;
             this.rlvVirItems.ItemSpacing = -1;
             this.rlvVirItems.Location = new System.Drawing.Point(188, 339);
@@ -523,6 +523,7 @@
             this.lbPlayersTargets.TabIndex = 0;
             this.lbPlayersTargets.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
             this.lbPlayersTargets.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
+            this.lbPlayersTargets.MouseEnter += new System.EventHandler(this.ListBox_MouseEnter);
             // 
             // rpvpHouses
             // 
@@ -589,7 +590,7 @@
             this.rtbRefresh.SmallTickFrequency = 5;
             this.radStatusStrip1.SetSpring(this.rtbRefresh, false);
             this.rtbRefresh.Text = "radTrackBarElement1";
-            this.rtbRefresh.ToolTipText = "radTrackBarElement1";
+            this.rtbRefresh.ToolTipText = "15";
             this.rtbRefresh.Value = 15F;
             this.rtbRefresh.ValueChanged += new System.EventHandler(this.rtbRefresh_ValueChanged);
             // 

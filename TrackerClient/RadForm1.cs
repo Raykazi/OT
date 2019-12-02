@@ -1,14 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using Newtonsoft.Json.Linq;
-using Telerik.WinControls;
 using Telerik.WinControls.UI;
 using TrackerInterface;
 
@@ -69,8 +67,8 @@ namespace TrackerClient
             InitializeComponent();
             timerMain.Enabled = true;
             timerMain.Start();
-            this.lbPlayersTargets.BackColor = lbPlayersAll.BackColor = rlvVirItems.BackColor = rlcVehicles.BackColor = rbtbAliases.BackColor = rtebVehicleInfo.BackColor = _defaultBgColor;
-            this.lbPlayersTargets.ForeColor = lbPlayersAll.ForeColor = Color.White;
+            lbPlayersTargets.BackColor = lbPlayersAll.BackColor = rlvVirItems.BackColor = rlcVehicles.BackColor = rbtbAliases.BackColor = rtebVehicleInfo.BackColor = _defaultBgColor;
+            lbPlayersTargets.ForeColor = lbPlayersAll.ForeColor = Color.White;
             pbMap.Image = Properties.Resources.Altis3;
             _activeListbox = lbPlayersAll;
             rtrbZoom.Value = 100;
@@ -487,6 +485,7 @@ namespace TrackerClient
         {
             Player p = (Player)_activeListbox.SelectedValue;
             string url = $"https://www.battlemetrics.com/players/{p.BMId}";
+            if (p.BMId == "0") return;
             var si = new ProcessStartInfo(url);
             Process.Start(si);
             lblBM.LinkVisited = true;
@@ -724,8 +723,8 @@ namespace TrackerClient
             map = picture;
             original.Dispose();
             GC.Collect();
-            if(_selectedPlayer != null)
-            pbMap_CenterPlayer(_selectedPlayer.Location);
+            if (_selectedPlayer != null && _selectedPlayer.Location.Length > 1)
+                pbMap_CenterPlayer(_selectedPlayer.Location);
             //Point panelCenter = new Point((rpMap.Width / 2), (rpMap.Height / 2)); // find the centerpoint of the panel
             //Point pbOffset = new Point((pbMap.Location.X + e.X), (pbMap.Location.Y + e.Y)); // find the offset of the mouse click
             //Point centerOffset = new Point((panelCenter.X - pbOffset.X), (panelCenter.Y - pbOffset.Y)); // find the difference between the mouse click and the center
