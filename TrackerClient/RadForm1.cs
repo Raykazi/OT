@@ -67,8 +67,8 @@ namespace TrackerClient
             InitializeComponent();
             timerMain.Enabled = true;
             timerMain.Start();
-            lbPlayersTargets.BackColor = lbPlayersAll.BackColor = rlvVirItems.BackColor = rlcVehicles.BackColor = rbtbAliases.BackColor = rtebVehicleInfo.BackColor = _defaultBgColor;
-            lbPlayersTargets.ForeColor = lbPlayersAll.ForeColor = Color.White;
+            lbPlayersWT.BackColor = lbPlayersVigi.BackColor = lbPlayersTargets.BackColor = lbPlayersAll.BackColor = rlvVirItems.BackColor = rlcVehicles.BackColor = rbtbAliases.BackColor = rtebVehicleInfo.BackColor = _defaultBgColor;
+            lbPlayersWT.ForeColor = lbPlayersVigi.ForeColor = lbPlayersTargets.ForeColor = lbPlayersAll.ForeColor = Color.White;
             pbMap.Image = Properties.Resources.Altis3;
             _activeListbox = lbPlayersAll;
             rtrbZoom.Value = 100;
@@ -170,8 +170,13 @@ namespace TrackerClient
         private void BuildTargetList()
         {
             var targetPlayers = new List<Player>();
+            var vigiPlayers = new List<Player>();
             foreach (var p in _onlinePlayers)
             {
+                if (p.BountyWanted > 90000)
+                {
+                    vigiPlayers.Add(p);
+                }
                 p.TargetLevel = -1;
                 if (p.Vehicles != null)
                 {
@@ -213,6 +218,10 @@ namespace TrackerClient
                         targetPlayers.Add(p);
                     }
             }
+
+            vigiPlayers = vigiPlayers.OrderBy(p => p.Name).ToList();
+            lbPlayersVigi.DataSource = vigiPlayers;
+            lbPlayersVigi.DisplayMember = "name";
             targetPlayers = targetPlayers.OrderBy(p => p.Name).ToList();
             lbPlayersTargets.DataSource = targetPlayers;
             lbPlayersTargets.DisplayMember = "name";
@@ -228,12 +237,15 @@ namespace TrackerClient
             var vehicles = new List<Vehicle>();
             rbtbAliases.Clear();
             rlvVirItems.Items.Clear();
+            decimal kdr = 0;
+            if (Convert.ToDecimal(p.Deaths) != 0)
+                kdr = Convert.ToDecimal(Convert.ToDecimal(p.Kills) / Convert.ToDecimal(p.Deaths));
 
             Text = p.Name;
             lblName.Text = $@"Name: {p.Name}";
             lblCash.Text = $@"Cash: {p.Cash:C}";
             lblBounty.Text = $@"Bounty: {p.BountyWanted:C}";
-            lblKDR.Text = $@"K/D/R: {p.Kills}/{p.Deaths}/{Convert.ToDecimal(Convert.ToDecimal(p.Kills) / Convert.ToDecimal(p.Deaths)):0.##}";
+            lblKDR.Text = $@"K/D/R: {p.Kills}/{p.Deaths}/{kdr:0.##}";
             lblCopRank.Text = $@"APD Rank: {p.CopRank}";
             lblGang.Text = $@"Gang: {(p.GangName == "-1" ? "N/A" : p.GangName)}";
             lblBank.Text = $@"Bank: {p.Bank:C}";
@@ -272,6 +284,8 @@ namespace TrackerClient
             rlcVehicles.DisplayMember = "name";
             if (p.Location.Length > 1 && p.Faction == "civ")
                 pbMap_CenterPlayer(p.Location);
+            if (PlayerMap != null && p.Location.Length > 1 && p.Faction == "civ")
+                PlayerMap.pbMap_CenterPlayer(p.Location);
         }
 
         private Player CreatePlayer(DataRow row, int serverNum)
@@ -728,6 +742,13 @@ namespace TrackerClient
             //Point panelCenter = new Point((rpMap.Width / 2), (rpMap.Height / 2)); // find the centerpoint of the panel
             //Point pbOffset = new Point((pbMap.Location.X + e.X), (pbMap.Location.Y + e.Y)); // find the offset of the mouse click
             //Point centerOffset = new Point((panelCenter.X - pbOffset.X), (panelCenter.Y - pbOffset.Y)); // find the difference between the mouse click and the center
+        }
+
+        private void rbMap_Click(object sender, EventArgs e)
+        {
+            PlayerMap?.Close();
+            PlayerMap = new Map { Players = _onlinePlayers };
+            PlayerMap.Show();
         }
     }
 }

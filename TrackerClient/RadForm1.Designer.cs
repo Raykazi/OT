@@ -68,6 +68,9 @@
             this.lbPlayersAll = new System.Windows.Forms.ListBox();
             this.rpvpTargets = new Telerik.WinControls.UI.RadPageViewPage();
             this.lbPlayersTargets = new System.Windows.Forms.ListBox();
+            this.rpvpVigiable = new Telerik.WinControls.UI.RadPageViewPage();
+            this.rpvpWarTargets = new Telerik.WinControls.UI.RadPageViewPage();
+            this.lbPlayersWT = new System.Windows.Forms.ListBox();
             this.rpvpHouses = new Telerik.WinControls.UI.RadPageViewPage();
             this.rpvpGangs = new Telerik.WinControls.UI.RadPageViewPage();
             this.rpBottom = new Telerik.WinControls.UI.RadPanel();
@@ -84,6 +87,7 @@
             this.timerMain = new System.Windows.Forms.Timer(this.components);
             this.bwPlayerTabRefresh = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
+            this.lbPlayersVigi = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.rpvMain)).BeginInit();
             this.rpvMain.SuspendLayout();
             this.rpvpPlayers.SuspendLayout();
@@ -103,6 +107,8 @@
             this.rpvPlayers.SuspendLayout();
             this.rpvpAll.SuspendLayout();
             this.rpvpTargets.SuspendLayout();
+            this.rpvpVigiable.SuspendLayout();
+            this.rpvpWarTargets.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.rpBottom)).BeginInit();
             this.rpBottom.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.radStatusStrip1)).BeginInit();
@@ -163,7 +169,7 @@
             // 
             this.lblBM.AutoSize = true;
             this.lblBM.LinkColor = System.Drawing.Color.White;
-            this.lblBM.Location = new System.Drawing.Point(352, 118);
+            this.lblBM.Location = new System.Drawing.Point(380, 118);
             this.lblBM.Name = "lblBM";
             this.lblBM.Size = new System.Drawing.Size(93, 13);
             this.lblBM.TabIndex = 125;
@@ -176,7 +182,7 @@
             // 
             this.lblSteamID.AutoSize = true;
             this.lblSteamID.LinkColor = System.Drawing.Color.White;
-            this.lblSteamID.Location = new System.Drawing.Point(175, 118);
+            this.lblSteamID.Location = new System.Drawing.Point(203, 118);
             this.lblSteamID.Name = "lblSteamID";
             this.lblSteamID.Size = new System.Drawing.Size(55, 13);
             this.lblSteamID.TabIndex = 124;
@@ -187,7 +193,7 @@
             // 
             // rtebVehicleInfo
             // 
-            this.rtebVehicleInfo.Location = new System.Drawing.Point(372, 339);
+            this.rtebVehicleInfo.Location = new System.Drawing.Point(383, 339);
             this.rtebVehicleInfo.Multiline = true;
             this.rtebVehicleInfo.Name = "rtebVehicleInfo";
             this.rtebVehicleInfo.ReadOnly = true;
@@ -211,7 +217,7 @@
             listViewDetailColumn2});
             this.rlvVirItems.HorizontalScrollState = Telerik.WinControls.UI.ScrollState.AlwaysHide;
             this.rlvVirItems.ItemSpacing = -1;
-            this.rlvVirItems.Location = new System.Drawing.Point(188, 339);
+            this.rlvVirItems.Location = new System.Drawing.Point(216, 339);
             this.rlvVirItems.Name = "rlvVirItems";
             this.rlvVirItems.Size = new System.Drawing.Size(155, 226);
             this.rlvVirItems.TabIndex = 120;
@@ -220,7 +226,7 @@
             // 
             // rlcVehicles
             // 
-            this.rlcVehicles.Location = new System.Drawing.Point(372, 169);
+            this.rlcVehicles.Location = new System.Drawing.Point(383, 169);
             this.rlcVehicles.Name = "rlcVehicles";
             this.rlcVehicles.Size = new System.Drawing.Size(160, 140);
             this.rlcVehicles.TabIndex = 119;
@@ -228,7 +234,7 @@
             // 
             // rbtbAliases
             // 
-            this.rbtbAliases.Location = new System.Drawing.Point(188, 169);
+            this.rbtbAliases.Location = new System.Drawing.Point(216, 169);
             this.rbtbAliases.Multiline = true;
             this.rbtbAliases.Name = "rbtbAliases";
             this.rbtbAliases.ReadOnly = true;
@@ -307,7 +313,7 @@
             // lblVVirtuals
             // 
             this.lblVVirtuals.AutoSize = true;
-            this.lblVVirtuals.Location = new System.Drawing.Point(369, 323);
+            this.lblVVirtuals.Location = new System.Drawing.Point(380, 323);
             this.lblVVirtuals.Name = "lblVVirtuals";
             this.lblVVirtuals.Size = new System.Drawing.Size(76, 13);
             this.lblVVirtuals.TabIndex = 115;
@@ -316,7 +322,7 @@
             // lblVehicles
             // 
             this.lblVehicles.AutoSize = true;
-            this.lblVehicles.Location = new System.Drawing.Point(369, 153);
+            this.lblVehicles.Location = new System.Drawing.Point(380, 153);
             this.lblVehicles.Name = "lblVehicles";
             this.lblVehicles.Size = new System.Drawing.Size(51, 13);
             this.lblVehicles.TabIndex = 113;
@@ -325,7 +331,7 @@
             // lblVirtuals
             // 
             this.lblVirtuals.AutoSize = true;
-            this.lblVirtuals.Location = new System.Drawing.Point(185, 323);
+            this.lblVirtuals.Location = new System.Drawing.Point(213, 323);
             this.lblVirtuals.Name = "lblVirtuals";
             this.lblVirtuals.Size = new System.Drawing.Size(37, 13);
             this.lblVirtuals.TabIndex = 111;
@@ -334,7 +340,7 @@
             // lblAliases
             // 
             this.lblAliases.AutoSize = true;
-            this.lblAliases.Location = new System.Drawing.Point(185, 153);
+            this.lblAliases.Location = new System.Drawing.Point(213, 153);
             this.lblAliases.Name = "lblAliases";
             this.lblAliases.Size = new System.Drawing.Size(45, 13);
             this.lblAliases.TabIndex = 110;
@@ -388,7 +394,7 @@
             // lblMedicRank
             // 
             this.lblMedicRank.AutoSize = true;
-            this.lblMedicRank.Location = new System.Drawing.Point(383, 92);
+            this.lblMedicRank.Location = new System.Drawing.Point(411, 92);
             this.lblMedicRank.Name = "lblMedicRank";
             this.lblMedicRank.Size = new System.Drawing.Size(62, 13);
             this.lblMedicRank.TabIndex = 101;
@@ -397,7 +403,7 @@
             // lblCopRank
             // 
             this.lblCopRank.AutoSize = true;
-            this.lblCopRank.Location = new System.Drawing.Point(170, 92);
+            this.lblCopRank.Location = new System.Drawing.Point(198, 92);
             this.lblCopRank.Name = "lblCopRank";
             this.lblCopRank.Size = new System.Drawing.Size(60, 13);
             this.lblCopRank.TabIndex = 100;
@@ -406,7 +412,7 @@
             // lblGang
             // 
             this.lblGang.AutoSize = true;
-            this.lblGang.Location = new System.Drawing.Point(407, 14);
+            this.lblGang.Location = new System.Drawing.Point(435, 14);
             this.lblGang.Name = "lblGang";
             this.lblGang.Size = new System.Drawing.Size(38, 13);
             this.lblGang.TabIndex = 99;
@@ -415,7 +421,7 @@
             // lblName
             // 
             this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(191, 14);
+            this.lblName.Location = new System.Drawing.Point(219, 14);
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(39, 13);
             this.lblName.TabIndex = 95;
@@ -424,7 +430,7 @@
             // lblKDR
             // 
             this.lblKDR.AutoSize = true;
-            this.lblKDR.Location = new System.Drawing.Point(403, 66);
+            this.lblKDR.Location = new System.Drawing.Point(431, 66);
             this.lblKDR.Name = "lblKDR";
             this.lblKDR.Size = new System.Drawing.Size(42, 13);
             this.lblKDR.TabIndex = 94;
@@ -433,7 +439,7 @@
             // lblBounty
             // 
             this.lblBounty.AutoSize = true;
-            this.lblBounty.Location = new System.Drawing.Point(184, 66);
+            this.lblBounty.Location = new System.Drawing.Point(212, 66);
             this.lblBounty.Name = "lblBounty";
             this.lblBounty.Size = new System.Drawing.Size(46, 13);
             this.lblBounty.TabIndex = 98;
@@ -442,7 +448,7 @@
             // lblBank
             // 
             this.lblBank.AutoSize = true;
-            this.lblBank.Location = new System.Drawing.Point(410, 40);
+            this.lblBank.Location = new System.Drawing.Point(438, 40);
             this.lblBank.Name = "lblBank";
             this.lblBank.Size = new System.Drawing.Size(35, 13);
             this.lblBank.TabIndex = 97;
@@ -451,7 +457,7 @@
             // lblCash
             // 
             this.lblCash.AutoSize = true;
-            this.lblCash.Location = new System.Drawing.Point(195, 40);
+            this.lblCash.Location = new System.Drawing.Point(223, 40);
             this.lblCash.Name = "lblCash";
             this.lblCash.Size = new System.Drawing.Size(35, 13);
             this.lblCash.TabIndex = 96;
@@ -463,7 +469,7 @@
             this.rpPlayerLeft.Dock = System.Windows.Forms.DockStyle.Left;
             this.rpPlayerLeft.Location = new System.Drawing.Point(0, 0);
             this.rpPlayerLeft.Name = "rpPlayerLeft";
-            this.rpPlayerLeft.Size = new System.Drawing.Size(164, 582);
+            this.rpPlayerLeft.Size = new System.Drawing.Size(192, 582);
             this.rpPlayerLeft.TabIndex = 0;
             this.rpPlayerLeft.ThemeName = "VisualStudio2012Dark";
             // 
@@ -471,12 +477,14 @@
             // 
             this.rpvPlayers.Controls.Add(this.rpvpAll);
             this.rpvPlayers.Controls.Add(this.rpvpTargets);
+            this.rpvPlayers.Controls.Add(this.rpvpVigiable);
+            this.rpvPlayers.Controls.Add(this.rpvpWarTargets);
             this.rpvPlayers.DefaultPage = this.rpvpAll;
             this.rpvPlayers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rpvPlayers.Location = new System.Drawing.Point(0, 0);
             this.rpvPlayers.Name = "rpvPlayers";
-            this.rpvPlayers.SelectedPage = this.rpvpAll;
-            this.rpvPlayers.Size = new System.Drawing.Size(164, 582);
+            this.rpvPlayers.SelectedPage = this.rpvpVigiable;
+            this.rpvPlayers.Size = new System.Drawing.Size(192, 582);
             this.rpvPlayers.TabIndex = 0;
             this.rpvPlayers.ThemeName = "VisualStudio2012Dark";
             ((Telerik.WinControls.UI.RadPageViewStripElement)(this.rpvPlayers.GetChildAt(0))).StripAlignment = Telerik.WinControls.UI.StripViewAlignment.Bottom;
@@ -487,7 +495,7 @@
             this.rpvpAll.ItemSize = new System.Drawing.SizeF(25F, 24F);
             this.rpvpAll.Location = new System.Drawing.Point(5, 5);
             this.rpvpAll.Name = "rpvpAll";
-            this.rpvpAll.Size = new System.Drawing.Size(154, 547);
+            this.rpvpAll.Size = new System.Drawing.Size(182, 547);
             this.rpvpAll.Text = "All";
             // 
             // lbPlayersAll
@@ -497,7 +505,7 @@
             this.lbPlayersAll.FormattingEnabled = true;
             this.lbPlayersAll.Location = new System.Drawing.Point(0, 0);
             this.lbPlayersAll.Name = "lbPlayersAll";
-            this.lbPlayersAll.Size = new System.Drawing.Size(154, 547);
+            this.lbPlayersAll.Size = new System.Drawing.Size(182, 547);
             this.lbPlayersAll.TabIndex = 1;
             this.lbPlayersAll.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
             this.lbPlayersAll.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
@@ -509,7 +517,7 @@
             this.rpvpTargets.ItemSize = new System.Drawing.SizeF(49F, 24F);
             this.rpvpTargets.Location = new System.Drawing.Point(5, 5);
             this.rpvpTargets.Name = "rpvpTargets";
-            this.rpvpTargets.Size = new System.Drawing.Size(154, 547);
+            this.rpvpTargets.Size = new System.Drawing.Size(182, 547);
             this.rpvpTargets.Text = "Targets";
             // 
             // lbPlayersTargets
@@ -519,11 +527,39 @@
             this.lbPlayersTargets.FormattingEnabled = true;
             this.lbPlayersTargets.Location = new System.Drawing.Point(0, 0);
             this.lbPlayersTargets.Name = "lbPlayersTargets";
-            this.lbPlayersTargets.Size = new System.Drawing.Size(154, 547);
+            this.lbPlayersTargets.Size = new System.Drawing.Size(182, 547);
             this.lbPlayersTargets.TabIndex = 0;
             this.lbPlayersTargets.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
             this.lbPlayersTargets.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
             this.lbPlayersTargets.MouseEnter += new System.EventHandler(this.ListBox_MouseEnter);
+            // 
+            // rpvpVigiable
+            // 
+            this.rpvpVigiable.Controls.Add(this.lbPlayersVigi);
+            this.rpvpVigiable.ItemSize = new System.Drawing.SizeF(31F, 24F);
+            this.rpvpVigiable.Location = new System.Drawing.Point(5, 5);
+            this.rpvpVigiable.Name = "rpvpVigiable";
+            this.rpvpVigiable.Size = new System.Drawing.Size(182, 547);
+            this.rpvpVigiable.Text = "Vigi";
+            // 
+            // rpvpWarTargets
+            // 
+            this.rpvpWarTargets.Controls.Add(this.lbPlayersWT);
+            this.rpvpWarTargets.ItemSize = new System.Drawing.SizeF(29F, 24F);
+            this.rpvpWarTargets.Location = new System.Drawing.Point(5, 5);
+            this.rpvpWarTargets.Name = "rpvpWarTargets";
+            this.rpvpWarTargets.Size = new System.Drawing.Size(182, 547);
+            this.rpvpWarTargets.Text = "WT";
+            // 
+            // lbPlayersWT
+            // 
+            this.lbPlayersWT.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbPlayersWT.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.lbPlayersWT.FormattingEnabled = true;
+            this.lbPlayersWT.Location = new System.Drawing.Point(0, 0);
+            this.lbPlayersWT.Name = "lbPlayersWT";
+            this.lbPlayersWT.Size = new System.Drawing.Size(182, 547);
+            this.lbPlayersWT.TabIndex = 2;
             // 
             // rpvpHouses
             // 
@@ -646,6 +682,7 @@
             this.rbMap.Name = "rbMap";
             this.radStatusStrip1.SetSpring(this.rbMap, false);
             this.rbMap.Text = "Map";
+            this.rbMap.Click += new System.EventHandler(this.rbMap_Click);
             // 
             // rpMain
             // 
@@ -667,6 +704,19 @@
             this.bwPlayerTabRefresh.WorkerReportsProgress = true;
             this.bwPlayerTabRefresh.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwPlayerTabRefresh_DoWork);
             this.bwPlayerTabRefresh.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwPlayerTabRefresh_RunWorkerCompleted);
+            // 
+            // lbPlayersVigi
+            // 
+            this.lbPlayersVigi.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbPlayersVigi.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.lbPlayersVigi.FormattingEnabled = true;
+            this.lbPlayersVigi.Location = new System.Drawing.Point(0, 0);
+            this.lbPlayersVigi.Name = "lbPlayersVigi";
+            this.lbPlayersVigi.Size = new System.Drawing.Size(182, 547);
+            this.lbPlayersVigi.TabIndex = 1;
+            this.lbPlayersVigi.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
+            this.lbPlayersVigi.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
+            this.lbPlayersVigi.MouseEnter += new System.EventHandler(this.ListBox_MouseEnter);
             // 
             // rfMain
             // 
@@ -705,6 +755,8 @@
             this.rpvPlayers.ResumeLayout(false);
             this.rpvpAll.ResumeLayout(false);
             this.rpvpTargets.ResumeLayout(false);
+            this.rpvpVigiable.ResumeLayout(false);
+            this.rpvpWarTargets.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.rpBottom)).EndInit();
             this.rpBottom.ResumeLayout(false);
             this.rpBottom.PerformLayout();
@@ -771,5 +823,9 @@
         private System.Windows.Forms.LinkLabel lblBM;
         private System.Windows.Forms.PictureBox pbMap;
         private Telerik.WinControls.UI.RadPanel rpMap;
+        private Telerik.WinControls.UI.RadPageViewPage rpvpVigiable;
+        private Telerik.WinControls.UI.RadPageViewPage rpvpWarTargets;
+        private System.Windows.Forms.ListBox lbPlayersWT;
+        private System.Windows.Forms.ListBox lbPlayersVigi;
     }
 }
