@@ -18,6 +18,10 @@ namespace TrackerClient
         double currentZoom = 100;
         Bitmap map = Properties.Resources.Altis3;
 
+        private int _xPos;
+        private int _yPos;
+        private bool _dragging;
+
         public Map()
         {
             InitializeComponent();
@@ -142,12 +146,6 @@ namespace TrackerClient
                 CanReset = false;
             }
         }
-        //TODO Will probably remove this
-        private void pbMap_MouseMove(object sender, MouseEventArgs e)
-        {
-            //Text = string.Format("Map X:{0} Y:{1} Size: {2},{3} ASP {4} {5}", e.X, e.Y, panel1.Size.Height, panel1.Size.Width, panel1.AutoScrollPosition.X, panel1.AutoScrollPosition.Y);
-
-        }
         /// <summary>
         /// Centers map on selected player location
         /// </summary>
@@ -161,6 +159,29 @@ namespace TrackerClient
             Point offsetinpicturebox = new Point((pbMap.Location.X + x), (pbMap.Location.Y + y)); // find the offset of the mouse click
             Point offsetfromcenter = new Point((panelcenter.X - offsetinpicturebox.X), (panelcenter.Y - offsetinpicturebox.Y)); // find the difference between the mouse click and the center
             panel1.AutoScrollPosition = new Point((Math.Abs(panel1.AutoScrollPosition.X) + (-1 * offsetfromcenter.X)), (Math.Abs(panel1.AutoScrollPosition.Y) + (-1 * offsetfromcenter.Y)));
+        }
+        private void pbMap_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Left) return;
+            _dragging = true;
+            _xPos = e.X;
+            _yPos = e.Y;
+        }
+
+        private void pbMap_MouseUp(object sender, MouseEventArgs e)
+        {
+            var c = sender as PictureBox;
+            if (null == c) return;
+            _dragging = false;
+        }
+
+        private void pbMap_MouseMove(object sender, MouseEventArgs e)
+        {
+            var c = sender as PictureBox;
+            if (!_dragging || null == c) return;
+            c.Top = e.Y + c.Top - _yPos;
+            c.Left = e.X + c.Left - _xPos;
+            GC.Collect();
         }
 
     }
