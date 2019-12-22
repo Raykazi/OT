@@ -90,6 +90,7 @@ namespace TrackerInterface
         public List<House> Houses { get; set; } //Thank you FeDot
         [DataMember]
         public List<string> Equipment { get; private set; }//String list with their physical equipment
+        public List<string> CivLicenses { get; private set; }
         [DataMember]
         public List<Item> Virtuals { get; private set; } //Custom item class for the palyers virtual items
         [DataMember]
@@ -112,6 +113,7 @@ namespace TrackerInterface
             Aliases = new List<string>();
             Equipment = new List<string>();
             Vehicles = new List<Vehicle>();
+            CivLicenses = new List<string>();
 
             //Setup player object with parameters from the calls
             Uid = uid;
@@ -176,14 +178,6 @@ namespace TrackerInterface
             }
             p.AddGear(gear);
             p.AddVehicles(player_vehicles);
-            //foreach (string item in p.Equipment)
-            //{
-            //    if (item.Contains("_") && !_debugListEqu.Contains(item))
-            //    {
-            //        _debugListEqu.Add(item);
-            //        //SetText($"{item}{Environment.NewLine}");
-            //    }
-            //}
             return p;
         }
         /// <summary>
@@ -238,15 +232,18 @@ namespace TrackerInterface
                     CopRank = "Corporal";
                     break;
                 case 4:
-                    CopRank = "Sergeant";
+                    CopRank = "Staff Sgt.";
                     break;
                 case 5:
-                    CopRank = "Lieutenant";
+                    CopRank = "Sergeant";
                     break;
                 case 6:
-                    CopRank = "Dep. Chief";
+                    CopRank = "Lieutenant";
                     break;
                 case 7:
+                    CopRank = "Dep. Chief";
+                    break;
+                case 8:
                     CopRank = "Chief";
                     break;
             }
@@ -301,6 +298,14 @@ namespace TrackerInterface
         /// <summary>
         /// Parse the JSON string regarding gear and inventory
         /// </summary>
+        public bool VigiGun { get; private set; }
+
+        private readonly List<string> VigiGuns = new List<string>()
+        {
+            "hgun_P07_F", "hgun_ACPC2_F", "SMG_02_F", "arifle_SPAR_01_snd_F" ,
+            "arifle_MX_Black_F","hgun_Pistol_heavy_02_F","hgun_Pistol_heavy_01_F","arifle_MX_GL_Black_F","arifle_MXM_Black_F",
+            "arifle_MX_SW_Black_F","srifle_DMR_03_F","srifle_DMR_02_F","arifle_SPAR_01_GL_blk_F","arifle_SPAR_02_blk_F","arifle_SPAR_03_blk_F","arifle_ARX_blk_F","srifle_DMR_07_blk_F"
+        };
         public void AddGear(string gear)
         {
             if (gear.Length <= 2) return;
@@ -311,6 +316,8 @@ namespace TrackerInterface
             {
                 if (i < 5 || i > 5 && i < 9)
                 {
+                    if (VigiGuns.Contains(equipment[i].ToString()))
+                        VigiGun = true;
                     Equipment.Add(TranslateEquipment(equipment[i].ToString()));
                 }//Ammo
                 else
@@ -333,6 +340,19 @@ namespace TrackerInterface
                             break;
                     }
             }
+        }
+
+        public void AddLicenses(string licenses)
+        {
+            if (licenses.Length <= 2) return;
+            licenses = licenses.Insert(0, "{\"licenses\": ");
+            licenses += "}";
+            var licenseJa = JArray.Parse(JObject.Parse(licenses)["licenses"].ToString());
+            foreach (var license in licenseJa)
+            {
+                CivLicenses.Add(license[0].ToString());
+            }
+
         }
         public void AddVehicles(DataTable data)
         {

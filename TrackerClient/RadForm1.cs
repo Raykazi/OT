@@ -211,12 +211,11 @@ namespace TrackerClient
                             p.TargetLevel = 2;
                         }
                     }
-                if (p.Equipment.Count >= 8)
-                    if (p.Equipment[7].Contains("Titan"))
-                    {
-                        p.TargetLevel = 4;
-                        targetPlayers.Add(p);
-                    }
+
+                if (p.Equipment.Count < 8) continue;
+                if (!p.Equipment[7].Contains("Titan")) continue;
+                p.TargetLevel = 4;
+                targetPlayers.Add(p);
             }
 
             vigiPlayers = vigiPlayers.OrderBy(p => p.Name).ToList();
@@ -301,6 +300,7 @@ namespace TrackerClient
             int medlvl = Convert.ToInt32(row["mediclevel"]);
             int admlvl = Convert.ToInt32(row["adminlevel"]);
             int donlvl = Convert.ToInt32(row["donatorlvl"]);
+            
 
             JArray stats = JArray.Parse(Helper.ToJson(row["player_stats"].ToString()));
             int kills = (int)stats[0];
@@ -319,6 +319,7 @@ namespace TrackerClient
             p.AddMoney((int)row["cash"], (int)row["bankacc"], 0, bounty);
             p.AddStats(coplvl, medlvl, admlvl, donlvl, kills, deaths, revives, arrests);
             string gear = "";
+            string licensese = Helper.ToJson(row["civ_licenses"].ToString());
             switch (p.Faction)
             {
                 case "civ":
@@ -333,6 +334,8 @@ namespace TrackerClient
             }
             p.AddGear(gear);
             p.AddVehicles(player_vehicles);
+            p.AddLicenses(licensese);
+            
             foreach (string item in p.Equipment)
             {
                 if (item.Contains("_") && !_debugListEqu.Contains(item))
@@ -368,6 +371,10 @@ namespace TrackerClient
             Player p = (Player)lb.Items[e.Index];
             var selected = ((e.State & DrawItemState.Selected) == DrawItemState.Selected);
             var text = p.AdminLevel == 0 ? p.Name : p.Name.Insert(p.Name.Length, $" [{p.Faction.ToUpper()}] ({p.AdminLevel})");
+            if (p.CivLicenses.Contains("license_civ_vigilante") && p.Faction.ToUpper() == "CIV" && p.VigiGun)
+            {
+                text = text.Insert(p.Name.Length, " [VIGI]");
+            }
             Color textColor = Color.White;
             Color backColor = new Color();
             if (p.AdminLevel > 0)
