@@ -350,7 +350,8 @@ namespace TrackerInterface
             var licenseJa = JArray.Parse(JObject.Parse(licenses)["licenses"].ToString());
             foreach (var license in licenseJa)
             {
-                CivLicenses.Add(license[0].ToString());
+                if (license[1].ToString() == "1")
+                    CivLicenses.Add(license[0].ToString());
             }
 
         }

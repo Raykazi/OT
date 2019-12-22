@@ -371,7 +371,7 @@ namespace TrackerClient
             Player p = (Player)lb.Items[e.Index];
             var selected = ((e.State & DrawItemState.Selected) == DrawItemState.Selected);
             var text = p.AdminLevel == 0 ? p.Name : p.Name.Insert(p.Name.Length, $" [{p.Faction.ToUpper()}] ({p.AdminLevel})");
-            if (p.CivLicenses.Contains("license_civ_vigilante") && p.Faction.ToUpper() == "CIV" && p.VigiGun)
+            if (p.CivLicenses.Contains("license_civ_vigilante") && p.Faction.ToUpper() == "CIV")
             {
                 text = text.Insert(p.Name.Length, " [VIGI]");
             }
