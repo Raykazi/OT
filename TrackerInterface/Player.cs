@@ -102,6 +102,8 @@ namespace TrackerInterface
         [DataMember]
         public int Server { get; set; } //Server 1 or 2
 
+        public bool WarTarget { get; set; } = false;
+
         private static readonly Db _db = new Db();
         /// <summary>
         /// Constructor

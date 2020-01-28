@@ -12,7 +12,7 @@ using TrackerInterface;
 
 namespace TrackerClient
 {
-    public partial class rfMain : Telerik.WinControls.UI.RadForm
+    public partial class RfMain : RadForm
     {
         private readonly Db _db = new Db();
 
@@ -20,6 +20,7 @@ namespace TrackerClient
         List<Player> _onlinePlayers = new List<Player>();
         List<Player> _tmpOnlinePlayers = new List<Player>();
         List<string> _debugListEqu = new List<string>();
+        public static readonly List<Color> TargetColors = new List<Color> { Color.White, Color.Yellow, Color.DeepPink, Color.Red, Color.IndianRed, Color.Black };
 
         readonly Color _defaultBgColor = Color.FromArgb(255, 37, 37, 38);
         bool _doingWork = false; //Prevents starting a player pull while one is still active
@@ -30,10 +31,13 @@ namespace TrackerClient
         int RefreshTime = 15000;
         ListBox _activeListbox;
 
-
         internal Map PlayerMap; //Map object to pass to the Map form/user control
         internal bool CanReset = false;
         Bitmap map = Properties.Resources.Altis3;
+
+        private DataTable _dtDbGangWars;
+        private List<int> _gangWarId = new List<int>();
+
 
         private RadListControl _activeListControl;
 
@@ -54,7 +58,7 @@ namespace TrackerClient
             "cocaine",  "cocainep","crack","ccocaine",
             "heroinu","heroinp","pheroin",
             "frog", "frogp","acid",
-            "mushroomu","mmushroom","mmushroom", "mmushroomp",
+            "mushroomu","mmushroom","mmushroom", "mmushroomp","mushroom",
             "ephedra", "lithium", "phosphorus","crystalmeth","methu",
             "yeast", "sugar", "corn","moonshine",
             "goldbar", "moneybag" };
@@ -62,7 +66,7 @@ namespace TrackerClient
         readonly string[] _watchListRunVehicles = { "Van (Cargo)", "CH-67 Huron", "SDV", "HEMTT", "V-44 X Blackfish", "Truck", "CH-49 Mohawk", "Zamak", "Tempest", "Mi-290 Taru (Fuel)" };
         readonly string[] _watchListMiscVehicles = { "Y-32 Xi'an", "Qilin (Minigun)", "Ifrit", "Strider", "Offroad (AT)", "MB 4WD (LMG)", "Prowler (HMG)", "Hunter", "UH-80 Ghost Hawk" };
 
-        public rfMain()
+        public RfMain()
         {
             InitializeComponent();
             timerMain.Enabled = true;
@@ -82,6 +86,15 @@ namespace TrackerClient
         {
             try
             {
+                _dtDbGangWars = _db.ExecuteReaderDT("SELECT * FROM `gangwars`");
+                if (_dtDbGangWars == null) return;
+                foreach (DataRow row in _dtDbGangWars.Rows)
+                {
+                    int gangID = (int)row["init_gangid"] == 111 ? (int)row["acpt_gangid"] : (int)row["init_gangid"];
+                    if (!_gangWarId.Contains(gangID))
+                        _gangWarId.Add(gangID);
+                }
+
                 _tmpOnlinePlayers.Clear();
                 DataTable tempPlayers = _db.ExecuteReaderDT($"SELECT * FROM players  WHERE last_active >= NOW() - INTERVAL 7.5 MINUTE AND last_server = '{_serverId}' ORDER BY `name` ASC");
                 tempPlayers.DefaultView.Sort = "name asc";
@@ -140,7 +153,6 @@ namespace TrackerClient
                 // ignored
             }
         }
-
         private void bwPlayerTabRefresh_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             _doingWork = false;
@@ -171,12 +183,16 @@ namespace TrackerClient
         {
             var targetPlayers = new List<Player>();
             var vigiPlayers = new List<Player>();
+            var warTargets = new List<Player>();
+
             foreach (var p in _onlinePlayers)
             {
-                if (p.BountyWanted > 90000)
+                if (p.BountyWanted >= 90000 && p.Faction == "civ")
                 {
                     vigiPlayers.Add(p);
                 }
+                if (p.WarTarget)
+                    warTargets.Add(p);
                 p.TargetLevel = -1;
                 if (p.Vehicles != null)
                 {
@@ -224,6 +240,9 @@ namespace TrackerClient
             targetPlayers = targetPlayers.OrderBy(p => p.Name).ToList();
             lbPlayersTargets.DataSource = targetPlayers;
             lbPlayersTargets.DisplayMember = "name";
+            warTargets = warTargets.OrderBy(p => p.Name).ToList();
+            lbPlayersWT.DataSource = warTargets;
+            lbPlayersWT.DisplayMember = "name";
         }
         /// <summary>
         /// Displays information from the Player object on the form
@@ -300,7 +319,7 @@ namespace TrackerClient
             int medlvl = Convert.ToInt32(row["mediclevel"]);
             int admlvl = Convert.ToInt32(row["adminlevel"]);
             int donlvl = Convert.ToInt32(row["donatorlvl"]);
-            
+
 
             JArray stats = JArray.Parse(Helper.ToJson(row["player_stats"].ToString()));
             int kills = (int)stats[0];
@@ -335,7 +354,7 @@ namespace TrackerClient
             p.AddGear(gear);
             p.AddVehicles(player_vehicles);
             p.AddLicenses(licensese);
-            
+
             foreach (string item in p.Equipment)
             {
                 if (item.Contains("_") && !_debugListEqu.Contains(item))
@@ -343,6 +362,11 @@ namespace TrackerClient
                     _debugListEqu.Add(item);
                     //SetText($"{item}{Environment.NewLine}");
                 }
+            }
+
+            if (_gangWarId.Contains((int) row["gangid"]) && p.Faction == "civ")
+            {
+                p.WarTarget = true;
             }
             return p;
         }
@@ -431,24 +455,28 @@ namespace TrackerClient
                         switch (p.TargetLevel)
                         {
                             case 0:
-                                backColor = Color.Yellow;
+                                backColor = RfMain.TargetColors[1]; //Color.Yellow;
                                 textColor = Color.Black;
                                 break;
                             case 1:
-                                backColor = Color.DeepPink;
+                                backColor = RfMain.TargetColors[2]; //Color.DeepPink;
                                 break;
                             case 2:
-                                backColor = Color.Red;
+                                backColor = RfMain.TargetColors[3]; //Color.Red;
                                 break;
                             case 3:
-                                backColor = Color.IndianRed;
+                                backColor = RfMain.TargetColors[4]; //Color.IndianRed;
                                 break;
                             case 4:
                                 backColor = Color.White;
+                                textColor = RfMain.TargetColors[5]; //Color.Black;
+                                break;
+                            case 5:
+                                backColor = Color.OrangeRed;
                                 textColor = Color.Black;
                                 break;
                             default:
-                                textColor = Color.White;
+                                textColor = RfMain.TargetColors[0]; //Color.White;
                                 break;
                         }
                         break;
@@ -662,7 +690,7 @@ namespace TrackerClient
                             mapColor = Color.Yellow;
                             break;
                         case 1:
-                            mapColor = Color.Green;
+                            mapColor = Color.DeepPink;
                             break;
                         case 2:
                             mapColor = Color.Red;
@@ -672,6 +700,9 @@ namespace TrackerClient
                             break;
                         case 4:
                             mapColor = Color.Black;
+                            break;
+                        case 5:
+                            mapColor = Color.OrangeRed;
                             break;
                     }
 
@@ -757,5 +788,6 @@ namespace TrackerClient
             PlayerMap = new Map { Players = _onlinePlayers };
             PlayerMap.Show();
         }
+
     }
 }

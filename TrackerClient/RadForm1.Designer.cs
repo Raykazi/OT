@@ -1,6 +1,6 @@
 ﻿namespace TrackerClient
 {
-    partial class rfMain
+    partial class RfMain
     {
         /// <summary>
         /// Required designer variable.
@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn1 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 0", "Item");
-            Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn2 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 1", "Amount");
+            Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn3 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 0", "Item");
+            Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn4 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 1", "Amount");
             this.rtVSDark = new Telerik.WinControls.Themes.VisualStudio2012DarkTheme();
             this.rpvMain = new Telerik.WinControls.UI.RadPageView();
             this.rpvpPlayers = new Telerik.WinControls.UI.RadPageViewPage();
@@ -69,6 +69,7 @@
             this.rpvpTargets = new Telerik.WinControls.UI.RadPageViewPage();
             this.lbPlayersTargets = new System.Windows.Forms.ListBox();
             this.rpvpVigiable = new Telerik.WinControls.UI.RadPageViewPage();
+            this.lbPlayersVigi = new System.Windows.Forms.ListBox();
             this.rpvpWarTargets = new Telerik.WinControls.UI.RadPageViewPage();
             this.lbPlayersWT = new System.Windows.Forms.ListBox();
             this.rpvpHouses = new Telerik.WinControls.UI.RadPageViewPage();
@@ -86,8 +87,6 @@
             this.rpMain = new Telerik.WinControls.UI.RadPanel();
             this.timerMain = new System.Windows.Forms.Timer(this.components);
             this.bwPlayerTabRefresh = new System.ComponentModel.BackgroundWorker();
-            this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
-            this.lbPlayersVigi = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.rpvMain)).BeginInit();
             this.rpvMain.SuspendLayout();
             this.rpvpPlayers.SuspendLayout();
@@ -208,13 +207,13 @@
             // rlvVirItems
             // 
             this.rlvVirItems.AllowColumnResize = false;
-            listViewDetailColumn1.HeaderText = "Item";
-            listViewDetailColumn1.Width = 100F;
-            listViewDetailColumn2.HeaderText = "Amount";
-            listViewDetailColumn2.Width = 50F;
+            listViewDetailColumn3.HeaderText = "Item";
+            listViewDetailColumn3.Width = 100F;
+            listViewDetailColumn4.HeaderText = "Amount";
+            listViewDetailColumn4.Width = 50F;
             this.rlvVirItems.Columns.AddRange(new Telerik.WinControls.UI.ListViewDetailColumn[] {
-            listViewDetailColumn1,
-            listViewDetailColumn2});
+            listViewDetailColumn3,
+            listViewDetailColumn4});
             this.rlvVirItems.HorizontalScrollState = Telerik.WinControls.UI.ScrollState.AlwaysHide;
             this.rlvVirItems.ItemSpacing = -1;
             this.rlvVirItems.Location = new System.Drawing.Point(216, 339);
@@ -483,7 +482,7 @@
             this.rpvPlayers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rpvPlayers.Location = new System.Drawing.Point(0, 0);
             this.rpvPlayers.Name = "rpvPlayers";
-            this.rpvPlayers.SelectedPage = this.rpvpVigiable;
+            this.rpvPlayers.SelectedPage = this.rpvpWarTargets;
             this.rpvPlayers.Size = new System.Drawing.Size(192, 582);
             this.rpvPlayers.TabIndex = 0;
             this.rpvPlayers.ThemeName = "VisualStudio2012Dark";
@@ -542,6 +541,19 @@
             this.rpvpVigiable.Size = new System.Drawing.Size(182, 547);
             this.rpvpVigiable.Text = "Vigi";
             // 
+            // lbPlayersVigi
+            // 
+            this.lbPlayersVigi.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbPlayersVigi.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.lbPlayersVigi.FormattingEnabled = true;
+            this.lbPlayersVigi.Location = new System.Drawing.Point(0, 0);
+            this.lbPlayersVigi.Name = "lbPlayersVigi";
+            this.lbPlayersVigi.Size = new System.Drawing.Size(182, 547);
+            this.lbPlayersVigi.TabIndex = 1;
+            this.lbPlayersVigi.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
+            this.lbPlayersVigi.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
+            this.lbPlayersVigi.MouseEnter += new System.EventHandler(this.ListBox_MouseEnter);
+            // 
             // rpvpWarTargets
             // 
             this.rpvpWarTargets.Controls.Add(this.lbPlayersWT);
@@ -560,6 +572,9 @@
             this.lbPlayersWT.Name = "lbPlayersWT";
             this.lbPlayersWT.Size = new System.Drawing.Size(182, 547);
             this.lbPlayersWT.TabIndex = 2;
+            this.lbPlayersWT.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
+            this.lbPlayersWT.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
+            this.lbPlayersWT.MouseEnter += new System.EventHandler(this.ListBox_MouseEnter);
             // 
             // rpvpHouses
             // 
@@ -705,27 +720,14 @@
             this.bwPlayerTabRefresh.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwPlayerTabRefresh_DoWork);
             this.bwPlayerTabRefresh.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwPlayerTabRefresh_RunWorkerCompleted);
             // 
-            // lbPlayersVigi
-            // 
-            this.lbPlayersVigi.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbPlayersVigi.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.lbPlayersVigi.FormattingEnabled = true;
-            this.lbPlayersVigi.Location = new System.Drawing.Point(0, 0);
-            this.lbPlayersVigi.Name = "lbPlayersVigi";
-            this.lbPlayersVigi.Size = new System.Drawing.Size(182, 547);
-            this.lbPlayersVigi.TabIndex = 1;
-            this.lbPlayersVigi.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
-            this.lbPlayersVigi.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
-            this.lbPlayersVigi.MouseEnter += new System.EventHandler(this.ListBox_MouseEnter);
-            // 
-            // rfMain
+            // RfMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1046, 621);
             this.Controls.Add(this.rpMain);
             this.Controls.Add(this.rpBottom);
-            this.Name = "rfMain";
+            this.Name = "RfMain";
             // 
             // 
             // 
@@ -806,7 +808,6 @@
         private Telerik.WinControls.UI.RadTrackBar rtrbZoom;
         private System.Windows.Forms.Timer timerMain;
         private System.ComponentModel.BackgroundWorker bwPlayerTabRefresh;
-        private System.ComponentModel.BackgroundWorker backgroundWorker2;
         private Telerik.WinControls.UI.RadButtonElement rbRefresh;
         private Telerik.WinControls.UI.RadLabelElement rlRefresh;
         private Telerik.WinControls.UI.CommandBarSeparator commandBarSeparator1;

@@ -115,22 +115,22 @@ namespace TrackerClient
                     switch (p.TargetLevel)
                     {
                         case -1:
-                            mapColor = Color.White;
+                            mapColor = RfMain.TargetColors[0]; //Color.White;
                             break;
                         case 0:
-                            mapColor = Color.Yellow;
+                            mapColor = RfMain.TargetColors[1]; //Color.Yellow;
                             break;
                         case 1:
-                            mapColor = Color.Green;
+                            mapColor = RfMain.TargetColors[2]; //Color.DeepPink;
                             break;
                         case 2:
-                            mapColor = Color.Red;
+                            mapColor = RfMain.TargetColors[3]; //Color.Red;
                             break;
                         case 3:
-                            mapColor = Color.IndianRed;
+                            mapColor = RfMain.TargetColors[4]; //Color.IndianRed;
                             break;
                         case 4:
-                            mapColor = Color.Black;
+                            mapColor = RfMain.TargetColors[5]; //Color.Black;
                             break;
                     }
                     e.Graphics.FillRectangle(new SolidBrush(mapColor), new RectangleF(new PointF(newCords[0], newCords[1]), new Size(4, 4)));
