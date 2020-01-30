@@ -12,7 +12,7 @@ namespace TrackerFetcher
 
         public Db(string host, int port, string db, string user, string pass)
         {
-            string conString = $"SERVER={host};Port={port};DATABASE={db};UID={user};PASSWORD={pass};Convert Zero Datetime=True;";
+            string conString = $"Server={host};port={port};Database={db};User Id={user};password={pass};Convert Zero Datetime=True;SslMode=none;";
             _connection = new MySqlConnection(conString);
         }
         private bool OpenConnection()
@@ -77,7 +77,7 @@ namespace TrackerFetcher
             }
             catch (MySqlException ex)
             {
-                Console.WriteLine(string.Format("Error {1}: {0}", ex.Message, ex.Number));
+                Console.WriteLine("Error {1}: {0}", ex.Message, ex.Number);
                 result = -1;
             }
             finally
@@ -111,7 +111,7 @@ namespace TrackerFetcher
             }
             catch (MySqlException ex)
             {
-                Console.WriteLine(string.Format("Error {1}: {0}", ex.Message, ex.ErrorCode));
+                Console.WriteLine("Error {1}: {0}", ex.Message, ex.ErrorCode);
                 dataTable = null;
             }
             finally
@@ -147,7 +147,7 @@ namespace TrackerFetcher
             }
             catch (MySqlException ex)
             {
-                Console.WriteLine(string.Format("Error {1}: {0}", ex.Message, ex.ErrorCode));
+                Console.WriteLine("Error {1}: {0}", ex.Message, ex.ErrorCode);
                 list = null;
             }
             finally
