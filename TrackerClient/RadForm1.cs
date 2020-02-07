@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Telerik.WinControls.UI;
 using TrackerInterface;
+using System.ServiceModel;
 
 namespace TrackerClient
 {
@@ -66,6 +67,9 @@ namespace TrackerClient
         readonly string[] _watchListRunVehicles = { "Van (Cargo)", "CH-67 Huron", "SDV", "HEMTT", "V-44 X Blackfish", "Truck", "CH-49 Mohawk", "Zamak", "Tempest", "Mi-290 Taru (Fuel)" };
         readonly string[] _watchListMiscVehicles = { "Y-32 Xi'an", "Qilin (Minigun)", "Ifrit", "Strider", "Offroad (AT)", "MB 4WD (LMG)", "Prowler (HMG)", "Hunter", "UH-80 Ghost Hawk" };
 
+        /*WCF Variables*/
+        private ChannelFactory<IServer> _channelFactory;
+        private IServer _server;
         public RfMain()
         {
             InitializeComponent();
@@ -78,6 +82,24 @@ namespace TrackerClient
             rtrbZoom.Value = 100;
         }
         /// <summary>
+        /// Open WCF Connection
+        /// </summary>
+        private void OpenConnection()
+        {
+            _channelFactory = new ChannelFactory<IServer>("OTConnection");
+            _server = _channelFactory.CreateChannel();
+        }
+        /// <summary>
+        /// Close the WCF Connection
+        /// </summary>
+        private void CloseConnection()
+        {
+            if (_channelFactory.State < CommunicationState.Closing)
+            {
+                _channelFactory.Close();
+            }
+        }
+        /// <summary>
         /// Connects to the server and pulls player information
         /// </summary>
         /// <param name="sender"></param>
@@ -86,14 +108,9 @@ namespace TrackerClient
         {
             try
             {
-                _dtDbGangWars = _db.ExecuteReaderDT("SELECT * FROM `gangwars`");
-                if (_dtDbGangWars == null) return;
-                foreach (DataRow row in _dtDbGangWars.Rows)
-                {
-                    int gangID = (int)row["init_gangid"] == 111 ? (int)row["acpt_gangid"] : (int)row["init_gangid"];
-                    if (!_gangWarId.Contains(gangID))
-                        _gangWarId.Add(gangID);
-                }
+                //OpenConnection();
+                //_gangWarId = _server.FetchWarTargets();
+                //CloseConnection();
 
                 _tmpOnlinePlayers.Clear();
                 DataTable tempPlayers = _db.ExecuteReaderDT($"SELECT * FROM players  WHERE last_active >= NOW() - INTERVAL 7.5 MINUTE AND last_server = '{_serverId}' ORDER BY `name` ASC");

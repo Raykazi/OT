@@ -72,6 +72,7 @@
     <Compile Include="DB.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="House.cs" />
+    <Compile Include="IServer.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="IWCFTrackerService.cs" />
     <Compile Include="Player.cs" />
