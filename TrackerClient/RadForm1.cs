@@ -172,7 +172,6 @@ namespace TrackerClient
         }
         private void bwPlayerTabRefresh_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            _doingWork = false;
             if (!_sw.IsRunning)
                 _sw.Start();
             lbPlayersAll.DataSource = _onlinePlayers;
@@ -187,6 +186,7 @@ namespace TrackerClient
                 _activeListbox.SelectedIndex = i;
             }
             _activeListbox.Refresh();
+            _doingWork = false;
         }
 
         private void rfMain_Load(object sender, EventArgs e)
@@ -317,9 +317,9 @@ namespace TrackerClient
             houses = houses.OrderBy(h => h.Id).ToList();
             rlcVehicles.DataSource = p.Vehicles.OrderByDescending(v => v.Active).ToList();
             rlcVehicles.DisplayMember = "name";
-            if (p.Location.Length > 1 && p.Faction == "civ")
+            if (p.Location.Length > 1 && p.Faction == "civ" && !_disableAutoLocate)
                 pbMap_CenterPlayer(p.Location);
-            if (PlayerMap != null && p.Location.Length > 1 && p.Faction == "civ")
+            if (PlayerMap != null && p.Location.Length > 1 && p.Faction == "civ" && !_disableAutoLocate)
                 PlayerMap.pbMap_CenterPlayer(p.Location);
         }
 
@@ -806,5 +806,23 @@ namespace TrackerClient
             PlayerMap.Show();
         }
 
+
+        private bool _disableAutoLocate = false;
+        private void rcb_disableAutoLocate_CheckStateChanged(object sender, EventArgs e)
+        {
+            var checkbox = sender as RadCheckBoxElement;
+            _disableAutoLocate = checkbox.IsChecked;
+        }
+
+        private void lbPlayersAll_DoubleClick(object sender, EventArgs e)
+        {
+            if (!_disableAutoLocate) return;
+            if (_selectedPlayer == null) return;
+            if (_selectedPlayer.Location.Length > 1 && _selectedPlayer.Faction == "civ")
+            {
+                pbMap_CenterPlayer(_selectedPlayer.Location);
+                PlayerMap?.pbMap_CenterPlayer(_selectedPlayer.Location);
+            }
+        }
     }
 }

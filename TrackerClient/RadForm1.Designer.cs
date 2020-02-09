@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn3 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 0", "Item");
-            Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn4 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 1", "Amount");
+            Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn1 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 0", "Item");
+            Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn2 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 1", "Amount");
             this.rtVSDark = new Telerik.WinControls.Themes.VisualStudio2012DarkTheme();
             this.rpvMain = new Telerik.WinControls.UI.RadPageView();
             this.rpvpPlayers = new Telerik.WinControls.UI.RadPageViewPage();
@@ -84,6 +84,7 @@
             this.rmiServer1 = new Telerik.WinControls.UI.RadMenuItem();
             this.rmiServer2 = new Telerik.WinControls.UI.RadMenuItem();
             this.rbMap = new Telerik.WinControls.UI.RadButtonElement();
+            this.rcb_disableAutoLocate = new Telerik.WinControls.UI.RadCheckBoxElement();
             this.rpMain = new Telerik.WinControls.UI.RadPanel();
             this.timerMain = new System.Windows.Forms.Timer(this.components);
             this.bwPlayerTabRefresh = new System.ComponentModel.BackgroundWorker();
@@ -207,13 +208,13 @@
             // rlvVirItems
             // 
             this.rlvVirItems.AllowColumnResize = false;
-            listViewDetailColumn3.HeaderText = "Item";
-            listViewDetailColumn3.Width = 100F;
-            listViewDetailColumn4.HeaderText = "Amount";
-            listViewDetailColumn4.Width = 50F;
+            listViewDetailColumn1.HeaderText = "Item";
+            listViewDetailColumn1.Width = 100F;
+            listViewDetailColumn2.HeaderText = "Amount";
+            listViewDetailColumn2.Width = 50F;
             this.rlvVirItems.Columns.AddRange(new Telerik.WinControls.UI.ListViewDetailColumn[] {
-            listViewDetailColumn3,
-            listViewDetailColumn4});
+            listViewDetailColumn1,
+            listViewDetailColumn2});
             this.rlvVirItems.HorizontalScrollState = Telerik.WinControls.UI.ScrollState.AlwaysHide;
             this.rlvVirItems.ItemSpacing = -1;
             this.rlvVirItems.Location = new System.Drawing.Point(216, 339);
@@ -482,7 +483,7 @@
             this.rpvPlayers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rpvPlayers.Location = new System.Drawing.Point(0, 0);
             this.rpvPlayers.Name = "rpvPlayers";
-            this.rpvPlayers.SelectedPage = this.rpvpWarTargets;
+            this.rpvPlayers.SelectedPage = this.rpvpAll;
             this.rpvPlayers.Size = new System.Drawing.Size(192, 582);
             this.rpvPlayers.TabIndex = 0;
             this.rpvPlayers.ThemeName = "VisualStudio2012Dark";
@@ -508,6 +509,7 @@
             this.lbPlayersAll.TabIndex = 1;
             this.lbPlayersAll.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBox_DrawItem);
             this.lbPlayersAll.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
+            this.lbPlayersAll.DoubleClick += new System.EventHandler(this.lbPlayersAll_DoubleClick);
             this.lbPlayersAll.MouseEnter += new System.EventHandler(this.ListBox_MouseEnter);
             // 
             // rpvpTargets
@@ -610,7 +612,8 @@
             this.rlRefresh,
             this.commandBarSeparator1,
             this.rsbServer,
-            this.rbMap});
+            this.rbMap,
+            this.rcb_disableAutoLocate});
             this.radStatusStrip1.Location = new System.Drawing.Point(0, 3);
             this.radStatusStrip1.Name = "radStatusStrip1";
             this.radStatusStrip1.Padding = new System.Windows.Forms.Padding(2);
@@ -698,6 +701,15 @@
             this.radStatusStrip1.SetSpring(this.rbMap, false);
             this.rbMap.Text = "Map";
             this.rbMap.Click += new System.EventHandler(this.rbMap_Click);
+            // 
+            // rcb_disableAutoLocate
+            // 
+            this.rcb_disableAutoLocate.Checked = false;
+            this.rcb_disableAutoLocate.Name = "rcb_disableAutoLocate";
+            this.rcb_disableAutoLocate.ReadOnly = false;
+            this.radStatusStrip1.SetSpring(this.rcb_disableAutoLocate, false);
+            this.rcb_disableAutoLocate.Text = "Disable Autolocate?";
+            this.rcb_disableAutoLocate.CheckStateChanged += new System.EventHandler(this.rcb_disableAutoLocate_CheckStateChanged);
             // 
             // rpMain
             // 
@@ -828,5 +840,6 @@
         private Telerik.WinControls.UI.RadPageViewPage rpvpWarTargets;
         private System.Windows.Forms.ListBox lbPlayersWT;
         private System.Windows.Forms.ListBox lbPlayersVigi;
+        private Telerik.WinControls.UI.RadCheckBoxElement rcb_disableAutoLocate;
     }
 }
