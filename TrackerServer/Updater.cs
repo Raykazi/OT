@@ -62,25 +62,39 @@ namespace TrackerServer
 
         public void Run()
         {
-            while (true)
+            try
             {
                 OpenConnection();
-                //if (_timer.ElapsedMilliseconds - _playerRunTime >= PlayerRefreshTime || _firstRun)
-                //{
-                //    _server.PlayerUpdate();
-                //    _playerRunTime = _timer.ElapsedMilliseconds;
-                //}
-                //if (_timer.ElapsedMilliseconds - _houseRunTime >= HouseRefreshTime || _firstRun)
-                //{
-                //    _server.HouseUpdate();
-                //    _houseRunTime = _timer.ElapsedMilliseconds;
-                //}
-                if (_timer.ElapsedMilliseconds - _gangRunTime >= GangRefreshTime || _firstRun)
+                while (true)
                 {
-                    _server.GangWarsUpdate();
-                    _gangRunTime = _timer.ElapsedMilliseconds;
+                    if (_timer.ElapsedMilliseconds - _playerRunTime >= PlayerRefreshTime || _firstRun)
+                    {
+                        _server.PlayerUpdate();
+                        _playerRunTime = _timer.ElapsedMilliseconds;
+                    }
+
+                    //if (_timer.ElapsedMilliseconds - _houseRunTime >= HouseRefreshTime || _firstRun)
+                    //{
+                    //    _server.HouseUpdate();
+                    //    _houseRunTime = _timer.ElapsedMilliseconds;
+                    //}
+                    if (_timer.ElapsedMilliseconds - _gangRunTime >= GangRefreshTime || _firstRun)
+                    {
+                        _server.GangWarsUpdate();
+                        _gangRunTime = _timer.ElapsedMilliseconds;
+                    }
+
+                    if (_firstRun) _firstRun = false;
                 }
-                if (_firstRun) _firstRun = false;
+            }
+            catch (Exception e)
+            {
+                ConsoleLog(e.Message);
+                ConsoleLog(e.StackTrace);
+                throw;
+            }
+            finally
+            {
                 CloseConnection();
             }
         }
