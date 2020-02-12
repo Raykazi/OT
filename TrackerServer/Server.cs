@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.ServiceModel;
-using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using RestSharp;
@@ -37,13 +33,13 @@ namespace TrackerServer
         private const string SchemaOs = "lc_prod";
 
         private const string HostOt = "127.0.0.1";
-        private const int PortOs = 3306;
+        private const int PortOt = 3306;
         private const string UserOt = "otuser";
         private const string PassOt = "2016againlol";
         private const string SchemaOt = "otdb";
 #endif
 
-        private readonly int[] Servers = new[] {1, 2};
+        private readonly int[] _servers = { 1, 2 };
 
         private const string PlayerSelectQuery =
             "SELECT * FROM players INNER JOIN gangmembers ON players.playerid=gangmembers.playerid WHERE last_active >= NOW() - INTERVAL 15 MINUTE AND last_server = {0} ORDER BY last_active DESC";
@@ -56,13 +52,14 @@ namespace TrackerServer
             "SELECT id, pid, side, `type`, classname, alive, active, insured, modifications, inventory FROM vehicles WHERE pid = '{0}' AND alive = 1 AND active > 0";
 
         private const string VehicleDeleteQuery = "DELETE FROM vehicles WHERE pid = '{0}';";
-        private readonly string house_query = $"";
-        private readonly string house_update_query = $"";
+        private readonly string house_query = "";
+        private readonly string house_update_query = "";
 
         private readonly string gang_query =
             "SELECT * FROM `gangwars` WHERE (init_gangid = '111' OR acpt_gangid = '111') AND active = 1";
 
-        private List<int> WarTargetGid { get; set; }
+        private static List<int> WarTargetGid { get; set; }
+        private static List<Player>[] _players = new List<Player>[2];
 
         public void ConsoleLog(string msg, string sender)
         {
@@ -74,10 +71,25 @@ namespace TrackerServer
             return WarTargetGid;
         }
 
-
-    public void PlayerUpdate()
+        public List<Player> FetchPlayers(int server)
         {
-            Servers.Select(id =>
+            return _players[server-1].OrderBy(p => p.Name).ToList();
+        }
+
+        public void Login(string machineName, string userName)
+        {
+            ConsoleLog($"{machineName}\\{userName} has logged in.", "SERVER");
+        }
+
+        public void Logout(string machineName, string userName)
+        {
+            ConsoleLog($"{machineName}\\{userName} has logged out.", "SERVER");
+        }
+
+
+        public void PlayerUpdate()
+        {
+            _servers.Select(id =>
             {
                 Thread tr = new Thread(() => DoPlayerUpdate(id));
                 tr.Start();
@@ -88,7 +100,7 @@ namespace TrackerServer
 
         public void HouseUpdate()
         {
-            Servers.Select(id =>
+            _servers.Select(id =>
             {
                 Thread tr = new Thread(() => DoHouseUpdate(id));
                 tr.Start();
@@ -132,7 +144,6 @@ namespace TrackerServer
                 else
                     break;
             }
-
             WarTargetGid = gangId;
             ConsoleLog($"{gangId.Count} active wars synced.", "UPDATER");
         }
@@ -190,9 +201,24 @@ namespace TrackerServer
                         ot_db.ExecuteNonQuery(sql);
                     }
                 }
-                ConsoleLog($"Server {serverId}: {pip} Added; {pup} Updated;", "UPDATER");
-                os_db = null;
+
+                List<Player> tmpOnlinePlayers = new List<Player>();
+                DataTable ot_dt = ot_db.ExecuteReaderDT($"SELECT * FROM players  WHERE last_active >= NOW() - INTERVAL 7.5 MINUTE AND last_server = '{serverId}' ORDER BY `name` ASC");
+                ot_dt.DefaultView.Sort = "name asc";
+                foreach (DataRow row in ot_dt.Rows)
+                {
+                    int server = (int)row["last_server"];
+                    Player p = Player.CreatePlayer(row, server);
+                    DataTable vehicles = ot_db.ExecuteReaderDT($"SELECT * FROM vehicles WHERE `pid` = '{p.SteamId}' AND `side` = '{p.Faction}' AND `active` = '{server}' AND `alive` = '1' ORDER BY  active DESC, type");
+                    p.Vehicles = Vehicle.CreateVehicles(vehicles);
+                    if (!tmpOnlinePlayers.Contains(p)) tmpOnlinePlayers.Add(p);
+                }
+                _players[serverId - 1] = tmpOnlinePlayers;
                 ot_db = null;
+                os_db = null;
+                ot_dt = null;
+                tmpOnlinePlayers = null;
+                ConsoleLog($"Server {serverId}: {pip} Added; {pup} Updated;", "UPDATER");
             }
             catch (Exception e)
             {
@@ -224,7 +250,7 @@ namespace TrackerServer
                     int count = Convert.ToInt32(ot_db.ExecuteScalar($"SELECT COUNT(*) FROM houses WHERE pos = '{pos}' AND server = '{serverId}';"));
                     if (count == 0)
                     {
-                        string sql = $"INSERT INTO houses (pid, pos, server, inventory, storageCapacity, owned, last_active, player_keys, inAH, oil, physical_inventory, physicalStorageCapacity) " +
+                        string sql = "INSERT INTO houses (pid, pos, server, inventory, storageCapacity, owned, last_active, player_keys, inAH, oil, physical_inventory, physicalStorageCapacity) " +
                                      $"VALUES ('{row["pid"]}', '{row["pos"]}', {serverId}, '{row["inventory"]}', {row["storageCapacity"]}, {row["owned"]}, '{(DateTime)row["last_active"]:yyyy-MM-dd HH:mm:ss}', '{row["player_keys"]}', {row["inAH"]}, {row["oil"]}, '{row["physical_inventory"]}', {row["physicalStorageCapacity"]})";
                         results = ot_db.ExecuteNonQuery(sql);
                         _ = results > 0 ? pip++ : 0;

@@ -21,5 +21,14 @@ namespace TrackerInterface
 
         [OperationContract]
         List<int> FetchWarTargets();
+
+        [OperationContract]
+        List<Player> FetchPlayers(int server);
+
+        [OperationContract]
+        void Login(string machineName, string userName);
+
+        [OperationContract]
+        void Logout(string machineName, string userName);
     }
 }
