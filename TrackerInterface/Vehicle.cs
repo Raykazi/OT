@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
+using Newtonsoft.Json.Linq;
 
 namespace TrackerInterface
 {
@@ -49,6 +52,34 @@ namespace TrackerInterface
             SecLevel = secLevel;
             StorageLevel = storageLevel;
             Inventory = inventory;
+        }
+
+        public static List<Vehicle> CreateVehicles(DataTable data)
+        {
+            List<Vehicle> tmpVehicles = new List<Vehicle>();
+            foreach (DataRow row in data.Rows)
+            {
+                JArray mods = JArray.Parse(Helper.ToJson(row["modifications"].ToString()));
+                int id = (int)row["id"];
+                int insured = Convert.ToInt32(row["insured"]);
+                int active = Convert.ToInt32(row["active"]);
+                int alive = Convert.ToInt32(row["alive"]);
+                int turbo = Convert.ToInt32(mods[0]);
+                int trunk = Convert.ToInt32(mods[1]);
+                int security = Convert.ToInt32(mods[2]);
+                string name = (string)row["classname"];
+                List<Item> items = new List<Item>();
+                JArray inv_array = JArray.Parse(Helper.ToJson(row["inventory"].ToString()));
+                if (inv_array.Count > 0)
+                {
+                    foreach (JToken item in inv_array[0].Cast<JArray>())
+                    {
+                        items.Add(new Item { Name = item[0].ToString(), Amount = Convert.ToInt32(item[1]) });
+                    }
+                }
+                tmpVehicles.Add(new Vehicle(id, Vehicle.TranslateName(name), active, insured, turbo, security, trunk, items));
+            }
+            return tmpVehicles;
         }
         public static string TranslateName(string classname)
         {

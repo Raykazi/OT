@@ -85,11 +85,12 @@ namespace TrackerInterface
         [DataMember]
         public DateTime LastUpdated { get; private set; }//Last time they were saved
         [DataMember]
-        public List<Vehicle> Vehicles { get; private set; } //Custom vehicle class array  with the players vehicle info
+        public List<Vehicle> Vehicles { get; set; } //Custom vehicle class array  with the players vehicle info
         [DataMember]
         public List<House> Houses { get; set; } //Thank you FeDot
         [DataMember]
         public List<string> Equipment { get; private set; }//String list with their physical equipment
+        [DataMember]
         public List<string> CivLicenses { get; private set; }
         [DataMember]
         public List<Item> Virtuals { get; private set; } //Custom item class for the palyers virtual items
@@ -101,10 +102,9 @@ namespace TrackerInterface
         public string Faction { get; private set; } //Cop,Civ, Medic
         [DataMember]
         public int Server { get; set; } //Server 1 or 2
-
+        [DataMember]
         public bool WarTarget { get; set; } = false;
 
-        private static readonly Db _db = new Db();
         /// <summary>
         /// Constructor
         /// </summary>
@@ -159,13 +159,11 @@ namespace TrackerInterface
             if (wanted.Count > 0)
                 bounty = (int)wanted[0];
 
-            var aliases = "";
-            aliases = JToken.Parse(Helper.ToJson(row["aliases"].ToString())).Aggregate(aliases, (current, pAlias) => current + (pAlias + ";"));
-            Player p = new Player(uid, steamID, name, aliases, gangName, gangRank, lastActive.ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)row["coordinates"], (string)row["last_side"], (string)row["bm_id"]);
-            DataTable player_vehicles = _db.ExecuteReaderDT($"SELECT * FROM vehicles WHERE `pid` = '{p.SteamId}' AND `side` = '{p.Faction}' AND `active` = '{serverNum}' AND `alive` = '1' ORDER BY  active DESC, type");
-            p.AddMoney((int)row["cash"], (int)row["bankacc"], 0, bounty);
-            p.AddStats(coplvl, medlvl, admlvl, donlvl, kills, deaths, revives, arrests);
+            string aliases = row["aliases"].ToString();
+            Player p = new Player(uid, steamID, name, aliases, gangName, gangRank, lastActive.ToUnixTime(), DateTime.UtcNow.ToUnixTime(), (string)row["coordinates"], (string)row["last_side"], row["bm_id"].ToString());
+            p.AddStats(coplvl, medlvl, admlvl, donlvl, kills, deaths, revives, arrests, (int)row["cash"], (int)row["bankacc"], 0, bounty);
             string gear = "";
+            string licenses = Helper.ToJson(row["civ_licenses"].ToString());
             switch (p.Faction)
             {
                 case "civ":
@@ -179,32 +177,25 @@ namespace TrackerInterface
                     break;
             }
             p.AddGear(gear);
-            p.AddVehicles(player_vehicles);
+            p.AddLicenses(licenses);
+            //foreach (string item in p.Equipment)
+            //{
+            //    if (item.Contains("_") && !_debugListEqu.Contains(item))
+            //    {
+            //        _debugListEqu.Add(item);
+            //        //SetText($"{item}{Environment.NewLine}");
+            //    }
+            //}
+            //if (_gangWarId.Contains((int)row["gangid"]) && p.Faction == "civ")
+            //{
+            //    p.WarTarget = true;
+            //}
             return p;
-        }
-        /// <summary>
-        /// Checks DB for an existing record, if one is found update if not create a record
-        /// </summary>
-        public void Save(string aliases, string cAir, string cCar, string cShip, string aAir, string aCar, string aShip, string mAir, string mCar, string mShip, string aGear, string cGear, string mGear, int server)
-        {
-            var location = Helper.Base64Encode(Helper.ToSQL(Location));
-            var data = _db.ExecuteReader("SELECT steamID FROM Player WHERE steamID =?", SteamId);
-            var sql = "";
-            if (data[0].Count == 0)
-            {
-                sql = "INSERT INTO player (UID, steamID, playerName, cash, bank, copLevel, medicLevel, adminLevel, donatorLevel, kills, deaths, medicRevives, bountyCollected, copArrests, timeCiv, timeApd, timeMed, bountyWanted, aliases, gangName, lastActive, vehApdAir, vehApdCar, vehApdShip, vehCivAir, vehCivCar, vehCivShip, vehMedAir, vehMedCar, vehMedShip, gearApd, gearCiv, gearMed, gangRank, timestamp, location, server) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                _db.ExecuteNonQuery(sql, Uid, SteamId, Name, Cash, Bank, CopLevel, MedicLevel, AdminLevel, DonatorLevel, Kills, Deaths, MedicRevives, BountyCollected, CopArrest, TimeCiv, TimeApd, TimeMed, BountyWanted, Helper.ToSQL(Aliases), GangName, LastActive.ToUnixTime(), aAir, aCar, aShip, cAir, cCar, cShip, mAir, mCar, mShip, aGear, cGear, mGear, GangRank, LastUpdated.ToUnixTime(), location, Server);
-            }
-            else
-            {
-                sql = "UPDATE player SET `playerName` = ?, `cash` = ?, `bank` = ?, `copLevel` = ?, `medicLevel` = ?, `adminLevel` = ?, `donatorLevel` = ?, `aliases` = ?, `kills` = ?, `deaths` = ?, `medicRevives` = ?, `bountyCollected` = ?, `copArrests` = ?, `timeCiv` = ?, `timeApd` = ?, `timeMed` = ?, `bountyWanted` = ?, `gangName` = ?, `gangRank` = ?, `lastActive` = ?, `gearApd` = ?, `gearCiv` = ?, `gearMed` = ?, `vehApdAir` = ?, `vehApdCar` = ?, `vehApdShip` = ?, `vehCivAir` = ?, `vehCivCar` = ?, `vehCivShip` = ?, `vehMedAir` = ?, `vehMedCar` = ?, `vehMedShip` = ? , `timestamp` = ? , `location` = ?, `server` = ? WHERE `steamID` = ?";
-                _db.ExecuteNonQuery(sql, Name, Cash, Bank, CopLevel, MedicLevel, AdminLevel, DonatorLevel, Helper.ToSQL(Aliases), Kills, Deaths, MedicRevives, BountyCollected, CopArrest, TimeCiv, TimeApd, TimeMed, BountyWanted, GangName, GangRank, LastActive.ToUnixTime(), aGear, cGear, mGear, aAir, aCar, aShip, cAir, cCar, cShip, mAir, mCar, mShip, LastUpdated.ToUnixTime(), location, Server, SteamId);
-            }
         }
         /// <summary>
         /// Setup the player object in regards to player stats
         /// </summary>
-        public void AddStats(int cop, int medic, int admin, int donator, int kills, int deaths, int revives, int arrests)
+        public void AddStats(int cop, int medic, int admin, int donator, int kills, int deaths, int revives, int arrests, int cash, int bank, int bountyCollected, int bountyWanted)
         {
             CopLevel = cop;
             MedicLevel = medic;
@@ -214,6 +205,10 @@ namespace TrackerInterface
             Deaths = deaths;
             MedicRevives = revives;
             CopArrest = arrests;
+            Cash = cash;
+            Bank = bank;
+            BountyCollected = bountyCollected;
+            BountyWanted = bountyWanted;
             ParseLevel();
         }
 
@@ -277,26 +272,6 @@ namespace TrackerInterface
                     break;
             }
         }
-
-        /// <summary>
-        /// Setup the player object in regards to player times
-        /// </summary>        
-        public void AddTime(int timeCiv, int timeApd, int timeMed)
-        {
-            TimeCiv = timeCiv;
-            TimeApd = timeApd;
-            TimeMed = timeMed;
-        }
-        /// <summary>
-        /// Setup the player object in regards to player money
-        /// </summary>        
-        public void AddMoney(int cash, int bank, int bountyCollected, int bountyWanted)
-        {
-            Cash = cash;
-            Bank = bank;
-            BountyCollected = bountyCollected;
-            BountyWanted = bountyWanted;
-        }
         /// <summary>
         /// Parse the JSON string regarding gear and inventory
         /// </summary>
@@ -356,33 +331,6 @@ namespace TrackerInterface
                     CivLicenses.Add(license[0].ToString());
             }
 
-        }
-        public void AddVehicles(DataTable data)
-        {
-            List<Vehicle> tmpVehicles = new List<Vehicle>();
-            foreach (DataRow row in data.Rows)
-            {
-                JArray mods = JArray.Parse(Helper.ToJson(row["modifications"].ToString()));
-                int id = (int)row["id"];
-                int insured = Convert.ToInt32(row["insured"]);
-                int active = Convert.ToInt32(row["active"]);
-                int alive = Convert.ToInt32(row["alive"]);
-                int turbo = Convert.ToInt32(mods[0]);
-                int trunk = Convert.ToInt32(mods[1]);
-                int security = Convert.ToInt32(mods[2]);
-                string name = (string)row["classname"];
-                List<Item> items = new List<Item>();
-                JArray inv_array = JArray.Parse(Helper.ToJson(row["inventory"].ToString()));
-                if (inv_array.Count > 0)
-                {
-                    foreach (JToken item in inv_array[0].Cast<JArray>())
-                    {
-                        items.Add(new Item { Name = item[0].ToString(), Amount = Convert.ToInt32(item[1]) });
-                    }
-                }
-                tmpVehicles.Add(new Vehicle(id, Vehicle.TranslateName(name), active, insured, turbo, security, trunk, items));
-            }
-            Vehicles = tmpVehicles;
         }
         /// <summary>
         /// Parse JSON house string array and place information into House object
