@@ -30,5 +30,8 @@ namespace TrackerInterface
 
         [OperationContract]
         void Logout(string machineName, string userName);
+
+        [OperationContract]
+        bool KeepAliveCheck();
     }
 }
