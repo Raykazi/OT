@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackerClient", "TrackerCli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackerInterface", "TrackerInterface\TrackerInterface.csproj", "{415BFEC7-AE6C-4C01-B775-7941A274F7FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackerFetcher", "TrackerFetcher\TrackerFetcher.csproj", "{0A0C7AF4-5B8F-47C5-A9D6-7F264C80877A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackerServer", "TrackerServer\TrackerServer.csproj", "{98035E1D-DCF7-4BC7-8F19-ACBD2A753BE4}"
 EndProject
 Global
@@ -25,10 +23,6 @@ Global
 		{415BFEC7-AE6C-4C01-B775-7941A274F7FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{415BFEC7-AE6C-4C01-B775-7941A274F7FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{415BFEC7-AE6C-4C01-B775-7941A274F7FF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0A0C7AF4-5B8F-47C5-A9D6-7F264C80877A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A0C7AF4-5B8F-47C5-A9D6-7F264C80877A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A0C7AF4-5B8F-47C5-A9D6-7F264C80877A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A0C7AF4-5B8F-47C5-A9D6-7F264C80877A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{98035E1D-DCF7-4BC7-8F19-ACBD2A753BE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{98035E1D-DCF7-4BC7-8F19-ACBD2A753BE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98035E1D-DCF7-4BC7-8F19-ACBD2A753BE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
