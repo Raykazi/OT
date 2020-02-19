@@ -49,7 +49,7 @@ namespace TrackerServer
         private const string PlayerUpdateQuery = "UPDATE players SET actually_active = 0 WHERE actually_active = 1;";
 
         private const string VehicleSelectQuery =
-            "SELECT id, pid, side, `type`, classname, alive, active, insured, modifications, inventory FROM vehicles WHERE pid = '{0}' AND alive = 1 AND active > 0";
+            "SELECT id, pid, side, `type`, classname, alive, active, insured, modifications, inventory FROM vehicles WHERE pid = '{0}' AND alive = 1 AND active = {1}";
 
         private const string VehicleDeleteQuery = "DELETE FROM vehicles WHERE pid = '{0}';";
         private readonly string house_query = "";
@@ -84,6 +84,11 @@ namespace TrackerServer
         public void Logout(string machineName, string userName)
         {
             ConsoleLog($"{machineName}\\{userName} has logged out.", "SERVER");
+        }
+
+        public bool KeepAliveCheck()
+        {
+            return true;
         }
 
 
@@ -194,10 +199,12 @@ namespace TrackerServer
                         ConsoleLog("LOGGING ENABLED!! ABORTING!", "UPDATER");
                         Thread.CurrentThread.Abort();
                     }
-                    DataTable os_veh_dt = os_db.ExecuteReaderDT(string.Format(VehicleSelectQuery, playerid));
+
+                    DataTable os_veh_dt = os_db.ExecuteReaderDT(string.Format(VehicleSelectQuery, playerid, serverId));
                     foreach (DataRow row2 in os_veh_dt.Rows)
                     {
-                        string sql = $"INSERT INTO `vehicles` (id, pid, side, `type`, classname, alive, active, insured, modifications, inventory) VALUES ('{row2["id"]}', '{row2["pid"]}', '{row2["side"]}', '{row2["type"]}', '{row2["classname"]}', '{Convert.ToInt32(row2["alive"])}', '{Convert.ToInt32(row2["active"])}', '{Convert.ToInt32(row2["insured"])}', '{row2["modifications"]}', '{row2["inventory"]}');";
+                        int active = serverId;
+                        string sql = $"INSERT INTO `vehicles` (id, pid, side, `type`, classname, alive, active, insured, modifications, inventory) VALUES ('{row2["id"]}', '{row2["pid"]}', '{row2["side"]}', '{row2["type"]}', '{row2["classname"]}', '{Convert.ToInt32(row2["alive"])}', '{active}', '{Convert.ToInt32(row2["insured"])}', '{row2["modifications"]}', '{row2["inventory"]}');";
                         ot_db.ExecuteNonQuery(sql);
                     }
                 }
@@ -211,6 +218,14 @@ namespace TrackerServer
                     Player p = Player.CreatePlayer(row, server);
                     DataTable vehicles = ot_db.ExecuteReaderDT($"SELECT * FROM vehicles WHERE `pid` = '{p.SteamId}' AND `side` = '{p.Faction}' AND `active` = '{server}' AND `alive` = '1' ORDER BY  active DESC, type");
                     p.Vehicles = Vehicle.CreateVehicles(vehicles);
+                    if (WarTargetGid.Count > 0)
+                    {
+                        int playerGID = Convert.ToInt32(row["gangID"]);
+                        if (WarTargetGid.Contains(playerGID) && p.Faction == "civ")
+                        {
+                            p.WarTarget = true;
+                        }
+                    }
                     if (!tmpOnlinePlayers.Contains(p)) tmpOnlinePlayers.Add(p);
                 }
                 _players[serverId - 1] = tmpOnlinePlayers;
